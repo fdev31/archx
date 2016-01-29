@@ -1,0 +1,1 @@
+../../all/base/post-install/10_fstab.sh

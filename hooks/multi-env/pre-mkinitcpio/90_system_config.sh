@@ -1,0 +1,1 @@
+../../all/base/pre-mkinitcpio/90_system_config.sh

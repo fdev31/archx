@@ -1,0 +1,1 @@
+../../all/desktop/install/40_login_manager_lightdm.sh

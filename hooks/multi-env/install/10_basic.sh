@@ -1,0 +1,1 @@
+../../all/base/install/10_basic.sh

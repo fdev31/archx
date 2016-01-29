@@ -1,0 +1,1 @@
+../../all/base/pre-mkinitcpio/10_locales.sh
