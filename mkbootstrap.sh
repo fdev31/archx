@@ -213,16 +213,16 @@ case $PARAM in
         make_disk_image
         ;;
 	*)
-		echo "Usage: $0 <command> [options]"
-		echo "Commands:"
-		echo "     shell: start a shell"
-		echo "   install: install some package"
-		echo "      conf: re-create ramdisk & rootfs after a manual update"
-		echo "        up: re-create rootfs after a manual update"
-		echo "       all: build the full system from scratch (RUN THIS FIRST)"
-		echo "       run: runs QEMU emulator"
-		echo "     flash: update a DOS formated partition"
-		exit 0
+        echo "Usage: $0 <command> [options]"
+        echo "Commands:"
+        echo "     shell: start a shell"
+        echo "   install: install some package"
+        echo "      conf: re-create ramdisk & rootfs after a manual update"
+        echo "        up: re-create rootfs after a manual update"
+        echo "       all: build the full system from scratch (RUN THIS FIRST)"
+        echo "       run: runs QEMU emulator"
+        echo "     flash: update a DOS formated partition"
+        exit 0
 esac
 
 echo "Type \" $0 install <package name> \" to install a new package"
