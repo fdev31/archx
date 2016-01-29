@@ -37,7 +37,7 @@ function step() {
 
 function reset_rootfs() {
     step "Clear old rootfs"
-    sudo rm -fr "$R"
+    sudo rm -fr "$R" 2> /dev/null
     mkdir "$R"
 }
 
@@ -60,7 +60,7 @@ function make_squash_root() {
     run_hooks install
     run_hooks post-install
     step "Cleaning FS & building SQUASHFS"
-    sudo rm $SQ
+    sudo rm $SQ 2> /dev/null
     (cd $R \
     && sudo find boot/* > ../ignored.files \
     && sudo find var/cache/ -type f >> ../ignored.files \
@@ -89,7 +89,7 @@ function mount_part0() {
 
     # Make final disk with boot + root
     T=tmpmnt
-	sudo rm -fr $T
+	sudo rm -fr $T 2> /dev/null
     sudo mkdir $T
     sudo mount $lo_dev $T
 }
@@ -118,7 +118,7 @@ function make_disk_image() {
     step "Populating filesystem"
     # Make final disk with boot + root
     T=tmpmnt
-	sudo rm -fr $T
+	sudo rm -fr $T 2> /dev/null
     sudo mkdir $T
     sudo mount $lo_dev $T
 
@@ -190,7 +190,7 @@ case $PARAM in
     flash)
 		shift # pop the first argument
         drive=$1
-        mkdir flute
+        mkdir flute 2>/dev/null
         sudo mount $drive flute || exit 1
         step "Copying boot..."
         sudo cp -ar $R/boot/* flute/ || exit 1
