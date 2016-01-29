@@ -4,5 +4,4 @@ source ./configuration.sh
 
 cat > $R/etc/sudoers.d/50_nopassword <<EOF
 %wheel ALL=(ALL) NOPASSWD: ALL
-user ALL=(ALL) NOPASSWD: ALL
 EOF

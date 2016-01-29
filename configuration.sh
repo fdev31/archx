@@ -9,7 +9,7 @@ PASSWORD="plop"
 # Advanced users only:
 
 DISK_MARGIN=1 # in megabytes
-DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users"
+DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel"
 ADMIN_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon"
 R="$PWD/ROOT"
 D="diskimage.raw"
