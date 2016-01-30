@@ -50,10 +50,3 @@ External resources are loaded from the *resources* folder
 This is alpha software: NEVER INTERRUPT THE SCRIPT WHILE RUNNING !!
 
 I am open to contributions
-
-## Improvements TBD
-
-- follow bash convention : UPPERCASE for vars
-- review quoting
-- use pacman -R whenever possible instead of arch-chroot
-- remove --recheck from grub

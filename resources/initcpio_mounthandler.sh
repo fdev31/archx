@@ -36,4 +36,4 @@ mkdir /new_root/.ghost
 mount --bind $O_OV_DIR /new_root/.ghost
 
 
-#-MOVABLE ROOT PATCH
+#MOVABLE ROOT PATCH END

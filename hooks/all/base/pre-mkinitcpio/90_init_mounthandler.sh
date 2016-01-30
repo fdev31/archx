@@ -1,5 +1,5 @@
 # script-forced
-source ./configuration.sh
+source ./strapfuncs.sh
 
 # Injects or updates boot's mount process using resources/initcpio_mounthandler.sh
 
@@ -8,9 +8,8 @@ garbage=tmp.file
 orig="\"$$mount_handler\" \\/new_root"
 
 ## undo first
-if grep "MOVABLE ROOT PATCH" "$I"; then
-    (sed "/^#MOVABLE ROOT PATCH/,/^#-MOVABLE ROOT PATCH/ s/.*/$orig/" < "$I" | uniq) > $garbage
-    install -TD -o root -g root -m 755 $garbage "$I"
+if contains "MOVABLE ROOT PATCH" "$I"; then
+    replace_with "#MOVABLE ROOT PATCH" "$orig" $"I"
 fi  
 
 # apply new conf

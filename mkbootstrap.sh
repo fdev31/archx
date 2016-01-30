@@ -65,8 +65,8 @@ function grub_install() {
     F="$1"
     D="$2"
     BIOS_MOD="part_gpt part_msdos fat usb"
-    sudo grub-install --recheck --target x86_64-efi --efi-directory "$F" --removable --no-nvram "$D"
-    sudo grub-install --recheck --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --no-nvram "$D"
+    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
 }
 
 function grub_on_img() {
@@ -95,7 +95,7 @@ function umount_part0() {
 
 function make_disk_image() {
     # computed disk size, in MB
-    CDS=$(echo $(stat -c '%s' "${SQ}") / 1000000.0 + $(du -s "${R}/boot" | cut -f1) / 1000.0  + "${DISK_MARGIN}" | bc)
+    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000.0 + $(du -s "${R}/boot" | cut -f1) / 1000.0  + "${DISK_MARGIN}" ))
 
     step "Creating disk image (${CDS} MB, ${DISK_MARGIN} reserved)"
 
@@ -164,7 +164,6 @@ case "$PARAM" in
 		;;
     conf*)
         reconfigure
-        make_squash_root
         exit
         ;;
     sq*):
@@ -179,12 +178,6 @@ case "$PARAM" in
         run_install_hooks
         make_squash_root
         make_disk_image
-        exit
-        ;;
-    g*)
-        mount_part0
-        grub_on_img
-        umount_part0
         exit
         ;;
     flash)
@@ -220,11 +213,11 @@ case "$PARAM" in
         echo "       run: runs QEMU emulator"
         echo "        up: re-create rootfs after a manual update (default)"
         echo "     shell: start a shell"
-        echo "   install: install some package"
-        echo "      conf: re-create ramdisk & rootfs"
+        echo "   install: install some package (args = pacman args)"
+        echo "      conf: re-create intial ramdisk"
         echo "    squash: re-create squash rootfs"
-        echo "      disk: re-create disk image from current squash"
-        echo "     flash: install rootfs to some USB drive & make it bootable"
+        echo "      disk: re-create disk image from current squash & ramdisk"
+        echo "     flash: install rootfs to some USB drive & make it bootable (arg = FAT partition)"
         exit 0
 esac
 

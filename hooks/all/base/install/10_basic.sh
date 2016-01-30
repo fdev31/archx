@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg -Sy --noconfirm yaourt
+install_pkg -Sy --noconfirm $PACMAN_BIN
