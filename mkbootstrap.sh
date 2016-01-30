@@ -64,8 +64,8 @@ function make_squash_root() {
 function grub_install() {
     F="$1"
     D="$2"
-    BIOS_MOD="part_gpt part_msdos fat usb"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --no-nvram "$D"
+    BIOS_MOD="normal search search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
 }
 
@@ -195,6 +195,7 @@ case "$PARAM" in
         sudo umount ./usb_drive_tmpmnt
         sudo sync
         sudo rm -fr usb_drive_tmpmnt
+        sudo dosfslabel "$drive" "$DISKLABEL"
         exit
         ;;
     all*)
