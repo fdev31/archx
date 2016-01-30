@@ -51,7 +51,3 @@ This is alpha software: NEVER INTERRUPT THE SCRIPT WHILE RUNNING !!
 
 I am open to contributions
 
-### Known bugs:
-
-- EFI boot is not working
-
