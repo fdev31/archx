@@ -183,19 +183,18 @@ case "$PARAM" in
     flash)
 		shift # pop the first argument
         drive=$1
-        mkdir flute 2>/dev/null
-        sudo mount $drive flute || exit 1
+        mkdir usb_drive_tmpmnt 2>/dev/null
+        sudo mount $drive usb_drive_tmpmnt || exit 1
         step "Copying boot..."
-        sudo cp -ar "$R/boot/"* flute/ || exit 1
+        sudo cp -ar "$R/boot/"* usb_drive_tmpmnt/ || exit 1
         step "Copying root (can take a while)..."
-        sudo cp "$SQ" flute/ || exit 1
+        sudo cp "$SQ" usb_drive_tmpmnt/ || exit 1
         step "Installing GRUB..."
-        grub_install flute/ "${drive:0:-1}"
-        df -h flute
+        grub_install usb_drive_tmpmnt/ "${drive:0:-1}"
         step "Syncing."
-        sudo umount ./flute
+        sudo umount ./usb_drive_tmpmnt
         sudo sync
-        sudo rm -fr flute
+        sudo rm -fr usb_drive_tmpmnt
         exit
         ;;
     all*)
