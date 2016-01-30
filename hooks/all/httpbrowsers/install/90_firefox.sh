@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S firefox
+. ./strapfuncs.sh
+install_pkg --noconfirm -S firefox

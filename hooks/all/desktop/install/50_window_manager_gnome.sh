@@ -1,1 +1,2 @@
-./mkbootstrap.sh install -S  --noconfirm gnome
+. ./strapfuncs.sh
+install_pkg -S  --noconfirm gnome

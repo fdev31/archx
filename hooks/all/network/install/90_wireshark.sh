@@ -1,3 +1,3 @@
-source ./configuration.sh
+. ./strapfuncs.sh
 
-./mkbootstrap.sh install --noconfirm -S wireshark-$PREFERRED_TOOLKIT
+install_pkg --noconfirm -S wireshark-$PREFERRED_TOOLKIT

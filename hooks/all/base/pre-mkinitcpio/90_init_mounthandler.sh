@@ -19,6 +19,4 @@ header=$(sed "/mount_handler.*new_root/,$ d" "$I")
 
 echo "$header
 $(cat resources/initcpio_mounthandler.sh)
-$footer" | sed -e "s/DISKLABEL/$DISKLABEL/" -e "s/ROOTIMAGE/$SQ/" > "$I"
-
-chmod 755 "$I"
+$footer" | sed -e "s/DISKLABEL/$DISKLABEL/" -e "s/ROOTIMAGE/$ROOTNAME/" > "$I"

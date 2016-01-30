@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S blender
+. ./strapfuncs.sh
+install_pkg --noconfirm -S blender

@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S darktable
+. ./strapfuncs.sh
+install_pkg --noconfirm -S darktable

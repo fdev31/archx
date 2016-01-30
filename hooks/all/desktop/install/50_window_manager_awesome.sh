@@ -1,1 +1,2 @@
-./mkbootstrap.sh install -S  --noconfirm awesome xterm
+. ./strapfuncs.sh
+install_pkg -S  --noconfirm awesome xterm

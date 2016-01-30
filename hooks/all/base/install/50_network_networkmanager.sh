@@ -1,2 +1,3 @@
-#!/bin/sh
-./mkbootstrap.sh install -Sy --noconfirm networkmanager
+. ./strapfuncs.sh
+
+install_pkg -Sy --noconfirm networkmanager

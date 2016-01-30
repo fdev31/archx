@@ -1,1 +1,2 @@
-./mkbootstrap.sh install -S  --noconfirm plasma
+. ./strapfuncs.sh
+install_pkg -S  --noconfirm plasma

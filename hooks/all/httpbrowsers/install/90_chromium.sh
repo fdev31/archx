@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S chromium
+. ./strapfuncs.sh
+install_pkg --noconfirm -S chromium

@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S inkscape
+. ./strapfuncs.sh
+install_pkg --noconfirm -S inkscape

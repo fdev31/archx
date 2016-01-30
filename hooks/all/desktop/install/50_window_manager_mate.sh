@@ -1,1 +1,2 @@
-./mkbootstrap.sh install -S  --noconfirm mate
+. ./strapfuncs.sh
+install_pkg -S  --noconfirm mate

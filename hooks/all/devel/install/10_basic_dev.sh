@@ -1,2 +1,3 @@
 #!/bin/sh
-./mkbootstrap.sh install -Sy --noconfirm base-devel
+. ./strapfuncs.sh
+install_pkg -Sy --noconfirm base-devel

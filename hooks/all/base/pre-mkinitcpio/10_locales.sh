@@ -1,6 +1,5 @@
 # script-forced
-source ./strapfuncs.sh
-source ./configuration.sh
+. ./strapfuncs.sh
 
 copy /etc/localtime
 copy /etc/locale.gen

@@ -1,3 +1,4 @@
-#!/bin/sh
-./mkbootstrap.sh install -Sy --noconfirm netctl wpa_supplicant
+. ./strapfuncs.sh
+
+install_pkg -Sy --noconfirm netctl wpa_supplicant
 

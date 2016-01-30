@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S calligra-krita
+. ./strapfuncs.sh
+install_pkg --noconfirm -S calligra-krita

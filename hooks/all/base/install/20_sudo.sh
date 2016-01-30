@@ -1,7 +1,7 @@
-source ./configuration.sh
+. ./strapfuncs.sh
 
-./mkbootstrap.sh install -Sy --noconfirm sudo
+install_pkg -Sy --noconfirm sudo
 
 cat > $R/etc/sudoers.d/50_nopassword <<EOF
-%wheel ALL=(ALL) NOPASSWD: ALL
+%wheel ALL=(ALL) ALL
 EOF

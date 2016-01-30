@@ -1,1 +1,2 @@
-./mkbootstrap.sh install -S  --noconfirm xfce4
+. ./strapfuncs.sh
+install_pkg -S  --noconfirm xfce4

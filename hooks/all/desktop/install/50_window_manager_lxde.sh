@@ -1,1 +1,3 @@
-./mkbootstrap.sh install -S  --noconfirm lxde
+. ./strapfuncs.sh
+
+install_pkg -S  --noconfirm lxde

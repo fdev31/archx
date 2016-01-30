@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S scribus
+. ./strapfuncs.sh
+install_pkg --noconfirm -S scribus

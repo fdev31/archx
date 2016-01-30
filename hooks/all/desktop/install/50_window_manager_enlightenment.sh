@@ -1,1 +1,2 @@
-./mkbootstrap.sh install -S  --noconfirm enlightenment epplet-base
+. ./strapfuncs.sh
+install_pkg -S  --noconfirm enlightenment epplet-base

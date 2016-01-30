@@ -1,4 +1,3 @@
-#!/bin/sh
-./mkbootstrap.sh install -Sy --noconfirm btrfs-progs squashfs-tools
+. ./strapfuncs.sh
 
-# Install scripts allowing to save "session"
+install_pkg -Sy --noconfirm btrfs-progs squashfs-tools

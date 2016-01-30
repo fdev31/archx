@@ -1,5 +1,5 @@
 # script-forced
-source ./strapfuncs.sh
+. ./strapfuncs.sh
 
 copy /etc/vconsole.conf
 

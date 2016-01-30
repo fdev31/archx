@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S dia
+. ./strapfuncs.sh
+install_pkg --noconfirm -S dia

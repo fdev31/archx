@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S mypaint
+. ./strapfuncs.sh
+install_pkg --noconfirm -S mypaint

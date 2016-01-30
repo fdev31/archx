@@ -1,3 +1,3 @@
-. ./configuration.sh
+. ./strapfuncs.sh
 
-./mkbootstrap.sh install --noconfirm -S avidemux-${PREFERRED_TOOLKIT}
+install_pkg --noconfirm -S avidemux-${PREFERRED_TOOLKIT}

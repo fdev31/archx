@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S libreoffice-still
+. ./strapfuncs.sh
+install_pkg --noconfirm -S libreoffice-still

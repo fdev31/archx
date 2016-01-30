@@ -1,6 +1,6 @@
-. ./configuration.sh
+. ./strapfuncs.sh
 
 if ls extra_packages/* >/dev/null 2>&1 ; then
-    ./mkbootstrap.sh install -U --noconfirm extra_packages/*
+    install_pkg -U --noconfirm extra_packages/*
 fi
 

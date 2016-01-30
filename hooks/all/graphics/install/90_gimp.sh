@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S gimp
+. ./strapfuncs.sh
+install_pkg --noconfirm -S gimp

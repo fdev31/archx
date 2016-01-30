@@ -1,1 +1,2 @@
-./mkbootstrap.sh install --noconfirm -S midori
+. ./strapfuncs.sh
+install_pkg --noconfirm -S midori
