@@ -95,7 +95,7 @@ function umount_part0() {
 
 function make_disk_image() {
     # computed disk size, in MB
-    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000.0 + $(du -s "${R}/boot" | cut -f1) / 1000.0  + "${DISK_MARGIN}" ))
+    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000 + $(du -s "${R}/boot" | cut -f1) / 1000  + ${DISK_MARGIN} ))
 
     step "Creating disk image (${CDS} MB, ${DISK_MARGIN} reserved)"
 
