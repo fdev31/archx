@@ -53,3 +53,11 @@ function install_pkg() {
     $PKGMGR -r "$R" --needed $*
     unshare_cache
 }
+
+function enable_service() {
+    sudo systemctl --root "$R" enable $1
+}
+
+function disable_service() {
+    sudo systemctl --root "$R" disable $1
+}

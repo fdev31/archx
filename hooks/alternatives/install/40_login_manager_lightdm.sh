@@ -8,4 +8,4 @@ else
     install_pkg -S  --noconfirm lightdm-kde-greeter
 fi
 
-sudo ln -sf /usr/lib/systemd/system/lightdm.service $R/etc/systemd/system/display-manager.service
+enable_service lightdm

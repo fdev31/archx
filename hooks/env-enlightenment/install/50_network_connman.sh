@@ -1,0 +1,1 @@
+../.././alternatives/install/50_network_connman.sh
