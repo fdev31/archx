@@ -23,7 +23,7 @@ LIVE_SYSTEM=1
 
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
-        HOOK_BUILD_DIR="$WORKDIR/.distrib_hooks"
+        HOOK_BUILD_DIR="$WORKDIR/installed_hooks"
         rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
         mkdir "$HOOK_BUILD_DIR"
         for PROFILE in $PROFILES; do
@@ -74,7 +74,7 @@ function run_install_hooks() {
     run_hooks post-install
     distro_install_hook
     if [ -n "$LIVE_SYSTEM" ]; then
-        sudo cp -ra extra_files/* "$R/boot/"
+        sudo cp -r extra_files/* "$R/boot/"
     fi
 }
 
@@ -106,7 +106,7 @@ function grub_on_img() {
 
 function mount_part0() {
     OFFSET=$(($SECT_SZ * $(fdisk -lu "$D" |grep "^$D" |awk '{print $3}') ))
-    LO_DEV=$(losetup -o "$OFFSET" --show -f "$LO_DEV" "$D")
+    LO_DEV=$(losetup -o "$OFFSET" --show -f "$D")
 
     # Make final disk with boot + root
     T=tmpmnt
@@ -119,6 +119,13 @@ function umount_part0() {
     sudo umount "./$T"
     sudo rmdir "$T"
     sudo losetup -d "$LO_DEV"
+}
+
+function mount_root_from_image() {
+    mount_part0
+    echo "Mounted in $T, ^D to leave "
+    $SHELL
+    umount_part0
 }
 
 function make_disk_image() {
@@ -183,6 +190,10 @@ case "$PARAM" in
         install_pkg "$*"
         exit
 		;;
+    m*)
+        mount_root_from_image
+        exit
+        ;;
 	shell*)
 		sudo arch-chroot "$R"
         exit
