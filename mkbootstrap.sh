@@ -71,6 +71,10 @@ function run_install_hooks() {
     run_hooks pre-install
     run_hooks install
     install_pkg --noconfirm -S $DISTRO_PACKAGE_LIST
+    if ls extra_packages/*tar* >/dev/null 2>&1 ; then
+        install_pkg -U --noconfirm extra_packages/*tar*
+    fi
+
     run_hooks post-install
     distro_install_hook
     if [ -n "$LIVE_SYSTEM" ]; then
