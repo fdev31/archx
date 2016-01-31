@@ -1,1 +1,0 @@
-../../all/base/pre-mkinitcpio/90_mkinitcpio_conf.sh

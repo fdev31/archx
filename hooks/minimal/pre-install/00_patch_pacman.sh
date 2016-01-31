@@ -1,1 +1,0 @@
-../../all/base/pre-install/00_patch_pacman.sh

@@ -1,1 +1,0 @@
-../../all/base/install/20_sudo.sh

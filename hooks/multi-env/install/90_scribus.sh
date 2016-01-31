@@ -1,1 +1,0 @@
-../../all/office/install/90_scribus.sh

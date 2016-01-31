@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$1" ]; then
     echo "Syntax: $0 <profile name>"
@@ -13,9 +13,13 @@ HOOK=$1
 
 
 if [ ! -z "$HOOK" ]; then
-    dest=$(echo $HOOK | cut -d/ -f3)
-    hookname=$(basename $HOOK)
-    ln -s "../../$HOOK" "${PROF_NAME}/$dest/$hookname"
+    DEST="${HOOK%/*}"
+    DEST="${DEST##*/}"
+    HOOKNAME=${HOOK##*/}
+    if [ ! -d "${PROF_NAME}/$DEST" ]; then
+        mkdir "${PROF_NAME}/$DEST"
+    fi
+    ln -sf "../../$HOOK" "${PROF_NAME}/$DEST/$HOOKNAME"
     exit
 fi
 
@@ -23,16 +27,34 @@ mkdir "$PROF_NAME" 2>/dev/null || (echo "Profile exists!" && exit)
 
 cd "$PROF_NAME"
 
-for name in $(find ../all/ -name "*.sh" | sort); do
+for NAME in $(find ../all/ -name "*.sh" | sort); do
     # TODO: auto import "script-forced" scripts
-    echo ${name:7:-3} | sed -E -e 's#/([0-9]{2}_)?# #g' -e 's/^(.*) (.*) (.*)$/\1:  \3  (\2)/'
-    echo -n "Import (Y/n) ? "
+    CAT="${NAME#*all/}"
+    CAT="${CAT%%/*}"
+    if [ "$CAT" = "$SKIP" ]; then
+        continue
+    fi
+    TYPE="${NAME#*$CAT/}"
+    TYPE="${TYPE%%/*}"
+    SHORT="${NAME##*/}"
+    SHORT="${SHORT#*_}"
+    SHORT="${SHORT%.*}"
+    echo "####################################################################"
+    echo "$CAT   =$SHORT=    ($TYPE)"
+    grep -v strapfuncs $NAME
+    echo -n "Import (Y/n/t/s) ? "
     read yn
+    if [ "$yn" = "t" ]; then
+        exit 0
+    fi
+    if [ "$yn" = "s" ]; then
+        SKIP=$CAT
+        continue
+    fi
     if [ "$yn" != "n" ]; then
-        hooktype=$( echo ${name:7:-3} | sed -E -e 's#/([0-9]{2}_)?# #g' -e 's/^(.*) (.*) (.*)$/\2/' )
-        if [ ! -d "$hooktype" ]; then
-            mkdir "$hooktype"
+        if [ ! -d "$TYPE" ]; then
+            mkdir "$TYPE"
         fi
-        ln -s "../$name" "$hooktype/"
+        ln -sf "../$NAME" "$TYPE/"
     fi
 done

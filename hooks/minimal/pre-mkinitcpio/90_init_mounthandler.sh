@@ -1,1 +1,0 @@
-../../all/base/pre-mkinitcpio/90_init_mounthandler.sh

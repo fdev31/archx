@@ -9,7 +9,7 @@ function step2() {
 }
 
 function copy() {
-    cp -a "$1"  "$R$1"
+    sudo cp -a "$1"  "$R$1"
 }
 
 function share_cache() {
@@ -29,7 +29,7 @@ function contains() {
 function strip_end() {
     PATTERN="$1"
     FILE="$2"
-    sed -i "/^${PATTERN}/,$ d" "${FILE}"
+    sudo sed -i "/^${PATTERN}/,$ d" "${FILE}"
 }
 
 function replace_with() {
@@ -40,16 +40,16 @@ function replace_with() {
     FOOTER=$(sed "0,/^$PATTERN END$/ d" "$I")
     echo "$HEADER
 $SUB
-$FOOTER" > "$I"
+$FOOTER" | sudo dd of="$I"
 }
 
 function install_pkg() {
     if [ -e "$R/bin/$PACMAN_BIN" ]; then
         PKGMGR=$PACMAN_BIN
     else
-        PKGMGR=pacman
+        PKGMGR="sudo pacman"
     fi
     share_cache
-    sudo $PKGMGR -r "$R" --needed $*
+    $PKGMGR -r "$R" --needed $*
     unshare_cache
 }

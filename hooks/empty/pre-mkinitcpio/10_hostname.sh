@@ -1,1 +1,0 @@
-../../all/base/pre-mkinitcpio/10_hostname.sh

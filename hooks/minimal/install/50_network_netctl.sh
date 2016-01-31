@@ -1,1 +1,0 @@
-../../all/base/install/50_network_netctl.sh

@@ -1,1 +1,0 @@
-../../all/network/install/90_wireshark.sh

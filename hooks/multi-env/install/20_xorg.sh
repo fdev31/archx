@@ -1,1 +1,0 @@
-../../all/xorg/install/20_xorg.sh

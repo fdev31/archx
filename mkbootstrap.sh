@@ -9,27 +9,50 @@ if [ ! -e configuration.sh ]; then
     exit 1
 fi
 
-source configuration.sh
-source strapfuncs.sh
+source ./configuration.sh
+source ./strapfuncs.sh
+source ./distrib/${DISTRIB}.sh
 
 SECT_SZ=512
 LO_DEV=''
 ROOT_DEV=''
 
+HOOK_BUILD_FLAG=0
+
+LIVE_SYSTEM=1
+
 function run_hooks() {
-    step "Executing $1 hooks..."
-    for hook in ./hooks/$PROFILE/$1/*.sh; do
+    if [ $HOOK_BUILD_FLAG -eq 0 ]; then
+        HOOK_BUILD_DIR="$WORKDIR/.distrib_hooks"
+        rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
+        mkdir "$HOOK_BUILD_DIR"
+        for PROFILE in $PROFILES; do
+            cp -ra "./hooks/$PROFILE/"* "$HOOK_BUILD_DIR"
+        done
+        for HK in $(find "$HOOK_BUILD_DIR" -type l); do
+            LNK=$(readlink "$HK")
+            if [ ! -f "$LNK" ]; then
+                ln -sf "${LNK/..\/.\//../hooks/}" "$HK"
+            fi
+        done
+        HOOK_BUILD_FLAG=1
+    fi
+
+    step "Executing $DISTRIB hooks..."
+    for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
         step2 "HOOK $hook"
-        sudo $hook
+        $hook
     done
 }
+
 function reset_rootfs() {
     step "Clear old rootfs"
     sudo rm -fr "$R" 2> /dev/null
-    mkdir "$R"
+    sudo mkdir "$R" 2> /dev/null
 }
 
 function base_install() {
+    # TODO configuration step
     step "Installing base packages & patch root files"
     # install packages
     sudo pacstrap -cd "$R" base
@@ -47,7 +70,12 @@ function run_install_hooks() {
     step "Triggering install hooks"
     run_hooks pre-install
     run_hooks install
+    install_pkg --noconfirm -S $DISTRO_PACKAGE_LIST
     run_hooks post-install
+    distro_install_hook
+    if [ -n "$LIVE_SYSTEM" ]; then
+        sudo cp -ra extra_files/* "$R/boot/"
+    fi
 }
 
 function make_squash_root() {
@@ -105,11 +133,8 @@ function make_disk_image() {
     echo -e "n\np\n1\n\n\nt\nef\na\nw" | LC_ALL=C fdisk "$D" >/dev/null 
 
     step2 "Creating FAT32 filesystem"
-    echo $(($SECT_SZ * $(fdisk -lu "$D" |grep "^$D" |awk '{print $3}') ))
     OFFSET=$(($SECT_SZ * $(fdisk -lu "$D" |grep "^$D" |awk '{print $3}') ))
-    echo losetup -o "$OFFSET" --show -f "$D"
     LO_DEV=$(losetup -o "$OFFSET" --show -f "$D")
-    echo mkdosfs -F 32 -n "$DISKLABEL" "$LO_DEV"
     mkdosfs -F 32 -n "$DISKLABEL" "$LO_DEV"
 
     step "Populating filesystem"
@@ -203,8 +228,12 @@ case "$PARAM" in
         base_install
         reconfigure
         run_install_hooks
-        make_squash_root
-        make_disk_image
+        if [ -n "$LIVE_SYSTEM" ]; then
+            make_squash_root
+            make_disk_image
+        else
+            echo "TODO: flash disk w/ grub"
+        fi
         ;;
 	*)
         echo "Usage: $0 <command> [options]"
