@@ -1,4 +1,22 @@
-# Arch movable root builder
+# A4D (Arch for Dummies, say "afford")
+
+## Project
+
+- "live" image builder for archlinux
+- Installable on USB storages / keys
+- Runnable with Qemu/vmware/etc
+- Fast
+- Configurable
+
+## Why ?
+
+Because ArchLinux is a pure, lean and fast distribution, fitting most opensource standards.
+Unfortunately it's not accessible for general users that just want to browse on the web,
+write documents, print, scan, etc...
+A4D aims at providing a smooth experience for unexperimented users,
+providing latest versions of popular graphical environments, allowing "real/normal" people to
+use this amazing opensource operating system.
+
 
 ## Quickstart
 
@@ -35,7 +53,17 @@ Install it to USB stick/drive with FAT partition (eg. sde1):
 
 - "Profiles" including package sets
 
-- UI to select packages
+- UI to select packages / installer (file or drive)
+
+- share disk images with popular desktop environments
+
+### Maybe
+
+- installation on windows drive
+
+This is already possible manually:
+
+- Create a bootable USB stick of A4D using USBWriter for instance
 
 ## How it works ?
 
