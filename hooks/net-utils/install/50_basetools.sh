@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg wireshark-$PREFERRED_TOOLKIT whois iputils
+install_pkg wireshark-$PREFERRED_TOOLKIT whois iputils netcat lftp
