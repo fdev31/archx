@@ -85,7 +85,7 @@ if [ "$RESULT" = "custom" ]; then
             PROFILES="$PROFILES gfx-base"
             ask "Do you want graphic design tools (Y/n)"
             if [ "$RESULT" != "n" ]; then
-                PROFILES="$PROFILES gfx-base"
+                PROFILES="$PROFILES gfx-more"
             fi
             ask "Do you want photography tools (Y/n)"
             if [ "$RESULT" != "n" ]; then
