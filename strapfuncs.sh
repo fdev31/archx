@@ -1,7 +1,7 @@
 source ./configuration.sh
 
 if [ -n "$SHARED_CACHE" ]; then
-    PKGMGR_OPTS="--cachedir '/var/cache/pacman/pkg'"
+    PKGMGR_OPTS="--cachedir /var/cache/pacman/pkg"
 fi
 
 function step() {
