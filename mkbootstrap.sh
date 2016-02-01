@@ -130,7 +130,9 @@ function umount_part0() {
 function mount_root_from_image() {
     mount_part0
     echo "Mounted in $T, ^D to leave "
-    $SHELL
+    cd "$T"
+        $SHELL
+    cd ..
     umount_part0
 }
 
