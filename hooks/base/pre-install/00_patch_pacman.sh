@@ -1,5 +1,7 @@
 . ./strapfuncs.sh
 
+raw_install_pkg -Sy # sync db
+
 pat="# MOVABLE PATCH"
 
 # update pacman conf
