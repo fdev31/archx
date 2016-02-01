@@ -229,6 +229,10 @@ case "$PARAM" in
         make_disk_image
         exit
         ;;
+    hook)
+        "$2"
+        exit
+        ;;
     flash)
 		shift # pop the first argument
         drive=$1
