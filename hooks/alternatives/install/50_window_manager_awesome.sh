@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg  awesome vicious arandr
+install_pkg  awesome vicious
