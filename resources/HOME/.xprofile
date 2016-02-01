@@ -1,0 +1,5 @@
+#!/bin/sh
+comp-switch &
+shift-switch &
+pasystray &
+nm-applet &
