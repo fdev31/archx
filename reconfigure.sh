@@ -116,22 +116,17 @@ if [ "$RESULT" = "custom" ]; then
 fi
 
 ask "Name for this distro (only ascii, no spaces)"
-append_conf "DISKLABEL=$RESULT"
+append_conf "DISKLABEL='$RESULT'"
 
 ask "User id/login"
-append_conf "USERNAME=$RESULT"
+append_conf "USERNAME='$RESULT'"
 ask "Password"
-append_conf "PASSWORD=$RESULT"
+append_conf "PASSWORD='$RESULT'"
 
-if [ -z "$OUT" ]; then
-    echo -e $CONFIG >> $OUT
-else
-    CFG=configuration.sh
-    if grep "RECONFIG SCRIPT" $CFG >/dev/null 2>&1 ; then
-        sed -i '/^# RECONFIG/,$ d' $CFG
-    fi
-    echo "# RECONFIG SCRIPT" >> $CFG
-    echo -e $CONFIG >> $CFG
+CFG=configuration.sh
+if grep "RECONFIG SCRIPT" $CFG >/dev/null 2>&1 ; then
+    sed -i '/^# RECONFIG/,$ d' "$CFG"
 fi
-
+echo "# RECONFIG SCRIPT" >> "$CFG"
+echo -e $CONFIG >> "$CFG"
 

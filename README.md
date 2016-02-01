@@ -41,6 +41,24 @@ Install it to USB stick/drive with FAT partition (eg. sde1):
 
     ./mkbootstrap.sh flash /dev/sde1
 
+## Instructions
+
+You can run the **reconfigure.sh** scripts, it will ask a few questions (or much more if you chose *custom*):
+
+    % ./reconfigure.sh
+     1 - custom
+     2 - basic
+     3 - cinnamon
+     4 - full
+     5 - gnome
+     6 - plasma
+    What distrib do you chose: 5
+    Name for this distro (only ascii, no spaces): GNOMELIVE
+    User id/login: toto
+    Password: otot
+
+Then follow the *Quickstart* instructions to build the OS image.
+
 ## TODO
 
 - i18n at build time
