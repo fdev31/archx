@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg --noconfirm -S grub efibootmgr mtools testdisk rsync file nmap
+install_pkg grub efibootmgr mtools testdisk rsync file nmap

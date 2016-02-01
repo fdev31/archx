@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg --noconfirm -S hplip
+install_pkg hplip

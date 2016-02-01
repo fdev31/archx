@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg --noconfirm -S blender
+install_pkg blender

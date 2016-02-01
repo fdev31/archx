@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg --noconfirm -S sane xsane-gimp
+install_pkg sane xsane-gimp

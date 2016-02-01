@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg --noconfirm -S dia
+install_pkg dia

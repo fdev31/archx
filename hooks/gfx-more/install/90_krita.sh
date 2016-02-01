@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg --noconfirm -S calligra-krita
+install_pkg calligra-krita

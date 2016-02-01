@@ -47,6 +47,7 @@ function raw_install_pkg() {
 }
 
 function install_pkg() {
+    step2 "Installing $*"
     raw_install_pkg --needed --noconfirm -S $*
 }
 

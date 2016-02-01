@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg --noconfirm -S avidemux-${PREFERRED_TOOLKIT}
+install_pkg avidemux-${PREFERRED_TOOLKIT}

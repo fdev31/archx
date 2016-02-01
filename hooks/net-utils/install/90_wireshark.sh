@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg --noconfirm -S wireshark-$PREFERRED_TOOLKIT
+install_pkg wireshark-$PREFERRED_TOOLKIT

@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg --noconfirm -S scribus
+install_pkg scribus
