@@ -1,4 +1,4 @@
-PROFILES="base xorg gfx-base snd-base office-base env-awesome"
+PROFILES="base xorg snd-base env-awesome"
 
 PREFERRED_TOOLKIT='gtk'
 
