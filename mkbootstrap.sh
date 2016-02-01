@@ -13,16 +13,19 @@ source ./configuration.sh
 source ./strapfuncs.sh
 source ./distrib/${DISTRIB}.sh
 
+if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
+    PROFILES="${PROFILES} flashdisk"
+fi
+
 SECT_SZ=512
 LO_DEV=''
 ROOT_DEV=''
 
 HOOK_BUILD_FLAG=0
 
-LIVE_SYSTEM=1
-
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
+        # BUILD CURRENT HOOKS COLLECTION
         HOOK_BUILD_DIR="$WORKDIR/installed_hooks"
         rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
         mkdir "$HOOK_BUILD_DIR"
@@ -89,11 +92,11 @@ function run_install_hooks() {
 function make_squash_root() {
     step "Cleaning FS & building SQUASHFS"
     IF=../ignored.files
-    pushd "$R" || exit -2
+    pushd "$R" >/dev/null || exit -2
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
         sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery
-    popd
+    popd > /dev/null
     rm ignored.files
 }
 

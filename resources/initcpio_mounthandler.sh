@@ -1,13 +1,16 @@
 #MOVABLE ROOT PATCH
 
-lbl="DISKLABEL"
-img="ROOTIMAGE"
+FS_IMAGE="ROOTIMAGE"
+
+SESSION_FILE="session.txz"
+HOME_FILE="home.btrfs"
+ETC_FILE="etc.btrfs"
 
 # overlay fs for RAM session
 O_WORK_DIR=/run/workoverlay
 O_OV_DIR=/run/lostoverlay
 
-BOOTROOT=/movroot # original root, includes root.img squashfs image
+BOOTROOT=/movroot # original root, includes squashfs image
 LOOPROOT=/real_root # squashfs mounted here
 
 mkdir $BOOTROOT
@@ -19,21 +22,27 @@ mkdir $O_OV_DIR
 
 echo "Mounting SquashFS..."
 
-if [ -e $BOOTROOT/${img}-new ]; then
-    echo "Found new ROOTfs !";
+if [ -e $BOOTROOT/${FS_IMAGE}-new ]; then
+    echo "Found new ROOT FS !";
     # TODO: snapshots handling
     read
 fi
 
-mount -o loop -t squashfs $BOOTROOT/$img $LOOPROOT
+mount -o loop -t squashfs $BOOTROOT/$FS_IMAGE $LOOPROOT
 mount overlay -t overlay -o rw,lowerdir=$LOOPROOT,upperdir=$O_OV_DIR,workdir=$O_WORK_DIR /new_root
 
-# make orinal root accessible as /boot
-mount --bind /movroot/ /new_root/boot
+# Handle sessions / snapshots
 
-# allow future script to make snapshots
+if [ -e "/movroot/$SESSION_FILE" ]; then
+    RR=/new_root/bin
+    $RR/xzcat "/movroot/$SESSION_FILE" | $RR/tar xvf -  -C /new_root
+fi
+
+BTRFS_OPTS="ssd,compress,discard,relatime"
+
+# make orinal root accessible as /boot + hide upper dir somewhere
+mount --bind /movroot/ /new_root/boot
 mkdir /new_root/.ghost
 mount --bind $O_OV_DIR /new_root/.ghost
-
 
 #MOVABLE ROOT PATCH END

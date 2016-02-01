@@ -1,6 +1,6 @@
 DISKLABEL="ARCHX"
 
-DISTRIB="basic"
+DISTRIB="full"
 
 USERNAME="guest"
 
@@ -16,9 +16,10 @@ WORKDIR="$PWD"
 
 SHARED_CACHE=1 # comment to not use host package cache
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
-DISK_MARGIN=1 # in megabytes
+DISK_MARGIN=200 # in megabytes
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel"
 ADMIN_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon,root"
+LIVE_SYSTEM=1
 
 # Customize names
 ROOTNAME="rootfs.s"
