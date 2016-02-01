@@ -73,8 +73,8 @@ function run_install_hooks() {
     step2 "Distribution packages"
     install_pkg $DISTRO_PACKAGE_LIST
     step2 "Extra packages"
-    if ls extra_packages/*tar* >/dev/null 2>&1 ; then
-        raw_install_pkg --needed -U --noconfirm extra_packages/*tar*
+    if ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
+        raw_install_pkg --needed -U --noconfirm extra_packages/*pkg.tar*
     fi
 
     run_hooks post-install

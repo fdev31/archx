@@ -2,8 +2,8 @@ PROFILES="base xorg gfx-base office-base env-enlightenment"
 
 PREFERRED_TOOLKIT='gtk'
 
-DISTRO_PACKAGE_LIST='scite gvim'
+DISTRO_PACKAGE_LIST='scite gvim lxappearance'
 
 function distro_install_hook() {
-    return
+    sudo tar xvf resources/home.txz -C "$R/home/$USERNAME/"
 }
