@@ -1,5 +1,5 @@
 . ./strapfuncs.sh
 
-install_pkg -Sy --noconfirm networkmanager
+install_pkg  networkmanager
 
 sudo systemctl --root "$R" enable NetworkManager

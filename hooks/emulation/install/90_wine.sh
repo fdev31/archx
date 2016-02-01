@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg -Sy --noconfirm wine
+install_pkg  wine

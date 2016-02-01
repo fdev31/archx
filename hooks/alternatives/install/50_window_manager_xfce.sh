@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg -S  --noconfirm xfce4
+install_pkg  xfce4

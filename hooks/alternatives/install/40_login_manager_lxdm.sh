@@ -1,4 +1,4 @@
 . ./strapfuncs.sh
 
-install_pkg -S  --noconfirm lxdm
+install_pkg  lxdm
 enable_service lxdm

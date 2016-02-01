@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg -S  --noconfirm mate
+install_pkg  mate

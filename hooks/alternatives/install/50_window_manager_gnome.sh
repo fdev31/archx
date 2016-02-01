@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg -S  --noconfirm gnome
+install_pkg  gnome

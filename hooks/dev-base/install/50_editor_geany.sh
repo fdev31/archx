@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg -Sy --noconfirm geany
+install_pkg  geany

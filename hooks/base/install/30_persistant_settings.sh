@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg -Sy --noconfirm btrfs-progs squashfs-tools
+install_pkg  btrfs-progs squashfs-tools

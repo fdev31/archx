@@ -1,3 +1,3 @@
 source ./strapfuncs.sh
 
-install_pkg -S  --noconfirm terminator terminus-font
+install_pkg  terminator terminus-font

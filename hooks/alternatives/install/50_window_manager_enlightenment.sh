@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg -S  --noconfirm enlightenment epplet-base elementary
+install_pkg  enlightenment epplet-base elementary

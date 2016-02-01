@@ -1,4 +1,4 @@
 . ./strapfuncs.sh
 
-install_pkg -S  --noconfirm ssdm
+install_pkg  ssdm
 enable_service ssdm

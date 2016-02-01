@@ -1,4 +1,4 @@
 . ./strapfuncs.sh
 
-install_pkg -S  --noconfirm gdm
+install_pkg  gdm
 enable_service gdm

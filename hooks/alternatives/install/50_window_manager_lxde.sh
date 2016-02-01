@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install_pkg -S  --noconfirm lxde
+install_pkg  lxde

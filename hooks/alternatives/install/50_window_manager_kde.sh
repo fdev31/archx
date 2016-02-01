@@ -1,2 +1,2 @@
 . ./strapfuncs.sh
-install_pkg -S  --noconfirm plasma kde-applications
+install_pkg  plasma kde-applications
