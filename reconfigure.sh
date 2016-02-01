@@ -42,7 +42,7 @@ get_choice "What distrib do you chose" ${DISTRIBS[@]}
 append_conf "DISTRIB=$RESULT"
 
 if [ "$RESULT" = "custom" ]; then
-    OUT="../distrib/custom.sh"
+    OUT="./distrib/custom.sh"
     PROFILES="base"
     ask "Do you want a graphical user interface [X11/xorg] (Y/n)"
     if [ "$RESULT" != "n" ]; then
@@ -109,7 +109,10 @@ if [ "$RESULT" = "custom" ]; then
     fi
     ask "Enter name of additional software you may use (eg. skype flashplugin)"
     echo "DISTRO_PACKAGE_LIST='$RESULT'" >> $OUT
-    echo 'function distro_install_hook() { return }' >> $OUT
+    echo 'function distro_install_hook() {
+    return
+}
+    ' >> $OUT
 fi
 
 ask "Name for this distro (only ascii, no spaces)"
