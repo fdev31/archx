@@ -1,5 +1,9 @@
 source ./configuration.sh
 
+if [ -n "$SHARED_CACHE" ]; then
+    PKGMGR_OPTS="--cachedir '/var/cache/pacman/pkg'"
+fi
+
 function step() {
     echo -e "\\033[44m\\033[1m ------------[   $1   >\\033[0m\\033[49m"
 }
@@ -10,16 +14,6 @@ function step2() {
 
 function copy() {
     sudo cp -a "$1"  "$R$1"
-}
-
-function share_cache() {
-    if ! mount | grep pacman ; then
-        sudo mount --bind /var/cache/pacman/pkg "$R/var/cache/pacman/pkg"
-    fi
-}
-
-function unshare_cache() {
-    sudo umount "$R/var/cache/pacman/pkg"
 }
 
 function contains() {
@@ -43,15 +37,17 @@ $SUB
 $FOOTER" | sudo dd of="$I"
 }
 
-function install_pkg() {
+function raw_install_pkg() {
     if [ -e "$R/bin/$PACMAN_BIN" ]; then
         PKGMGR=$PACMAN_BIN
     else
         PKGMGR="sudo pacman"
     fi
-    share_cache
-    $PKGMGR -r "$R" --needed $*
-    unshare_cache
+    $PKGMGR $PKGMGR_OPTS -r "$R" $*
+}
+
+function install_pkg() {
+    raw_install_pkg --needed --noconfirm -S $*
 }
 
 function enable_service() {

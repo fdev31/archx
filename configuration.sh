@@ -14,6 +14,7 @@ WORKDIR="$PWD"
 
 # Advanced users only:
 
+SHARED_CACHE=1 # comment to not use host package cache
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
 DISK_MARGIN=1 # in megabytes
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel"
