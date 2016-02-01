@@ -1,6 +1,5 @@
 syntax: glob
 ROOT/*
-.*
 *.xz
 *.s
 *.raw
