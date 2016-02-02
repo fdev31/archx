@@ -26,6 +26,8 @@ nic_display()
 -- sexec=GUI, texec=TERM
 
 local app_items = {
+    { "Web browser", sexec(WEB_BROWSER) },
+    { "File manager", sexec(FILE_MANAGER) },
     { "Inkscape", sexec('inkscape') },
     { "Blender", sexec('blender') },
     { "Gimp", sexec('gimp') },
@@ -42,7 +44,6 @@ local screen_items = {
 
 menu_items = {
     { "applications", app_items, beautiful.sun},
-    { "files", sexec(FILE_MANAGER) },
     { 'screen', screen_items},
     { "quit", awesome.quit },
 }
