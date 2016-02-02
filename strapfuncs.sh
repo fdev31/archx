@@ -1,4 +1,10 @@
 source ./configuration.sh
+source ./distrib/${DISTRIB}.sh
+
+if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
+    PROFILES="${PROFILES} flashdisk"
+fi
+
 
 PAD_WIDTH=$(tput cols)
 
@@ -35,7 +41,7 @@ function replace_with() {
     SUB="$2"
     FILE="$3"
     HEADER=$(sed "/^$PATTERN$/,$ d" "$I")
-    FOOTER=$(sed "0,/^$PATTERN END$/ d" "$I")
+    FOOTER=$(sed "0,/^$PATTERN END/ d" "$I")
     echo "$HEADER
 $SUB
 $FOOTER" | sudo dd of="$I"

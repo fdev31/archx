@@ -9,18 +9,12 @@ if [ ! -e configuration.sh ]; then
     exit 1
 fi
 
-source ./configuration.sh
 source ./strapfuncs.sh
-source ./distrib/${DISTRIB}.sh
 
-if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
-    PROFILES="${PROFILES} flashdisk"
-fi
 
 SECT_SZ=512
 LO_DEV=''
 ROOT_DEV=''
-
 HOOK_BUILD_FLAG=0
 
 function run_hooks() {
@@ -78,9 +72,9 @@ function run_install_hooks() {
         install_pkg $DISTRO_PACKAGE_LIST
     fi
     step2 "Extra packages"
-    if ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
-        raw_install_pkg --needed -U --noconfirm extra_packages/*pkg.tar*
-    fi
+#    if ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
+#        raw_install_pkg --needed -U --noconfirm extra_packages/*pkg.tar*
+#    fi
 
     run_hooks post-install
     distro_install_hook
@@ -95,6 +89,11 @@ function make_squash_root() {
     pushd "$R" >/dev/null || exit -2
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
+        if [ -n "$USE_LOOP_RWDISK" ]; then
+            for FOLD in $PERSISTENT_FOLDERS ; do
+                sudo find "$FOLD/" >> $IF
+            done
+        fi
         sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery
     popd > /dev/null
     rm ignored.files
@@ -104,7 +103,7 @@ function grub_install() {
     F="$1"
     D="$2"
     BIOS_MOD="normal search search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+#    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
 }
 
@@ -141,9 +140,27 @@ function mount_root_from_image() {
     umount_part0
 }
 
+function create_btrfs() {
+    step "Creating BTRFS image of ${DISK_MARGIN} MB"
+    if [ -n "$USE_LOOP_RWDISK" ]; then
+        dd if=/dev/zero "of=$BTFSIMG" bs=1M count=$DISK_MARGIN
+        mkfs.btrfs -L "$DISKLABEL" -M -n 4096 -s 4096 "$BTFSIMG"
+        mkdir btrmnt
+        sudo mount "$BTFSIMG" btrmnt -o compress
+        for FOLD in $PERSISTENT_FOLDERS ; do
+            sudo mkdir -m 755 -p "btrmnt/$FOLD"
+            sudo cp -ra "$R/$FOLD/." "btrmnt/$FOLD"
+        done
+        sudo umount btrmnt
+        sudo rm -fr btrmnt
+    fi
+}
+
 function make_disk_image() {
     # computed disk size, in MB
-    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000 + $(du -s "${R}/boot" | cut -f1) / 1000  + ${DISK_MARGIN} ))
+    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000 + $(du -s "${R}/boot" | cut -f1) / 1000  + ${DISK_MARGIN} + 1 ))
+    BTFSIMG="$WORKDIR/$USE_LOOP_RWDISK"
+    create_btrfs
 
     step "Creating disk image (${CDS} MB, ${DISK_MARGIN} reserved)"
 
@@ -163,6 +180,11 @@ function make_disk_image() {
 	sudo rm -fr "$T" 2> /dev/null
     sudo mkdir "$T"
     sudo mount "$LO_DEV" "$T"
+
+    if [ -n "$USE_LOOP_RWDISK" ]; then
+        echo "$PERSISTENT_FOLDERS" > "$WORKDIR/.ps"
+        sudo mv "$WORKDIR/.ps" "$BTFSIMG" "$T/"
+    fi
 
     sudo cp -ar "$R/boot/"* "$T/"
     if [ ! -d "$T/EFI" ]; then

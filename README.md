@@ -3,6 +3,7 @@
 ## Project
 
 - "live" image builder for archlinux
+- Graphical environments provided
 - Installable on USB storages / keys
 - Runnable with Qemu/vmware/etc
 - Fast

@@ -1,5 +1,9 @@
-# <file system> <dir>   <type>  <options>   <dump>  <pass>
+# <dev>    <dir>           <type>  <options>   <dump>  <pass>
 /dev/loop0 /               auto    rw             0      0
+#none       /boot           auto    rw,nofail      0      1
+#none       /home           auto    rw,nofail      0      1
+#none       /var/lib        auto    rw,nofail      0      1
+#none       /etc            auto    rw,nofail      0      1
 tmpfs      /tmp            tmpfs   nodev,nosuid   0      1
 tmpfs      /run            tmpfs   rw             0      2
 tmpfs      /var/cache      tmpfs   rw             0      2

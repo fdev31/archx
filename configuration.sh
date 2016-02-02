@@ -1,10 +1,10 @@
 DISKLABEL="ARCHX"
 
-DISTRIB="full"
+DISTRIB="basic"
 
 USERNAME="guest"
 
-PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
+PREFERRED_TOOLKIT="" # or "qt" , keep LOWERCASE !
 
 PASSWORD="plop"
 
@@ -19,10 +19,14 @@ COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
 DISK_MARGIN=200 # in megabytes
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel"
 ADMIN_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon,root"
-LIVE_SYSTEM=1
+
+LIVE_SYSTEM=1 # Runs in RAMFS
+USE_LOOP_RWDISK="btrfs.img" # Have persistent folders in a loopback btrfs
+#USE_LOOP_RWDISK= # uncomment to disable persistence
+PERSISTENT_FOLDERS="home etc var/lib" # !! NO TAIL or LEADING SLASH !!!
 
 # Customize names
 ROOTNAME="rootfs.s"
 R="$WORKDIR/ROOT"
-D="$WORKDIR/diskimage.raw"
+D="$WORKDIR/testimage.raw"
 SQ="$WORKDIR/$ROOTNAME"
