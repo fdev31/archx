@@ -12,7 +12,7 @@ _FILE=$(cat "$I")
 echo "$_FILE
 
 # MOVABLE PATCH
-MODULES='squashfs vfat loop overlay'
+MODULES='squashfs vfat loop overlay btrfs'
 HOOKS='base udev keyboard block'
 COMPRESSION='$COMPRESSION_TYPE'
 " | sudo dd "of=$I"
