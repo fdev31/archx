@@ -2,7 +2,7 @@
 -- Default awesome theme --
 ---------------------------
 
-WALLPAPER = "/usr/share/backgrounds/gnome/Terraform-green.jpg"
+WALLPAPER = "/usr/share/awesome/themes/zenburn/zenburn-background.png"
 
 theme = {}
 
