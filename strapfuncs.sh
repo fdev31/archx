@@ -13,19 +13,17 @@ function have_xorg() {
     fi
 }
 
-PAD_WIDTH=$(tput cols)
-
 if [ -n "$SHARED_CACHE" ]; then
     PKGMGR_OPTS="--cachedir /var/cache/pacman/pkg"
 fi
 
 function step() {
-    W=$(( $PAD_WIDTH - 5 ))
+    W=$(( $(tput cols) - 5 ))
     printf "\\033[44m\\033[1m    %-${W}s>\\033[0m\\033[49m" "$1"
 }
 
 function step2() {
-    W=$(( $PAD_WIDTH - 5 ))
+    W=$(( $(tput cols) - 5 ))
     printf "\\033[44m    %-${W}s>\\033[0m" "$1"
 }
 
