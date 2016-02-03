@@ -1,6 +1,8 @@
 source ./configuration.sh
 source ./distrib/${DISTRIB}.sh
 
+[ -e my_conf.sh ] && source ./my_conf.sh
+
 if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
     PROFILES="${PROFILES} flashdisk"
 fi

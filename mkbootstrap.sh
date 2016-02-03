@@ -72,9 +72,9 @@ function run_install_hooks() {
         install_pkg $DISTRO_PACKAGE_LIST
     fi
     step2 "Extra packages"
-#    if ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
-#        raw_install_pkg --needed -U --noconfirm extra_packages/*pkg.tar*
-#    fi
+    if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
+        raw_install_pkg --needed -U --noconfirm extra_packages/*pkg.tar*
+    fi
 
     run_hooks post-install
     distro_install_hook
@@ -89,11 +89,6 @@ function make_squash_root() {
     pushd "$R" >/dev/null || exit -2
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
-        if [ -n "$USE_LOOP_RWDISK" ]; then
-            for FOLD in $PERSISTENT_FOLDERS ; do
-                sudo find "$FOLD/" >> $IF
-            done
-        fi
         sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery
     popd > /dev/null
     rm ignored.files
@@ -143,26 +138,39 @@ function mount_root_from_image() {
 function create_btrfs() {
     step "Creating BTRFS image of ${DISK_MARGIN} MB"
     if [ -n "$USE_LOOP_RWDISK" ]; then
-        dd if=/dev/zero "of=$BTFSIMG" bs=1M count=$DISK_MARGIN
-        mkfs.btrfs -L "$DISKLABEL" -M -n 4096 -s 4096 "$BTFSIMG"
-        mkdir btrmnt
-        sudo mount "$BTFSIMG" btrmnt -o compress
-        for FOLD in $PERSISTENT_FOLDERS ; do
-            sudo mkdir -m 755 -p "btrmnt/$FOLD"
-            sudo cp -ra "$R/$FOLD/." "btrmnt/$FOLD"
-        done
-        sudo umount btrmnt
-        sudo rm -fr btrmnt
+        HFS="$WORKDIR/homefs.btr"
+        RFS="$WORKDIR/rootfs.btr"
+        step2 "rootfs.btr"
+        dd if=/dev/zero "of=$WORKDIR/rootfs.btr" "bs=${DISK_MARGIN}M" count=1
+        step2 "homefs.btr"
+        dd if=/dev/zero "of=$WORKDIR/homefs.btr" "bs=${DISK_MARGIN}M" count=1
+        step2 "Making filesystems"
+        mkfs.btrfs -L "rootfs" -M -n 4096 -s 4096 "$RFS"
+        sudo mkfs.btrfs -L "home"   -M -n 4096 -s 4096 "$HFS" --root "$R/home"
+
+#         populate home folder
+#        MPT="$WORKDIR/.btr_mnt_pt"
+#        mkdir "$MPT"
+#
+#        sudo mount "$HFS" "$MPT" -o compress
+#        sudo cp -ra "$R/home/." "$MPT"
+#        sudo umount "$MPT"
+#        sudo rm -fr "$MPT"
     fi
 }
 
 function make_disk_image() {
     # computed disk size, in MB
-    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000 + $(du -s "${R}/boot" | cut -f1) / 1000  + ${DISK_MARGIN} + 1 ))
-    BTFSIMG="$WORKDIR/$USE_LOOP_RWDISK"
+    if [ -z "$USE_LOOP_RWDISK" ]; then
+        _DM="( $DISK_MARGIN * 2 )"
+    else
+        _DM=$DISK_MARGIN
+    fi
+    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000 + $(du -s "${R}/boot" | cut -f1) / 1000  + ${_DM} + 1 ))
+
     create_btrfs
 
-    step "Creating disk image (${CDS} MB, ${DISK_MARGIN} reserved)"
+    step "Creating disk image (${CDS} MB, ${_DM} reserved)"
 
     dd if=/dev/zero "of=${D}" bs=1M count=${CDS}
 
@@ -180,11 +188,6 @@ function make_disk_image() {
 	sudo rm -fr "$T" 2> /dev/null
     sudo mkdir "$T"
     sudo mount "$LO_DEV" "$T"
-
-    if [ -n "$USE_LOOP_RWDISK" ]; then
-        echo "$PERSISTENT_FOLDERS" > "$WORKDIR/.ps"
-        sudo mv "$WORKDIR/.ps" "$BTFSIMG" "$T/"
-    fi
 
     sudo cp -ar "$R/boot/"* "$T/"
     if [ ! -d "$T/EFI" ]; then
@@ -223,37 +226,29 @@ case "$PARAM" in
 	ins*)
 		shift # pop the first argument
         install_pkg "$*"
-        exit
 		;;
     m*)
         mount_root_from_image
-        exit
         ;;
 	shell*)
 		sudo arch-chroot "$R"
-        exit
 		;;
     conf*)
         reconfigure
-        exit
         ;;
     sq*):
         make_squash_root
-        exit
         ;;
     d*)
         make_disk_image
-        exit
         ;;
     up*)
         run_install_hooks
         make_squash_root
         make_disk_image
-        exit
         ;;
     hook)
         "$2"
-        exit
         ;;
     flash)
 		shift # pop the first argument
@@ -271,7 +266,6 @@ case "$PARAM" in
         sudo sync
         sudo rm -fr usb_drive_tmpmnt
         sudo dosfslabel "$drive" "$DISKLABEL"
-        exit
         ;;
     all*)
         reset_rootfs
@@ -299,7 +293,5 @@ case "$PARAM" in
         echo "     flash: install rootfs to some USB drive & make it bootable (arg = FAT partition)"
         exit 0
 esac
-
-echo "Type \" $0 install <package name> \" to install a new package"
-echo "or \" $0 up \" to rebuild the disk image"
+echo "Done"
 

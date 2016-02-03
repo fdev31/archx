@@ -21,6 +21,8 @@ local k = {
     awful.key({ "Control", "Shift" } , "l"     , sexec('screenlocker.sh')) ,
     awful.key({ modkey             } , "t"     , sexec(FILE_MANAGER) )    ,
     awful.key({ modkey             } , "w"     , sexec(WEB_BROWSER) ) ,
+    awful.key({ modkey             } , "Up"    , sexec('compton-trans -c +5') )    ,
+    awful.key({ modkey             } , "Down"  , sexec('compton-trans -c -- -5') ) ,
 
     awful.key({ modkey } , "p", function ()
         screen_switched = true awful.screen.focus_relative( 1)
