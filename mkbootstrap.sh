@@ -20,7 +20,7 @@ HOOK_BUILD_FLAG=0
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
-        HOOK_BUILD_DIR="$WORKDIR/installed_hooks"
+        HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
         rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
         mkdir "$HOOK_BUILD_DIR"
         for PROFILE in $PROFILES; do
