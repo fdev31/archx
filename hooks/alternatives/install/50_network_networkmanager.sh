@@ -2,8 +2,6 @@
 
 install_pkg  networkmanager
 
-if [[ "$PROFILES" = *xorg* ]]; then
-    install_pkg  network-manager-applet
-fi
+have_xorg && install_pkg  network-manager-applet
 
 sudo systemctl --root "$R" enable NetworkManager
