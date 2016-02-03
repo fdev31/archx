@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install-pkg cmt ladspa-plugins
+install_pkg ladspa-plugins

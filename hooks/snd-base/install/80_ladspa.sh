@@ -1,3 +1,3 @@
 . ./strapfuncs.sh
 
-install-pkg cmt ladspa swh-plugins
+install_pkg cmt ladspa swh-plugins
