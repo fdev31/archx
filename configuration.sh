@@ -23,7 +23,7 @@ ADMIN_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,
 LIVE_SYSTEM=1 # Runs in RAMFS
 USE_LOOP_RWDISK="btrfs.img" # Have persistent folders in a loopback btrfs
 #USE_LOOP_RWDISK= # uncomment to disable persistence
-PERSISTENT_FOLDERS="home etc var/lib" # !! NO TAIL or LEADING SLASH !!!
+PERSISTENT_FOLDERS="home etc" # !! NO TAIL or LEADING SLASH !!!
 
 # Customize names
 ROOTNAME="rootfs.s"

@@ -5,6 +5,13 @@ if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
     PROFILES="${PROFILES} flashdisk"
 fi
 
+function have_xorg() {
+    if [[ "$PROFILES" = *xorg* ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
 
 PAD_WIDTH=$(tput cols)
 
