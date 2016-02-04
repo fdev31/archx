@@ -38,7 +38,7 @@ function run_hooks() {
     step "Executing $DISTRIB hooks..."
     for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
         step2 "HOOK $hook"
-        $hook
+        source $hook
     done
 }
 
@@ -248,7 +248,7 @@ case "$PARAM" in
         make_disk_image
         ;;
     hook)
-        "$2"
+        source "$2"
         ;;
     flash)
 		shift # pop the first argument
