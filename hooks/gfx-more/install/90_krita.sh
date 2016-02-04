@@ -1,5 +1,4 @@
 . ./strapfuncs.sh
 
-if [ "$REFERRED_TOOLKIT" = "qt" ]; then
-    install_pkg calligra-krita
-fi
+install_pkg calligra-krita
+install_pkg calligra-l10n-${LANG%_*}
