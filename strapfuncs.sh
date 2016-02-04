@@ -54,12 +54,13 @@ $SUB
 $FOOTER" | sudo dd of="$I"
 }
 
+function have_package() {
+    _set_pkgmgr
+    $PKGMGR $PKGMGR_OPTS -r "$R" -Qqq $* >/dev/null 2>&1
+}
+
 function raw_install_pkg() {
-    if [ -e "$R/bin/$PACMAN_BIN" ]; then
-        PKGMGR=$PACMAN_BIN
-    else
-        PKGMGR="sudo pacman"
-    fi
+    _set_pkgmgr
     $PKGMGR $PKGMGR_OPTS -r "$R" $*
 }
 
@@ -68,10 +69,23 @@ function install_pkg() {
     raw_install_pkg --needed --noconfirm -S $*
 }
 
+function remove_pkg() {
+    _set_pkgmgr
+    $PKGMGR -r "$R" --noconfirm -R $*
+}
+
 function enable_service() {
     sudo systemctl --root "$R" enable $1
 }
 
 function disable_service() {
     sudo systemctl --root "$R" disable $1
+}
+
+function _set_pkgmgr() {
+    if [ -e "$R/bin/$PACMAN_BIN" ]; then
+        PKGMGR=$PACMAN_BIN
+    else
+        PKGMGR="sudo pacman"
+    fi
 }
