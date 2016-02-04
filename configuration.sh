@@ -27,5 +27,5 @@ USE_LOOP_RWDISK=1 # Have persistent folders in a loopback btrfs
 # Customize names
 ROOTNAME="rootfs.s"
 R="$WORKDIR/ROOT"
-D="$WORKDIR/testimage.raw"
+D="$WORKDIR/fulldisk.raw"
 SQ="$WORKDIR/$ROOTNAME"
