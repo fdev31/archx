@@ -1,5 +1,3 @@
-# script-forced
-source ./strapfuncs.sh
 
 # Injects or updates boot's mount process using resources/initcpio_mounthandler.sh
 

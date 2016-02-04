@@ -1,4 +1,3 @@
-. ./strapfuncs.sh
 install_pkg ttf-dejavu artwiz-fonts
 install_pkg hunspell hunspell-${LANG%_*}
 install_pkg libreoffice-still

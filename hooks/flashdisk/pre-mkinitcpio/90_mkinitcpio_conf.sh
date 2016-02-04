@@ -1,5 +1,3 @@
-# script-forced
-. ./strapfuncs.sh
 
 sudo install -TD -o root -g root resources/linux.preset "$R/etc/mkinitcpio.d/linux.preset"
 

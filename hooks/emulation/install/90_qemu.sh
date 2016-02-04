@@ -1,4 +1,3 @@
-. ./strapfuncs.sh
 
 install_pkg  qemu qemu-arch-extra
 

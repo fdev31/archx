@@ -1,4 +1,3 @@
-. ./strapfuncs.sh
 
 install_pkg pulseaudio
 install_pkg pulseaudio-gconf

@@ -1,4 +1,3 @@
-. ./strapfuncs.sh
 
 install_pkg  netctl wpa_supplicant ifplugd
 

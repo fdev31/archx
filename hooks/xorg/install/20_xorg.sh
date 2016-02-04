@@ -1,4 +1,3 @@
-source ./strapfuncs.sh
 
 install_pkg  xorg xterm
 

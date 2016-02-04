@@ -1,4 +1,3 @@
-. ./strapfuncs.sh
 
 sudo rm -fr "$R/home/$USERNAME/"
 sudo cp -r ./resources/HOME "$R/home/$USERNAME"

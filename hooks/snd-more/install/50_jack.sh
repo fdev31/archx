@@ -1,4 +1,3 @@
-. ./strapfuncs.sh
 
 install_pkg jack2
 install_pkg pulseaudio-jack
