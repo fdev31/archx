@@ -1,94 +1,117 @@
 #MOVABLE ROOT PATCH
-# opt kernel params:
-# nobtr: 100% volatile system
-# homeonly: /home persists, not /
-# reset
-# shell: start a shell before startup
-export FS_IMAGE="ROOTIMAGE"
-export HOME_IMAGE="homefs.btr"
-export ROOT_IMAGE="rootfs.btr"
 
+export SQUASH_IMAGE="ROOTIMAGE"
+export BTRFS_IMAGE="rootfs.btr"
 export SESSION_FILE="session.txz"
-export BTRFS_IMG="btrfs.img"
 
 # overlay fs for RAM session
-export O_OV_DIR=/run/lostoverlay
-export O_WORK_DIR=/run/workoverlay
+export OVERLAY_UPPER="/run/overlay"
+export OVERLAY_WORKDIR="/run/overlay_work"
 
+export FS_BOOT="/fat_root" # original root, includes squashfs image
+export FS_ROOT_RO="/squash_root" # squashfs mounted here
+export FS_ROOT_RW="/btr_root" # btrfs mounted here
 
-export BOOTROOT=/movroot # original root, includes squashfs image
-export LOOPROOT=/real_root # squashfs mounted here
-
-mkdir $BOOTROOT
-mkdir $LOOPROOT
-
-RR="$LOOPROOT/bin"
-
-"$mount_handler" $BOOTROOT # Mount boot device
-
-# Remount RW (we need it to write on BTRFS)
-echo "Loading filesystems..."
-mount "$BOOTROOT" -o remount,rw
 BTRFS_OPTS="ssd,compress,discard,relatime"
 
+mkdir "$FS_BOOT"
+mkdir "$FS_ROOT_RO"
+mkdir "$FS_ROOT_RW"
+mkdir "$OVERLAY_UPPER"
+mkdir "$OVERLAY_WORKDIR"
+
+RR="$FS_ROOT_RO/bin"
+
+"$mount_handler" $FS_BOOT # Mount boot device
+
+# Simple init: remount boot device rw & mount Squashfs from it
+# Remount RW (we need it to write on BTRFS)
+echo "Loading filesystems..."
+mount "$FS_BOOT" -o remount,rw
+
 # Mount squash (base RO filesystem)
-mount -o loop -t squashfs $BOOTROOT/$FS_IMAGE $LOOPROOT
+mount -o loop -t squashfs "$FS_BOOT/$SQUASH_IMAGE" "$FS_ROOT_RO"
+echo "- squash image loaded"
 
-loadkmap < "/$LOOPROOT/usr/share/kbd/keymaps/initrd.map"
-
-##### Choice: SQUASH + BTR FS (persist) or SQUASH + TMPFS (volatile)
-
-# if BTR rootfs, mount it (instead of using initrd's tmpfs)
-if [ -z "$nobtr" ] && [ -z "$homeonly" ] && [ -e "$BOOTROOT/$ROOT_IMAGE" ]; then
-    echo "- persistent root"
-    mkdir "$O_OV_DIR"
-    mount "$BOOTROOT/$ROOT_IMAGE" "$O_OV_DIR" -o $BTRFS_OPTS
-
-    export O_WORK_DIR="$O_OV_DIR/WORK"
-    export O_OV_DIR="$O_OV_DIR/ROOT"
+# Loading key map
+if [ -e "/$FS_ROOT_RO/usr/share/kbd/keymaps/initrd.map" ]; then
+    loadkmap < "/$FS_ROOT_RO/usr/share/kbd/keymaps/initrd.map"
+    echo "- keymap"
 fi
 
-# root mounted, create workdir
-mkdir -p $O_WORK_DIR
-mkdir -p $O_OV_DIR
+##### Choices:
+##  - shell:  run an interactive shell after mounts
+##  - nobtr:  100% volatile system (in RAM)
+##  - homeonly:  /home is non-volatile
+##    else       / is non-volatile
 
-mount overlay -t overlay -o lowerdir=$LOOPROOT,upperdir=$O_OV_DIR,workdir=$O_WORK_DIR /new_root
+# Mount huge RAMFS overlay
 
-# if BTR HOME FS, mount it (instead of using default overlay)
-if [ -z "$nobtr" ] && [ -e "$BOOTROOT/$HOME_IMAGE" ]; then
-    echo "- persistent home"
-    mount "$BOOTROOT/$HOME_IMAGE" /new_root/home -o $BTRFS_OPTS
+mount overlay -t overlay -o "lowerdir=$FS_ROOT_RO,upperdir=$OVERLAY_UPPER,workdir=$OVERLAY_WORKDIR" /new_root
+mkdir /new_root/.ghost # ram accessible as ghost
+mount --bind "$OVERLAY_UPPER" /new_root/.ghost
+
+mount_overlays() {
+    for FOLD in "$@"; do
+        echo " [M] $FOLD"
+        FLAT_NAME=$(echo $FOLD | sed 's#/#_#g')
+        FLAT_NAME=${FLAT_NAME:1}
+        if [ ! -d "$PFX$FLAT_NAME" ]; then
+            mkdir "$PFX$FLAT_NAME"
+            mkdir "$WPFX$FLAT_NAME"
+        fi
+        M_OPTS="lowerdir=$FS_ROOT_RO$FOLD,upperdir=$PFX$FLAT_NAME,workdir=$WPFX${FLAT_NAME}"
+        mount /dev/loop1 -t overlay -o "$M_OPTS" /new_root$FOLD
+    done
+}
+
+if [ ! -e "$FS_BOOT/$BTRFS_IMAGE" ] || [ -n "$nobtr" ]; then
+    # RAMFS + SQUASH on /
+    echo "- mode: VOLATILE"
+    if [ -n "$nobtr" ] && [ -e "$FS_BOOT/$SESSION_FILE" ]; then # check session file/unpack
+        echo "- recovering saved session"
+        "$RR/xzcat" "$FS_BOOT/$SESSION_FILE" | "$RR/tar" xvf - -C /new_root
+    fi
+else
+    # WE HAVE PERSISTENCE HERE
+    echo "- mode: STORED"
+    mount "$FS_BOOT/$BTRFS_IMAGE" "$FS_ROOT_RW" -o $BTRFS_OPTS
+    mkdir /new_root/.ghost_rw # create ghost folder & mount Stored there
+    mount --move "$FS_ROOT_RW" /new_root/.ghost_rw
+    PFX="/new_root/.ghost_rw/ROOT/" # new prefix
+    WPFX="/new_root/.ghost_rw/WORK/" # new prefix
+
+
+    # Mount filesytems
+    echo " [M] /home"
+    mount --bind  "$PFX/home" /new_root/home
+    if [ -n "$homeonly" ]; then
+        echo "- persistence: HOME"
+    else
+        mount_overlays "/var/lib" "/var/db" "/usr/lib" "/usr/share" "/opt" "/etc"
+    fi
 fi
 
-# Handle sessions / snapshots for TMPFS systems
-if [ ! -e "$BOOTROOT/$ROOT_IMAGE" ] && [ -e "$BOOTROOT/$SESSION_FILE" ]; then
-    echo "- recovering saved session"
-    $RR/xzcat "$BOOTROOT/$SESSION_FILE" | $RR/tar xvf -  -C /new_root
-fi
-
-# make original root accessible as /boot + hide upper dir somewhere
-mount --move $BOOTROOT/ /new_root/boot -o rw
-mkdir /new_root/.ghost 2>/dev/null
-mount --move $O_OV_DIR /new_root/.ghost
+# Bind /boot
+echo "- moving mountpoints to new root"
+mount --move "$FS_BOOT" /new_root/boot
 
 unset nobtr
+unset homeonly
 
 if [ -n "$shell" ] ; then
-    loadkmap < "/$LOOPROOT/usr/share/kbd/keymaps/initrd.map"
     sh -i
     unset shell
 fi
 
 echo 'Starting, yey !'
 
-export FS_IMAGE=
-export HOME_IMAGE=
-export ROOT_IMAGE=
+export SQUASH_IMAGE=
+export BTRFS_IMAGE=
 export SESSION_FILE=
-export BTRFS_IMG=
-export O_WORK_DIR=
-export O_OV_DIR=
-export BOOTROOT=
-export LOOPROOT=
+export OVERLAY_WORKDIR=
+export OVERLAY_UPPER=
+export FS_BOOT=
+export FS_ROOT_RO=
 
 #MOVABLE ROOT PATCH END

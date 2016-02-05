@@ -138,24 +138,20 @@ function mount_root_from_image() {
 function create_btrfs() {
     step "Creating BTRFS image of ${DISK_MARGIN} MB"
     if [ -n "$USE_LOOP_RWDISK" ]; then
-        HFS="$WORKDIR/homefs.btr"
         RFS="$WORKDIR/rootfs.btr"
         step2 "rootfs.btr"
         dd if=/dev/zero "of=$WORKDIR/rootfs.btr" "bs=${DISK_MARGIN}M" count=1
-        step2 "homefs.btr"
-        dd if=/dev/zero "of=$WORKDIR/homefs.btr" "bs=${DISK_MARGIN}M" count=1
-        step2 "Making filesystems"
-        mkfs.btrfs -L "rootfs" -M -n 4096 -s 4096 "$RFS"
-        sudo mkfs.btrfs -L "home"   -M -n 4096 -s 4096 "$HFS" --root "$R/home"
 
-#         populate home folder
-#        MPT="$WORKDIR/.btr_mnt_pt"
-#        mkdir "$MPT"
-#
-#        sudo mount "$HFS" "$MPT" -o compress
-#        sudo cp -ra "$R/home/." "$MPT"
-#        sudo umount "$MPT"
-#        sudo rm -fr "$MPT"
+        step2 "Building persistent filesystem"
+        MPT="$WORKDIR/.btr_mnt_pt"
+        mkdir "$MPT"
+        mkdir "$MPT/ROOT"
+        mkdir "$MPT/WORK"
+        sudo cp -r "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
+        sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
+        rm -fr "$RFS".xz
+        xz -k --best "$RFS"
+        sudo rm -fr "$MPT"
     fi
 }
 
@@ -190,12 +186,14 @@ function make_disk_image() {
     sudo mount "$LO_DEV" "$T"
 
     sudo cp -ar "$R/boot/"* "$T/"
-    if [ ! -d "$T/EFI" ]; then
-        sudo mkdir "$T/EFI/"
-    fi
-    step2 "Copying ROOTFS (can take a while)..."
-    sudo cp "$SQ" "$T/"
 
+    step2 "Copying base filesystem (can take a while)..."
+    sudo cp "$SQ" "$T/"
+    if [ -n "$USE_LOOP_RWDISK" ]; then
+        step2 "Copying persistent filesystem..."
+        sudo cp -r "$RFS" "$T/"
+        sudo cp "$RFS".xz "$T/"
+    fi
     step2 "Syncing."
     sudo sync
     step "Grub..."
@@ -218,7 +216,8 @@ fi
 
 case "$PARAM" in
     run*)
-        exec qemu-system-x86_64 -m 1024 -enable-kvm -drive file=$D,format=raw
+        shift
+        exec qemu-system-x86_64 -m 1024 -enable-kvm -drive file=$D,format=raw $*
         # if GRUB is broken for you, try this one:
 #        qemu-system-x86_64 -m 1024 -enable-kvm -drive file=$D,format=raw -kernel $R/boot/vmlinuz-linux -initrd $R/boot/initramfs-linux.img -append root=LABEL=$DISKLABEL
         exit
@@ -238,6 +237,7 @@ case "$PARAM" in
         ;;
     sq*):
         make_squash_root
+        make_disk_image
         ;;
     d*)
         make_disk_image
@@ -287,9 +287,9 @@ case "$PARAM" in
         echo "        up: re-create rootfs after a manual update (default)"
         echo "     shell: start a shell"
         echo "   install: install some package (args = pacman args)"
-        echo "      conf: re-create intial ramdisk"
-        echo "    squash: re-create squash rootfs"
-        echo "      disk: re-create disk image from current squash & ramdisk"
+#        echo "      conf: re-create intial ramdisk"
+#        echo "    squash: re-create squash rootfs"
+#        echo "      disk: re-create disk image from current squash & ramdisk"
         echo "     flash: install rootfs to some USB drive & make it bootable (arg = FAT partition)"
         exit 0
 esac
