@@ -44,7 +44,7 @@ cpugraph  = awful.widget.graph()
 -- Graph properties
 local w=40
 cpugraph:set_width(w)
-cpugraph:set_background_color("#494B4F")
+cpugraph:set_background_color("#222222")
 cpugraph:set_color({ type = "linear", from = { 0, -w/8 }, to = { w*0.2, w/2 }, stops = { {1, "#7799DD"}, {0, "#ff3333" }}})
 cpugraph:buttons(PROCESS_MON_BUTTON)
  -- Register widgets
