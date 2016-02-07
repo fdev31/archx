@@ -1,11 +1,11 @@
 # Name for this Linux distribution
 DISKLABEL="ARCHX"
 # Package set to install
-DISTRIB="basic"
+DISTRIB="full"
 # Your login id
 USERNAME="guest"
 # do you prefer qt or gtk ?
-PREFERRED_TOOLKIT="" # or "qt" , keep LOWERCASE !
+PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
 PASSWORD="sexy"
 
