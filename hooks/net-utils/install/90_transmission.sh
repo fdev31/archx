@@ -1,0 +1,1 @@
+install_pkg transmission-$PREFERRED_TOOLKIT
