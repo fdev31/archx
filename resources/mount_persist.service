@@ -1,0 +1,22 @@
+[Unit]
+Description=Enables persistence
+Before=sysinit.target shutdown.target local-fs.target
+After=local-fs-pre.target
+DefaultDependencies=no
+Conflicts=shutdown.target
+Requires=local-fs-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/persist_mounter.sh mount
+ExecStop=/bin/persist_mounter.sh unmount
+Restart=on-failure
+RestartSec=2
+StandardOutput=tty
+StandardInput=tty
+StandardError=tty
+
+
+[Install]
+WantedBy=multi-user.target

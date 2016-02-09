@@ -1,4 +1,4 @@
-PROFILES="base xorg snd-base env-awesome"
+PROFILES="base xorg snd-base env-awesome locales"
 
 PREFERRED_TOOLKIT='gtk'
 

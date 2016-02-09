@@ -148,12 +148,19 @@ function create_btrfs() {
         mkdir "$MPT/ROOT"
         mkdir "$MPT/WORK"
         sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-#        sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
-        mkfs.ext4 -O ^has_journal -m 3 -L "$DISKLABEL-RW" "$RFS"
         sudo mkdir .tmpbtr
+        if [ "$ROOT_TYPE" = "btr" ]; then
+            sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
+        else
+            mkfs.ext4 -O ^has_journal -m 3 -L "$DISKLABEL-RW" "$RFS"
+        fi
         sudo mount "${RFS}" .tmpbtr
-        sudo cp -ra "$MPT/." .tmpbtr
-#        sudo btrfs filesystem resize $(( ${DISK_MARGIN} * 1024 * 1024 ))  .tmpbtr
+
+        if [ "$ROOT_TYPE" = "btr" ]; then
+            sudo btrfs filesystem resize $(( ${DISK_MARGIN} * 1024 * 1024 ))  .tmpbtr
+        else
+            sudo cp -ra "$MPT/." .tmpbtr
+        fi
         sudo umount .tmpbtr
         sudo rmdir .tmpbtr
         rm -fr "$RFS".xz

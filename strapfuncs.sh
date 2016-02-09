@@ -75,7 +75,7 @@ function remove_pkg() {
 }
 
 function enable_service() {
-    sudo systemctl --root "$R" enable $1
+    sudo systemctl --root "$R" --force enable $1
 }
 
 function disable_service() {
