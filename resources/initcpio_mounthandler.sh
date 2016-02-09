@@ -130,6 +130,10 @@ fi
 unset nobtr
 unset homeonly
 
+if [ -n "$recoverfs" ]; then
+    touch "$F_TMPFS_ROOT/.reset_state"
+fi
+
 if [ -n "$shell" ] ; then
     sh -i
     unset shell

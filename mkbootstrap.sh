@@ -98,7 +98,8 @@ function grub_install() {
     F="$1"
     D="$2"
     BIOS_MOD="normal search search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
-#    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+    echo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
 }
 
@@ -255,6 +256,11 @@ case "$PARAM" in
         ;;
     d*)
         make_disk_image
+        ;;
+    gr*)
+        mount_part0
+        grub_on_img
+        umount_part0
         ;;
     up*)
         run_install_hooks

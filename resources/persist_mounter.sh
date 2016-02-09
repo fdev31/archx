@@ -3,6 +3,10 @@
 RPFX="/mnt/persist"
 
 mount_persist() {
+    if [ -e "/run/overlay/.reset_state" ]; then
+        xzcat -d /boot/rootfs.btr.xz > /boot/rootfs.btr
+        reboot
+    fi
     return # handled by initrd
 }
 myumount() {

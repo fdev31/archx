@@ -3,7 +3,7 @@ DISKLABEL="ARCHX"
 # Package set to install
 DISTRIB="full"
 # Your login id
-USERNAME="guest"
+USERNAME="user"
 # do you prefer qt or gtk ?
 PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
