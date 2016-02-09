@@ -82,6 +82,13 @@ function disable_service() {
     sudo systemctl --root "$R" disable $1
 }
 
+function install_bin() {
+sudo install -m 755 -o root -g root "$1" "$2"
+}
+function install_file() {
+sudo install -m 644 -o root -g root "$1" "$2"
+}
+
 function _set_pkgmgr() {
     if [ -e "$R/bin/$PACMAN_BIN" ]; then
         PKGMGR=$PACMAN_BIN

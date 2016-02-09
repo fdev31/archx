@@ -1,3 +1,1 @@
-
-sudo install -o root -g root -m 644 resources/fstab "$R/etc/fstab"
-
+install_file resources/fstab "$R/etc/fstab"
