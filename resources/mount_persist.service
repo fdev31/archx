@@ -7,15 +7,15 @@ Conflicts=shutdown.target
 Requires=local-fs-pre.target
 
 [Service]
-Type=oneshot
+Type=simple
 RemainAfterExit=yes
 ExecStart=/bin/persist_mounter.sh mount
 ExecStop=/bin/persist_mounter.sh unmount
 Restart=on-failure
-RestartSec=2
-StandardOutput=tty
-StandardInput=tty
-StandardError=tty
+RestartSec=3
+#StandardOutput=tty
+#StandardInput=tty
+#StandardError=tty
 
 
 [Install]
