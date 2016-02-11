@@ -73,7 +73,7 @@ function run_install_hooks() {
     fi
     step2 "Extra packages"
     if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
-        raw_install_pkg --needed -U --noconfirm extra_packages/*pkg.tar*
+        sudo pacman -U --needed --noconfirm extra_packages/*pkg.tar*
     fi
 
     run_hooks post-install
