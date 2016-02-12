@@ -64,22 +64,26 @@ function reconfigure() {
 }
 
 function run_install_hooks() {
-    step "Triggering install hooks"
-    run_hooks pre-install
-    run_hooks install
-    if [ -n "$DISTRO_PACKAGE_LIST" ]; then
-        step2 "Distribution packages"
-        install_pkg $DISTRO_PACKAGE_LIST
+    if [ -z "EXTRA_ONLY" ]; then
+        step "Triggering install hooks"
+        run_hooks pre-install
+        run_hooks install
+        if [ -n "$DISTRO_PACKAGE_LIST" ]; then
+            step2 "Distribution packages"
+            install_pkg $DISTRO_PACKAGE_LIST
+        fi
     fi
     step2 "Extra packages"
     if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
         sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
     fi
 
-    run_hooks post-install
-    distro_install_hook
-    if [ -n "$LIVE_SYSTEM" ]; then
-        sudo cp -r extra_files/* "$R/boot/"
+    if [ -z "EXTRA_ONLY" ]; then
+        distro_install_hook
+        if [ -n "$LIVE_SYSTEM" ]; then
+            sudo cp -r extra_files/* "$R/boot/"
+        fi
+        run_hooks post-install
     fi
 }
 
@@ -260,6 +264,9 @@ case "$PARAM" in
         mount_part0
         grub_on_img
         umount_part0
+        ;;
+    pkg)
+        run_install_hooks
         ;;
     up*)
         run_install_hooks
