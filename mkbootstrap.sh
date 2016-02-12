@@ -1,15 +1,19 @@
 #!/bin/bash
 
-DEPS="grub arch-install-scripts sudo dosfstools squashfs-tools xz"
-
-pacman -Qq $DEPS > /dev/null || exit "Required packages: $DEPS"
-
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
     exit 1
 fi
 
 source ./strapfuncs.sh
+
+DEPS="grub arch-install-scripts sudo dosfstools squashfs-tools xz"
+
+if [ -n "$SECUREBOOT" ]; then
+    DEPS="$DEPS prebootloader"
+fi
+
+pacman -Qq $DEPS > /dev/null || exit "Required packages: $DEPS"
 
 
 SECT_SZ=512
@@ -101,9 +105,18 @@ function make_squash_root() {
 function grub_install() {
     F="$1"
     D="$2"
-    BIOS_MOD="normal search search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
-    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
+    BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
+    echo "FOLD/ $F"
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+    sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
+    echo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
+
+    if [ -n "$SECUREBOOT" ]; then
+        sudo cp /usr/lib/prebootloader/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
+        sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
+        sudo mv "$F/EFI//BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
+    fi
+
 }
 
 function grub_on_img() {
