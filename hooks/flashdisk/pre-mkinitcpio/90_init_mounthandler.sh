@@ -15,4 +15,7 @@ HEADER=$(sed "/mount_handler.*new_root/,$ d" "$I")
 
 echo "$HEADER
 $(cat resources/initcpio_mounthandler.sh)
-$FOOTER" | sed -e "s/DISKLABEL/$DISKLABEL/" -e "s/ROOTIMAGE/$ROOTNAME/" | sudo dd "of=$I"
+$FOOTER" | sed \
+    -e "s/{{DISKLABEL}}/$DISKLABEL/" \
+    -e "s/{{ROOTIMAGE}}/$ROOTNAME/" \
+    -e "s/{{STORAGE}}/rootfs.$ROOT_TYPE/" | sudo dd "of=$I"

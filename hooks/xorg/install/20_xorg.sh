@@ -8,3 +8,5 @@ enable_service accounts-daemon
 if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
     install_pkg gtk-engines
 fi
+
+install_pkg libx264 mesa-libgl
