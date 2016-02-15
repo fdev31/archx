@@ -1,7 +1,7 @@
 #MOVABLE ROOT PATCH
 
-export SQUASH_IMAGE="ROOTIMAGE"
-export BTRFS_IMAGE="rootfs.btr"
+export SQUASH_IMAGE={{ROOTIMAGE}}
+export STORAGE_IMAGE={{STORAGE}}
 export SESSION_FILE="session.txz"
 
 # overlay fs for RAM session
@@ -61,8 +61,6 @@ create_mega_overlay() {
         mkdir -p "$F_TMPFS_ROOT/$FOLD" "$F_TMPFS_WORK_ROOT/$FOLD"
         mount tmpfs-ov -t overlay -o "lowerdir=/new_root/$FOLD,upperdir=$F_TMPFS_ROOT/$FOLD,workdir=$F_TMPFS_WORK_ROOT/$FOLD" "/new_root/$FOLD" || oops
     done
-#    mkdir /new_root/.ghost # ram accessible as ghost
-#    mount --bind "$F_TMPFS_ROOT" /new_root/.ghost
 }
 
 run_newroot() {
@@ -89,23 +87,25 @@ mount_overlays() {
     done
 }
 
-if [ -e "/new_root/boot/$BTRFS_IMAGE" ] && [ -z "$nobtr" ]; then
+if [ -e "/new_root/boot/$STORAGE_IMAGE" ] && [ -z "$nobtr" ]; then
     # WE HAVE PERSISTENCE HERE
     echo "- mode: STORED"
-    losetup /dev/loop1 "/new_root/boot/$BTRFS_IMAGE"
-    if run_newroot fsck.ext4 /dev/loop1 -y ; then
-        BTRFS_OPTS="discard,relatime"
-        echo "FS: EXT4"
-    else
-        BTRFS_OPTS="ssd,compress,discard,relatime"
-        run_newroot btrfs check -p --repair --check-data-csum /dev/loop1 || oops
+    losetup /dev/loop1 "/new_root/boot/$STORAGE_IMAGE"
+
+    if [ "$STORAGE_IMAGE" != "${STORAGE_IMAGE%.btr}" ]; then
         echo "FS: BTR"
+        FS_OPTS="ssd,compress,discard,relatime"
+        run_newroot btrfs check -p --repair --check-data-csum /dev/loop1 || oops
+    else
+        echo "FS: EXT4"
+        run_newroot fsck.ext4 /dev/loop1 -y
+        FS_OPTS="discard,relatime"
     fi
 
     mkdir /new_root/mnt/storage # create ghost folder & mount Stored there
-    mount /dev/loop1 /new_root/mnt/storage -o $BTRFS_OPTS || oops
+    mount /dev/loop1 /new_root/mnt/storage -o $FS_OPTS || oops
     PFX="/new_root/mnt/storage/ROOT/" # new prefix
-    WPFX="/new_root/mnt/storage/WORK/" # new prefix
+    WPFX="/new_root/mnt/storage/WORK/" # new work prefix
 
     # Mount filesytems
     echo " [M] /home"
@@ -114,8 +114,7 @@ if [ -e "/new_root/boot/$BTRFS_IMAGE" ] && [ -z "$nobtr" ]; then
     if [ -n "$homeonly" ]; then
         true
     else
-        mount_overlays /etc /var/db /usr /srv /opt
-#        mount_overlays ${persist//:/ }
+        mount_overlays /etc /var/db /usr /srv /opt /var/lib/pacman
     fi
 else
     # RAMFS + SQUASH on /
@@ -127,9 +126,6 @@ else
     fi
 fi
 
-unset nobtr
-unset homeonly
-
 if [ -n "$recoverfs" ]; then
     touch "$F_TMPFS_ROOT/.reset_state"
 fi
@@ -140,13 +136,5 @@ if [ -n "$shell" ] ; then
 fi
 
 echo 'Starting, yey !'
-
-export SQUASH_IMAGE=
-export BTRFS_IMAGE=
-export SESSION_FILE=
-export F_TMPFS_WORK_ROOT=
-export F_TMPFS_ROOT=
-export F_BOOT_ROOT=
-export F_SQUASH_ROOT=
 
 #MOVABLE ROOT PATCH END

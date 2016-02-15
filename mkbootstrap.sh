@@ -68,27 +68,23 @@ function reconfigure() {
 }
 
 function run_install_hooks() {
-    if [ -z "EXTRA_ONLY" ]; then
-        step "Triggering install hooks"
-        run_hooks pre-install
-        run_hooks install
-        if [ -n "$DISTRO_PACKAGE_LIST" ]; then
-            step2 "Distribution packages"
-            install_pkg $DISTRO_PACKAGE_LIST
-        fi
+    step "Triggering install hooks"
+    run_hooks pre-install
+    run_hooks install
+    if [ -n "$DISTRO_PACKAGE_LIST" ]; then
+        step2 "Distribution packages"
+        install_pkg $DISTRO_PACKAGE_LIST
     fi
     step2 "Extra packages"
     if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
         sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
     fi
 
-    if [ -z "EXTRA_ONLY" ]; then
-        distro_install_hook
-        if [ -n "$LIVE_SYSTEM" ]; then
-            sudo cp -r extra_files/* "$R/boot/"
-        fi
-        run_hooks post-install
+    distro_install_hook
+    if [ -n "$LIVE_SYSTEM" ]; then
+        sudo cp -r extra_files/* "$R/boot/"
     fi
+    run_hooks post-install
 }
 
 function make_squash_root() {
@@ -97,7 +93,7 @@ function make_squash_root() {
     pushd "$R" >/dev/null || exit -2
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
-        sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery
+        sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size 1M
     popd > /dev/null
     rm ignored.files
 }
@@ -109,8 +105,7 @@ function grub_install() {
     echo "FOLD/ $F"
     sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
-    echo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
-
+    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
     if [ -n "$SECUREBOOT" ]; then
         sudo cp /usr/lib/prebootloader/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
         sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
@@ -153,42 +148,46 @@ function mount_root_from_image() {
 }
 
 function create_btrfs() {
-    step "Creating BTRFS image of ${DISK_MARGIN} MB"
-    if [ -n "$USE_LOOP_RWDISK" ]; then
-        RFS="$WORKDIR/rootfs.btr"
-        step2 "rootfs.btr"
-        dd if=/dev/zero "of=$WORKDIR/rootfs.btr" "bs=${DISK_MARGIN}M" count=1
+    if [ -n "$USE_RWDISK" ]; then
+        step "Creating BTRFS image of ${DISK_MARGIN} MB"
+        if [ "$USE_RWDISK" = "loop" ]; then
+            RFS="$WORKDIR/rootfs.${ROOT_TYPE}"
+            dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
+            # FIXME: HERE
+            step2 "Building persistent filesystem"
+            MPT="$WORKDIR/.btr_mnt_pt"
+            mkdir "$MPT"
+            mkdir "$MPT/ROOT"
+            mkdir "$MPT/WORK"
+            sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
+            sudo mkdir .tmpbtr
+            if [ "$ROOT_TYPE" = "btr" ]; then
+                sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
+            else
+                mkfs.ext4 -O ^has_journal -m 1 -L "$DISKLABEL-RW" "$RFS"
+            fi
+            sudo mount "${RFS}" .tmpbtr
 
-        step2 "Building persistent filesystem"
-        MPT="$WORKDIR/.btr_mnt_pt"
-        mkdir "$MPT"
-        mkdir "$MPT/ROOT"
-        mkdir "$MPT/WORK"
-        sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-        sudo mkdir .tmpbtr
-        if [ "$ROOT_TYPE" = "btr" ]; then
-            sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
+            if [ "$ROOT_TYPE" = "btr" ]; then
+                sudo btrfs filesystem resize $(( ${DISK_MARGIN} * 1024 * 1024 ))  .tmpbtr
+            else
+                sudo cp -ra "$MPT/." .tmpbtr
+            fi
+            sudo umount .tmpbtr
+            sudo rmdir .tmpbtr
+            rm -fr "$RFS".xz
+            xz -k --best "$RFS"
+            sudo rm -fr "$MPT"
         else
-            mkfs.ext4 -O ^has_journal -m 3 -L "$DISKLABEL-RW" "$RFS"
+            RFS="$WORKDIR/rootfs.btr"
+            dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
         fi
-        sudo mount "${RFS}" .tmpbtr
-
-        if [ "$ROOT_TYPE" = "btr" ]; then
-            sudo btrfs filesystem resize $(( ${DISK_MARGIN} * 1024 * 1024 ))  .tmpbtr
-        else
-            sudo cp -ra "$MPT/." .tmpbtr
-        fi
-        sudo umount .tmpbtr
-        sudo rmdir .tmpbtr
-        rm -fr "$RFS".xz
-        xz -k --best "$RFS"
-        sudo rm -fr "$MPT"
     fi
 }
 
 function make_disk_image() {
     # computed disk size, in MB
-    if [ -z "$USE_LOOP_RWDISK" ]; then
+    if [ "$USE_RWDISK" = "loop" ]; then # TODO: FIXME
         _DM="( $DISK_MARGIN * 2 )"
     else
         _DM=$DISK_MARGIN
@@ -220,7 +219,7 @@ function make_disk_image() {
 
     step2 "Copying base filesystem (can take a while)..."
     sudo cp "$SQ" "$T/"
-    if [ -n "$USE_LOOP_RWDISK" ]; then
+    if [ "$USE_RWDISK" = "loop" ] ; then
         step2 "Copying persistent filesystem..."
         sudo cp -r "$RFS" "$T/"
         sudo cp "$RFS".xz "$T/"
@@ -231,6 +230,12 @@ function make_disk_image() {
     grub_on_img
 
     umount_part0
+    if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ] ; then
+        step2 "Making additional partition (TODO)"
+#        step2 "Copying persistent filesystem..."
+#        sudo cp -r "$RFS" "$T/"
+#        sudo cp "$RFS".xz "$T/"
+    fi
 }
 
 # MAIN
@@ -248,8 +253,14 @@ fi
 case "$PARAM" in
     run*)
         shift
-        exec qemu-system-x86_64 -m 1024 -enable-kvm -drive file=$D,format=raw $*
-        # if GRUB is broken for you, try this one:
+        if [ -n "$EFI" ]; then
+            BIOSDRIVE="-drive file=/usr/share/ovmf/ovmf_x64.bin,format=raw,if=pflash,readonly"
+        else
+            BIOSDRIVE=""
+        fi
+        echo qemu-system-x86_64 -m 1024 -enable-kvm $BIOSDRIVE -drive file=$D,format=raw $*
+        exec qemu-system-x86_64 -m 1024 -enable-kvm $BIOSDRIVE -drive file=$D,format=raw $*
+        # if GRUB is broken for you, try loading linux directly:
 #        qemu-system-x86_64 -m 1024 -enable-kvm -drive file=$D,format=raw -kernel $R/boot/vmlinuz-linux -initrd $R/boot/initramfs-linux.img -append root=LABEL=$DISKLABEL
         exit
         ;;
