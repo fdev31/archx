@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RPFX="/mnt/persist"
+RPFX="/mnt/storage"
 
 mount_persist() {
     if [ -e "/run/overlay/.reset_state" ]; then
@@ -18,11 +18,11 @@ myumount() {
 unmount_persist() {
 
     umount /home || exit -1
-    for DIR in /etc /var/db /usr /srv /opt /var/lib; do
-        myumount "$DIR" || exit -1
+    for DIR in /etc /var/db /usr /srv /opt /var/lib/pacman /var/lib; do
+        myumount "$DIR" 
     done
 
-    umount "$RFPX" || exit -1
+    umount "$RFPX"
     sync
     mount -o remount,ro /boot || exit -1
     echo "DATA is SAFE"
