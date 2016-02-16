@@ -14,7 +14,6 @@ PASSWORD="sexy"
 PACMAN_BIN=yaourt
 WORKDIR="$PWD"
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
-COMPRESSION_TYPE="gzip" # xz or gzip (faster, uses less memory, but bigger files)
 DISK_MARGIN=300 # extra space for persistence, also HOME size
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon,root"
 NO_EXTRA_PACKAGES= # set to 1 to disable extra packages
