@@ -94,7 +94,7 @@ function make_squash_root() {
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
         if [ "$COMPRESSION_TYPE" = "xz" ]; then
-            sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size 1M
+            sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
         else
             sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M
         fi
@@ -106,7 +106,6 @@ function grub_install() {
     F="$1"
     D="$2"
     BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
-    echo "FOLD/ $F"
     sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
@@ -126,7 +125,7 @@ function grub_on_img() {
 }
 
 function mount_part0() {
-    OFFSET=$(($SECT_SZ * $(fdisk -lu "$D" |grep "^$D" |awk '{print $3}') ))
+    OFFSET=$(($SECT_SZ * $(get_part_offset "$D" boot) ))
     LO_DEV=$(losetup -o "$OFFSET" --show -f "$D")
 
     # Make final disk with boot + root
@@ -153,63 +152,87 @@ function mount_root_from_image() {
 
 function create_btrfs() {
     if [ -n "$USE_RWDISK" ]; then
-        step "Creating BTRFS image of ${DISK_MARGIN} MB"
-        if [ "$USE_RWDISK" = "loop" ]; then
+        if [ -n "$1" ]; then
+            RFS="$1"
+        else
+            step "Creating BTRFS image of ${DISK_MARGIN} MB"
             RFS="$WORKDIR/rootfs.${ROOT_TYPE}"
             dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
-            # FIXME: HERE
-            step2 "Building persistent filesystem"
-            MPT="$WORKDIR/.btr_mnt_pt"
-            mkdir "$MPT"
-            mkdir "$MPT/ROOT"
-            mkdir "$MPT/WORK"
-            sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-            sudo mkdir .tmpbtr
-            if [ "$ROOT_TYPE" = "btr" ]; then
-                sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
-            else
-                mkfs.ext4 -O ^has_journal -m 1 -L "$DISKLABEL-RW" "$RFS"
-            fi
-            sudo mount "${RFS}" .tmpbtr
-
-            if [ "$ROOT_TYPE" = "btr" ]; then
-                sudo btrfs filesystem resize $(( ${DISK_MARGIN} * 1024 * 1024 ))  .tmpbtr
-            else
-                sudo cp -ra "$MPT/." .tmpbtr
-            fi
-            sudo umount .tmpbtr
-            sudo rmdir .tmpbtr
-            rm -fr "$RFS".xz
-            xz -k --best "$RFS"
-            sudo rm -fr "$MPT"
-        else
-            RFS="$WORKDIR/rootfs.btr"
-            dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
         fi
+        step2 "Building persistent filesystem"
+        MPT="$WORKDIR/.btr_mnt_pt"
+        mkdir "$MPT"
+        mkdir "$MPT/ROOT"
+        mkdir "$MPT/WORK"
+        sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
+        sudo mkdir .tmpbtr
+        if [ "$ROOT_TYPE" = "btr" ]; then
+            echo sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
+            sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
+        else
+            mkfs.ext4 -O ^has_journal -m 1 -L "$DISKLABEL-RW" "$RFS"
+        fi
+        sudo mount "${RFS}" .tmpbtr
+
+        if [ "$ROOT_TYPE" = "btr" ]; then
+            sudo btrfs filesystem resize max  .tmpbtr
+        else
+            sudo cp -ra "$MPT/." .tmpbtr
+        fi
+        sudo umount .tmpbtr
+        sudo rmdir .tmpbtr
+        rm -fr "$RFS".xz
+        xzcat -9 < "$RFS" > "$WORKDIR/rootfs.${ROOT_TYPE}"
+        sudo rm -fr "$MPT"
     fi
+}
+
+function get_part_offset() {
+    _DISK="$1"
+    _IS_BOOT="$2"
+    if [ -z "$_IS_BOOT" ]; then
+        _GREP='-v'
+    fi
+    fdisk -lu $_DISK | grep ^$_DISK | grep $_GREP '*' | sed 's/*/ /' | awk '{print $2}'
 }
 
 function make_disk_image() {
     # computed disk size, in MB
-    if [ "$USE_RWDISK" = "loop" ]; then # TODO: FIXME
-        _DM="( $DISK_MARGIN * 2 )"
+    if [ -n "$USE_RWDISK" ]; then
+        _DM="$DISK_MARGIN"
     else
-        _DM=$DISK_MARGIN
+        _DM=0
     fi
-    CDS=$(( $(stat -c '%s' "${SQ}") / 1000000 + $(du -s "${R}/boot" | cut -f1) / 1000  + ${_DM} + 1 ))
+    MM=50 # marginal margin: 50B
 
-    create_btrfs
+    CDS=$(( $(stat -c '%s' "${SQ}") / 1048576 + $(du -s "${R}/boot" | cut -f1) / 1024  + ${_DM} + ${MM} ))
 
-    step "Creating disk image (${CDS} MB, ${_DM} reserved)"
+    step "Creating ${CDS} MB disk image (Free: /home = $_DM MB, /boot = $MM MB)"
 
     dd if=/dev/zero "of=${D}" bs=1M count=${CDS}
 
     #  Make partitions
-    echo -e "n\np\n1\n\n\nt\nef\na\nw" | LC_ALL=C fdisk "$D" >/dev/null 
+    echo -e "n\np\n1\n\n+$(( $CDS - $_DM ))M\nt\nef\na\nw" | LC_ALL=C fdisk "$D" >/dev/null 
+
+     # create 2nd partition
+    if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ]; then
+        echo -e "n\np\n2\n\n\nw" | LC_ALL=C fdisk "$D" >/dev/null
+        _TO=$(get_part_offset "$D")
+        _OFFSET=$(( $SECT_SZ * $_TO ))
+        LO_DEV=$(losetup -o "$_OFFSET" --show -f "$D")
+        create_btrfs "$LO_DEV"
+        losetup -d "$LO_DEV"
+        LIMIT_FAT_SIZE=yes
+    else
+        create_btrfs
+    fi
 
     step2 "Creating FAT32 filesystem"
-    OFFSET=$(($SECT_SZ * $(fdisk -lu "$D" |grep "^$D" |awk '{print $3}') ))
-    LO_DEV=$(losetup -o "$OFFSET" --show -f "$D")
+    OFFSET=$(( $SECT_SZ * $(get_part_offset "$D" boot) ))
+    if [ -n "$LIMIT_FAT_SIZE" ]; then
+        LODEV_OPTS="--sizelimit $(( $_OFFSET - $OFFSET ))"
+    fi
+    LO_DEV=$(losetup -o "$OFFSET" $LODEV_OPTS --show -f "$D")
     mkdosfs -F 32 -n "$DISKLABEL" "$LO_DEV"
 
     step "Populating filesystem"
@@ -227,12 +250,15 @@ function make_disk_image() {
         step2 "Copying persistent filesystem..."
         sudo cp -r "$RFS" "$T/"
         sudo cp "$RFS".xz "$T/"
+    elif [ -n "$USE_RWDISK" ]; then
+        # TODO !! Copy .xz file as well // TEST !!
+        echo "Copy to partition"
+        sudo cp "$RFS".xz "$T/"
     fi
     step2 "Syncing."
     sudo sync
     step "Grub..."
     grub_on_img
-
     umount_part0
     if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ] ; then
         step2 "Making additional partition (TODO)"

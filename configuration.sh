@@ -20,7 +20,7 @@ NO_EXTRA_PACKAGES= # set to 1 to disable extra packages
 SHARED_CACHE=1 # comment to not use host package cache
 SECUREBOOT=1
 LIVE_SYSTEM=1 # Runs in RAMFS
-USE_RWDISK="loop" # "loop" (loopback in first part), "" (no) or anything else (yes)
+USE_RWDISK=1 # "loop" (loopback in first part), "" (no) or anything else (yes)
 
 # Customize names
 ROOTNAME="rootfs.s"
