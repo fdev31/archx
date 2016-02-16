@@ -1,6 +1,3 @@
-
-raw_install_pkg -Sy # sync db
-
 pat="# MOVABLE PATCH"
 
 # update pacman conf
@@ -16,3 +13,5 @@ echo "$_MIR_FILE
 $pat
 $(cat resources/additional_mirrors.conf)
 " | sudo dd "of=$I"
+
+raw_install_pkg -Sy # sync db
