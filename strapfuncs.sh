@@ -43,6 +43,13 @@ function strip_end() {
     sudo sed -i "/^${PATTERN}/,$ d" "${FILE}"
 }
 
+function append() {
+	orig=$(cat $1)
+	echo "$orig
+$2
+" | sudo dd "of=$1"
+}
+
 function replace_with() {
     PATTERN="$1"
     SUB="$2"
