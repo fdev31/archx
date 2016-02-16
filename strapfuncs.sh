@@ -97,7 +97,7 @@ function install_file() {
 }
 
 function install_desktop() {
-    ASDIR="$R/home/$USERNAME/.config/autostart"
+    ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
         sudo chown 1000.100 "$ASDIR"
@@ -105,7 +105,7 @@ function install_desktop() {
     sudo install -o 1000 -g 100 -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
 }
 function install_menu () {
-    ASDIR="$R/home/$USERNAME/.config/menus/"
+    ASDIR="resources/HOME/.config/menus"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
         sudo chown 1000.100 "$ASDIR"
