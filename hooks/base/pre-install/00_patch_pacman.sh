@@ -14,4 +14,4 @@ $pat
 $(cat resources/additional_mirrors.conf)
 " | sudo dd "of=$I"
 
-raw_install_pkg -Syu # sync db
+raw_install_pkg -Syu --noconfirm # sync db
