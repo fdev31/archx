@@ -82,8 +82,11 @@ mount_overlays() {
             mkdir "$WPFX$FLAT_NAME"
         fi
         M_OPTS="lowerdir=/new_root$FOLD,upperdir=$PFX$FLAT_NAME,workdir=$WPFX$FLAT_NAME"
-        umount /new_root$FOLD
-        mount /dev/loop1 -t overlay -o "$M_OPTS" /new_root$FOLD || oops
+        DEST_DIR="/new_root$FOLD"
+        if grep " $DEST_DIR " /etc/mtab > /dev/null ; then
+            umount "$DEST_DIR"
+        fi
+        mount /dev/loop1 -t overlay -o "$M_OPTS" "$DEST_DIR" || oops
     done
 }
 
