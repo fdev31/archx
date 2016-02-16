@@ -83,10 +83,27 @@ function disable_service() {
 }
 
 function install_bin() {
-sudo install -m 755 -o root -g root "$1" "$2"
+    sudo install -m 755 -o root -g root "$1" "$2"
 }
 function install_file() {
-sudo install -m 644 -o root -g root "$1" "$2"
+    sudo install -m 644 -o root -g root "$1" "$2"
+}
+
+function install_desktop() {
+    ASDIR="$R/home/$USERNAME/.config/autostart"
+    if [ ! -d "$ASDIR" ]; then
+        mkdir "$ASDIR"
+        sudo chown 1000.100 "$ASDIR"
+    fi
+    sudo install -o 1000 -g 100 -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+}
+function install_menu () {
+    ASDIR="$R/home/$USERNAME/.config/menus/"
+    if [ ! -d "$ASDIR" ]; then
+        mkdir "$ASDIR"
+        sudo chown 1000.100 "$ASDIR"
+    fi
+    sudo install -o 1000 -g 100 -m 644 "resources/$1.menu" "$ASDIR"
 }
 
 function _set_pkgmgr() {

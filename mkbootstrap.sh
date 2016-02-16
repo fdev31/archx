@@ -93,7 +93,11 @@ function make_squash_root() {
     pushd "$R" >/dev/null || exit -2
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
-        sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size 1M
+        if [ "$COMPRESSION_TYPE" = "xz" ]; then
+            sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size 1M
+        else
+            sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M
+        fi
     popd > /dev/null
     rm ignored.files
 }
