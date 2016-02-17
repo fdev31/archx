@@ -1,1 +1,1 @@
-install_pkg openshot
+install_pkg openshot frei0r-plugins
