@@ -181,8 +181,8 @@ function create_btrfs() {
         fi
         sudo umount .tmpbtr
         sudo rmdir .tmpbtr
-        rm -fr "$RFS".xz
-        xzcat -9 < "$RFS" > "$WORKDIR/rootfs.${ROOT_TYPE}"
+        rm -fr "$RFS".${COMPRESSION_TYPE}
+        xz -z9 "$RFS" --stdout > "$WORKDIR/rootfs.${ROOT_TYPE}.${COMPRESSION_TYPE}"
         sudo rm -fr "$MPT"
     fi
 }
@@ -246,14 +246,13 @@ function make_disk_image() {
 
     step2 "Copying base filesystem (can take a while)..."
     sudo cp "$SQ" "$T/"
-    if [ "$USE_RWDISK" = "loop" ] ; then
-        step2 "Copying persistent filesystem..."
-        sudo cp -r "$RFS" "$T/"
-        sudo cp "$RFS".xz "$T/"
-    elif [ -n "$USE_RWDISK" ]; then
-        # TODO !! Copy .xz file as well // TEST !!
-        echo "Copy to partition"
-        sudo cp "$RFS".xz "$T/"
+    if [ -n "$USE_RWDISK" ]; then
+        if [ "$USE_RWDISK" = "loop" ] ; then
+            step2 "Copying persistent filesystem..."
+            sudo cp -r "$RFS" "$T/"
+        fi
+        step2 "Copying persistent filesystem backup..."
+        sudo cp "$WORKDIR/rootfs.${ROOT_TYPE}.${COMPRESSION_TYPE}" "$T/"
     fi
     step2 "Syncing."
     sudo sync
