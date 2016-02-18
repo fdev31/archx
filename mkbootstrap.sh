@@ -179,6 +179,8 @@ function create_btrfs() {
         else
             sudo cp -ra "$MPT/." .tmpbtr
         fi
+        pushd .tmpbtr
+        tar cvf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
         sudo umount .tmpbtr
         sudo rmdir .tmpbtr
         rm -fr "$RFS".${COMPRESSION_TYPE}
@@ -301,7 +303,8 @@ case "$PARAM" in
         mount_root_from_image
         ;;
 	shell*)
-		sudo arch-chroot "$R"
+        shift
+		sudo arch-chroot "$R" $*
 		;;
     conf*)
         reconfigure
@@ -326,8 +329,8 @@ case "$PARAM" in
         make_squash_root
         make_disk_image
         ;;
-    hook)
-        source "$2"
+    hook*)
+        source "$1"
         ;;
     flash)
 		shift # pop the first argument

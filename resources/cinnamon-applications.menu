@@ -41,6 +41,9 @@
 		<Exclude>
 			<Filename>Bluetooth Transfer-027fe4f0-d438-11e5-9b27-525400123456.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>yelp.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Universal Access</Name>
@@ -79,6 +82,12 @@
 		<Include>
 			<Filename>SimpleScreenRecorder-4a751c58-d43d-11e5-a628-525400123456.desktop</Filename>
 		</Include>
+		<Include>
+			<Filename>Scribus-118f1298-d5b6-11e5-b327-525400123456.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>SimpleScreenRecorder-3dffa7ac-d5b6-11e5-b327-525400123456.desktop</Filename>
+		</Include>
 	</Menu>
 	<Menu>
 		<Name>Graphics</Name>
@@ -103,6 +112,12 @@
 		</Exclude>
 		<Exclude>
 			<Filename>blender.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>evince.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>Scribus-118f1298-d5b6-11e5-b327-525400123456.desktop</Filename>
 		</Exclude>
 	</Menu>
 	<Menu>
@@ -170,6 +185,9 @@
 		<Exclude>
 			<Filename>geany.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>glade.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Multimedia</Name>
@@ -210,30 +228,6 @@
 			<Directory>alacarte-made-9142caf8-d439-11e5-9b27-525400123456.directory</Directory>
 			<Deleted/>
 		</Menu>
-		<Layout>
-			<Merge type="menus"/>
-			<Menuname>alacarte-made-f40ca8ee-d438-11e5-9b27-525400123456</Menuname>
-			<Filename>avidemux-gtk.desktop</Filename>
-			<Filename>clementine.desktop</Filename>
-			<Filename>pavucontrol.desktop</Filename>
-			<Filename>ffmpegyag.desktop</Filename>
-			<Filename>ghb.desktop</Filename>
-			<Filename>mixxx.desktop</Filename>
-			<Filename>mpv.desktop</Filename>
-			<Filename>pitivi.desktop</Filename>
-			<Filename>pasystray.desktop</Filename>
-			<Filename>pavumeter-record.desktop</Filename>
-			<Filename>pavumeter.desktop</Filename>
-			<Filename>qv4l2.desktop</Filename>
-			<Filename>simplescreenrecorder.desktop</Filename>
-			<Filename>SimpleScreenRecorder-e5a3940c-d438-11e5-9b27-525400123456.desktop</Filename>
-			<Filename>org.gnome.Cheese.desktop</Filename>
-			<Filename>org.gnome.Totem.desktop</Filename>
-			<Filename>PulseAudio System Tray-68f05bba-d439-11e5-9b27-525400123456.desktop</Filename>
-			<Filename>PulseAudio Volume Meter (Capture)-6d2fd746-d439-11e5-9b27-525400123456.desktop</Filename>
-			<Filename>PulseAudio Volume Meter (Playback)-72b7dd94-d439-11e5-9b27-525400123456.desktop</Filename>
-			<Merge type="files"/>
-		</Layout>
 		<Exclude>
 			<Filename>PulseAudio Manager-6306f5ba-d439-11e5-9b27-525400123456.desktop</Filename>
 		</Exclude>
@@ -264,6 +258,34 @@
 		<Include>
 			<Filename>pavucontrol.desktop</Filename>
 		</Include>
+		<Exclude>
+			<Filename>SimpleScreenRecorder-3dffa7ac-d5b6-11e5-b327-525400123456.desktop</Filename>
+		</Exclude>
+		<Include>
+			<Filename>alacarte-made-b69be69e-d5b6-11e5-93b2-525400123456.desktop</Filename>
+		</Include>
+		<Layout>
+			<Merge type="menus"/>
+			<Filename>avidemux-gtk.desktop</Filename>
+			<Filename>pavucontrol.desktop</Filename>
+			<Filename>ffmpegyag.desktop</Filename>
+			<Filename>ghb.desktop</Filename>
+			<Filename>mixxx.desktop</Filename>
+			<Filename>pasystray.desktop</Filename>
+			<Filename>pavumeter-record.desktop</Filename>
+			<Filename>pavumeter.desktop</Filename>
+			<Filename>qv4l2.desktop</Filename>
+			<Filename>simplescreenrecorder.desktop</Filename>
+			<Filename>org.gnome.Cheese.desktop</Filename>
+			<Filename>org.gnome.Totem.desktop</Filename>
+			<Filename>audacity.desktop</Filename>
+			<Filename>vlc.desktop</Filename>
+			<Filename>mplayer.desktop</Filename>
+			<Filename>openshot.desktop</Filename>
+			<Filename>paman.desktop</Filename>
+			<Filename>SimpleScreenRecorder-3dffa7ac-d5b6-11e5-b327-525400123456.desktop</Filename>
+			<Merge type="files"/>
+		</Layout>
 	</Menu>
 	<Menu>
 		<Name>Education</Name>
@@ -279,6 +301,9 @@
 		</Include>
 		<Include>
 			<Filename>Geany-d2908d70-d43d-11e5-a628-525400123456.desktop</Filename>
+		</Include>
+		<Include>
+			<Filename>Wireshark (GTK+)-de2d6580-d5b5-11e5-b327-525400123456.desktop</Filename>
 		</Include>
 	</Menu>
 	<Menu>
@@ -317,6 +342,9 @@
 		<Include>
 			<Filename>gnome-terminal.desktop</Filename>
 		</Include>
+		<Exclude>
+			<Filename>Wireshark (GTK+)-de2d6580-d5b5-11e5-b327-525400123456.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<DefaultLayout inline="false"/>
 	<Menu>
@@ -328,9 +356,6 @@
 		<AppDir>/home/user/.local/share/applications</AppDir>
 		<Include>
 			<Filename>Avahi Zeroconf Browser-e5c9b202-d43a-11e5-9b27-525400123456.desktop</Filename>
-		</Include>
-		<Include>
-			<Filename>wireshark-gtk.desktop</Filename>
 		</Include>
 		<Include>
 			<Filename>Zenmap-8a239e3e-d43c-11e5-a628-525400123456.desktop</Filename>
@@ -347,6 +372,10 @@
 		<Include>
 			<Filename>Bluetooth Transfer-54d96226-d43d-11e5-a628-525400123456.desktop</Filename>
 		</Include>
+		<Exclude>
+			<Filename>wireshark-gtk.desktop</Filename>
+		</Exclude>
+		<Deleted/>
 	</Menu>
 	<Layout>
 		<Merge type="menus"/>

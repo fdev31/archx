@@ -30,7 +30,7 @@ oops() {
 remount_boot_root() {
     echo "Loading filesystems..."
     mount --move "$F_BOOT_ROOT" /new_root/boot || oops
-    mount /new_root/boot -o remount,rw || oops
+#    mount /new_root/boot -o remount,ro || oops
 }
 
 mount_squash() {
@@ -55,9 +55,11 @@ load_kmap() {
 
 # Mount huge RAMFS overlay
 
+RAMFS_FOLDERS="etc opt srv usr mnt var/db var/lib home"
+PERSIST_FOLDERS="/etc /opt /srv /usr /var/db /var/lib/pacman"
 
 create_mega_overlay() {
-    for FOLD in etc home opt srv usr mnt var/db var/lib; do
+    for FOLD in $RAMFS_FOLDERS; do
         mkdir -p "$F_TMPFS_ROOT/$FOLD" "$F_TMPFS_WORK_ROOT/$FOLD"
         mount tmpfs-ov -t overlay -o "lowerdir=/new_root/$FOLD,upperdir=$F_TMPFS_ROOT/$FOLD,workdir=$F_TMPFS_WORK_ROOT/$FOLD" "/new_root/$FOLD" || oops
     done
@@ -124,7 +126,7 @@ if [ -e "/new_root/boot/$STORAGE_IMAGE" ] || [ -e "/dev/disk/by-label/{{DISKLABE
     if [ -n "$homeonly" ]; then
         true
     else
-        mount_overlays /etc /var/db /usr /srv /opt /var/lib/pacman
+        mount_overlays $PERSIST_FOLDERS
     fi
 else
     # RAMFS + SQUASH on /
@@ -141,7 +143,7 @@ if [ -n "$recoverfs" ]; then
 fi
 
 if [ -n "$shell" ] ; then
-    sh -i
+    LD_LIBRARY_PATH=/new_root/lib PATH="/new_root/bin:$PATH" sh -i
     unset shell
 fi
 
