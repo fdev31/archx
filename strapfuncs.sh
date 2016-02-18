@@ -1,11 +1,29 @@
 source ./configuration.sh
 source ./distrib/${DISTRIB}.sh
 
+# DETECT LANGUAGE
+
+COUNTRY=$(geoiplookup $(curl -s icanhazip.com))
+COUNTRY=${COUNTRY#*: }
+COUNTRY=${COUNTRY%,*}
+if [ -e country_codes/$COUNTRY ] ; then
+    echo "** Adding i18n-$COUNTRY support"
+    source country_codes/$COUNTRY
+else
+    echo "** No i18n support found for $COUNTRY"
+fi
+
+# LOAD OVERRIDES
+
 [ -e my_conf.sh ] && source ./my_conf.sh
+
+# AUTO ADD FLASHDISK IF LIVESYSTEM
 
 if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
     PROFILES="${PROFILES} flashdisk"
 fi
+
+# FONCTION DEFINITION
 
 function have_xorg() {
     if [[ "$PROFILES" = *xorg* ]]; then

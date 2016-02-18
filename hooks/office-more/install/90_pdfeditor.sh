@@ -2,6 +2,8 @@ install_pkg masterpdfeditor
 CFG="resources/HOME/.config/Code Industry/Master PDF Editor.conf"
 
 if [ ! -e "$CFG" ]; then
+    mkdir "${CFG%/*}"
     echo "[General]
-    lang=$(echo ${LANG%.*} | tr 'A-Z' 'a-z') " > "$CFG"
+lang=${LANG_ISO2}_${LANG_ISO2}" > "$CFG"
+    sudo chown -R 1000.100 "${CFG%/*}"
 fi

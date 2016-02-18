@@ -1,1 +1,1 @@
-install_pkg  base-devel
+install_pkg base-devel gcc-multilib gcc-libs-multilib

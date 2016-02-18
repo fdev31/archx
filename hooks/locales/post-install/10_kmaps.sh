@@ -1,3 +1,3 @@
-echo "Installing ${LANG%_*} support..."
+echo "Installing ${LANG_ISO2} support..."
 
-install_file "resources/${LANG%_*}.kmap" "$R/usr/share/kbd/keymaps/initrd.map"
+install_file "resources/${LANG_ISO2}.kmap" "$R/usr/share/kbd/keymaps/initrd.map"
