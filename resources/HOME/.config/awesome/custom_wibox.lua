@@ -91,8 +91,8 @@ for _, w in pairs(fs) do
 end -- Enable caching
 vicious.cache(vicious.widgets.fs)
 -- Register widgets
-vicious.register(fs.r, vicious.widgets.fs, "${/ used_p}",     599)
-vicious.register(fs.h, vicious.widgets.fs, "${/home used_p}", 599)
+vicious.register(fs.r, vicious.widgets.fs, "${/boot used_p}",     599)
+vicious.register(fs.h, vicious.widgets.fs, "${/mnt/storage used_p}", 599)
 vicious.register(fs.t, vicious.widgets.fs, "${/tmp used_p}", 599)
 -- }}}
 

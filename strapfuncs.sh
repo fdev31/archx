@@ -1,5 +1,4 @@
 source ./configuration.sh
-source ./distrib/${DISTRIB}.sh
 
 # DETECT LANGUAGE
 
@@ -17,9 +16,11 @@ fi
 
 [ -e my_conf.sh ] && source ./my_conf.sh
 
+source ./distrib/${DISTRIB}.sh
+
 # AUTO ADD FLASHDISK IF LIVESYSTEM
 
-if [ -n "$LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
+if [ -n "$USE_LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
     PROFILES="${PROFILES} flashdisk"
 fi
 
@@ -114,21 +115,19 @@ function install_file() {
     sudo install -m 644 -o root -g root "$1" "$2"
 }
 
-function install_desktop() {
+function autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
-        sudo chown 1000.100 "$ASDIR"
     fi
-    sudo install -o 1000 -g 100 -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+    sudo install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
 }
 function install_menu () {
     ASDIR="resources/HOME/.config/menus"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
-        sudo chown 1000.100 "$ASDIR"
     fi
-    sudo install -o 1000 -g 100 -m 644 "resources/$1.menu" "$ASDIR"
+    sudo install -m 644 "resources/$1.menu" "$ASDIR"
 }
 
 function _set_pkgmgr() {
@@ -137,4 +136,8 @@ function _set_pkgmgr() {
     else
         PKGMGR="sudo pacman"
     fi
+}
+
+function set_user_ownership() {
+    sudo chown -R $USERID.$USERGID $*
 }

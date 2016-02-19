@@ -5,5 +5,4 @@ if [ ! -e "$CFG" ]; then
     mkdir "${CFG%/*}"
     echo "[General]
 lang=${LANG_ISO2}_${LANG_ISO2}" > "$CFG"
-    sudo chown -R 1000.100 "${CFG%/*}"
 fi

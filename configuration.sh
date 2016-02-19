@@ -4,6 +4,8 @@ DISKLABEL="ARCHX"
 DISTRIB="full"
 # Your login id
 USERNAME="user"
+USERID="1000"
+USERGID="100"
 # do you prefer qt or gtk ?
 PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
@@ -11,20 +13,26 @@ PASSWORD="sexy"
 
 # Advanced users only:
 
-PACMAN_BIN=yaourt
-WORKDIR="$PWD"
+PACMAN_BIN=yaourt # alternative pacman frontend
+WORKDIR="$PWD" # default workdir = script dir
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
-DISK_MARGIN=150 # extra space for persistence, also HOME size
+DISK_MARGIN=100 # extra space for persistence, also HOME size, used for loopback or disk images
+BOOT_MARGIN=100 # extra space for /boot (first partition)
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon,root"
 NO_EXTRA_PACKAGES= # set to 1 to disable extra packages
 SHARED_CACHE=1 # comment to not use host package cache
-SECUREBOOT=1
-LIVE_SYSTEM=1 # Runs in RAMFS
+SECUREBOOT=1 # enables secureboot compatibility
+
+USE_LIVE_SYSTEM=1 # 1= live system, empty= standard archlinux install
+# if USE_LIVE_SYSTEM=1:
+LIVE_SYSTEM="/mnt/storage" # enables stored extra partition in that mountpoint
 USE_RWDISK=1 # "loop" (loopback in first part), "" (no) or anything else (yes)
+
+# if USE_RWDISK=loop:
+ROOT_TYPE="ext4" # or ext4
 
 # Customize names
 ROOTNAME="rootfs.s"
-ROOT_TYPE="btr" # or ext4
 R="$WORKDIR/ROOT"
 D="$WORKDIR/DISKIMAGE"
 SQ="$WORKDIR/$ROOTNAME"

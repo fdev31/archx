@@ -26,4 +26,4 @@ exit 0
 ' | sudo dd "of=$R/bin/shift-swich"
 sudo chmod 755 "$R/bin/shift-swich"
 
-install_desktop redshift-gtk
+autostart_app redshift-gtk

@@ -1,4 +1,3 @@
-
 # Injects or updates boot's mount process using resources/initcpio_mounthandler.sh
 
 I="$R/lib/initcpio/init"
@@ -16,6 +15,7 @@ HEADER=$(sed "/mount_handler.*new_root/,$ d" "$I")
 echo "$HEADER
 $(cat resources/initcpio_mounthandler.sh)
 $FOOTER" | sed \
-    -e "s/{{DISKLABEL}}/$DISKLABEL/" \
-    -e "s/{{ROOTIMAGE}}/$ROOTNAME/" \
-    -e "s/{{STORAGE}}/rootfs.$ROOT_TYPE/" | sudo dd "of=$I"
+    -e "s#{{ROOTIMAGE}}#$ROOTNAME#" \
+    -e "s#{{DISKLABEL}}#$DISKLABEL#" \
+    -e "s#{{STORAGE_PATH}}#$LIVE_SYSTEM#" \
+    -e "s#{{STORAGE}}#rootfs.$ROOT_TYPE#" | sudo dd "of=$I"

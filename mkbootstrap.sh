@@ -15,7 +15,6 @@ fi
 
 pacman -Qq $DEPS > /dev/null || exit "Required packages: $DEPS"
 
-
 SECT_SZ=512
 LO_DEV=''
 ROOT_DEV=''
@@ -24,46 +23,47 @@ HOOK_BUILD_FLAG=0
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
-        HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
-        rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
-        mkdir "$HOOK_BUILD_DIR"
-        for PROFILE in $PROFILES; do
-            cp -ra "./hooks/$PROFILE/"* "$HOOK_BUILD_DIR"
-        done
-        for HK in $(find "$HOOK_BUILD_DIR" -type l); do
-            LNK=$(readlink "$HK")
-            if [ ! -f "$LNK" ]; then
-                ln -sf "${LNK/..\/.\//../hooks/}" "$HK"
-            fi
-        done
-        HOOK_BUILD_FLAG=1
-    fi
-
-    step "Executing $DISTRIB hooks..."
-    for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
-        step2 "HOOK $hook"
-        source $hook
+    HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
+    rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
+    mkdir "$HOOK_BUILD_DIR"
+    for PROFILE in $PROFILES; do
+        step2 " ===> profile $PROFILE"
+        cp -ra "./hooks/$PROFILE/"* "$HOOK_BUILD_DIR"
     done
+    for HK in $(find "$HOOK_BUILD_DIR" -type l); do
+        LNK=$(readlink "$HK")
+        if [ ! -f "$LNK" ]; then
+            ln -sf "${LNK/..\/.\//../hooks/}" "$HK"
+        fi
+    done
+    HOOK_BUILD_FLAG=1
+fi
+
+step "Executing $DISTRIB hooks..."
+for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
+    step2 "HOOK $hook"
+    source $hook
+done
 }
 
 function reset_rootfs() {
-    step "Clear old rootfs"
-    sudo rm -fr "$R" 2> /dev/null
-    sudo mkdir "$R" 2> /dev/null
+step "Clear old rootfs"
+sudo rm -fr "$R" 2> /dev/null
+sudo mkdir "$R" 2> /dev/null
 }
 
 function base_install() {
-    # TODO configuration step
-    step "Installing base packages & patch root files"
-    # install packages
-    sudo pacstrap -cd "$R" base
-    # configure fstab
-    sudo chown root.root "$R"
+# TODO configuration step
+step "Installing base packages & patch root files"
+# install packages
+sudo pacstrap -cd "$R" base
+# configure fstab
+sudo chown root.root "$R"
 }
 
 function reconfigure() {
-    step "Re-generating RAMFS and low-level config" 
-    run_hooks pre-mkinitcpio
+step "Re-generating RAMFS and low-level config" 
+run_hooks pre-mkinitcpio
     sudo arch-chroot "$R" mkinitcpio -p linux
 }
 
@@ -93,6 +93,7 @@ function make_squash_root() {
     pushd "$R" >/dev/null || exit -2
         sudo find boot/* > $IF
         sudo find var/cache/ -type f >> $IF
+        sudo mkdir ".$LIVE_SYSTEM"
         if [ "$COMPRESSION_TYPE" = "xz" ]; then
             sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
         else
@@ -150,7 +151,7 @@ function mount_root_from_image() {
     umount_part0
 }
 
-function create_btrfs() {
+function create_persistent_storage() {
     if [ -n "$USE_RWDISK" ]; then
         if [ -n "$1" ]; then
             RFS="$1"
@@ -160,31 +161,15 @@ function create_btrfs() {
             dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
         fi
         step2 "Building persistent filesystem"
-        MPT="$WORKDIR/.btr_mnt_pt"
+        MPT="$WORKDIR/.storage_mnt_pt"
         mkdir "$MPT"
         mkdir "$MPT/ROOT"
         mkdir "$MPT/WORK"
         sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-        sudo mkdir .tmpbtr
-        if [ "$ROOT_TYPE" = "btr" ]; then
-            echo sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
-            sudo mkfs.btrfs -L "${DISKLABEL}-RW" -M -n 4096 -s 4096 "$RFS" --root "$MPT"
-        else
-            mkfs.ext4 -O ^has_journal -m 1 -L "$DISKLABEL-RW" "$RFS"
-        fi
-        sudo mount "${RFS}" .tmpbtr
-
-        if [ "$ROOT_TYPE" = "btr" ]; then
-            sudo btrfs filesystem resize max  .tmpbtr
-        else
-            sudo cp -ra "$MPT/." .tmpbtr
-        fi
-        pushd .tmpbtr
-        tar cvf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
-        sudo umount .tmpbtr
-        sudo rmdir .tmpbtr
-        rm -fr "$RFS".${COMPRESSION_TYPE}
-        xz -z9 "$RFS" --stdout > "$WORKDIR/rootfs.${ROOT_TYPE}.${COMPRESSION_TYPE}"
+        
+        pushd "$MPT"
+            tar cf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
+        popd > /dev/null
         sudo rm -fr "$MPT"
     fi
 }
@@ -205,11 +190,12 @@ function make_disk_image() {
     else
         _DM=0
     fi
-    MM=50 # marginal margin: 50B
+    BOOT_SZ=$(du -BM -s "$R/boot")
+    BOOT_SZ=${BOOT_SZ%%M*}
 
-    CDS=$(( $(stat -c '%s' "${SQ}") / 1048576 + $(du -s "${R}/boot" | cut -f1) / 1024  + ${_DM} + ${MM} ))
+    CDS=$(( $(stat -c '%s' "${SQ}") / 1048576 + $BOOT_SZ + ${_DM} + ${BOOT_MARGIN} ))
 
-    step "Creating ${CDS} MB disk image (Free: /home = $_DM MB, /boot = $MM MB)"
+    step "Creating ${CDS} MB disk image (Free: /home = $_DM MB, /boot = $BOOT_MARGIN MB)"
 
     dd if=/dev/zero "of=${D}" bs=1M count=${CDS}
 
@@ -222,11 +208,11 @@ function make_disk_image() {
         _TO=$(get_part_offset "$D")
         _OFFSET=$(( $SECT_SZ * $_TO ))
         LO_DEV=$(losetup -o "$_OFFSET" --show -f "$D")
-        create_btrfs "$LO_DEV"
+        create_persistent_storage "$LO_DEV"
         losetup -d "$LO_DEV"
         LIMIT_FAT_SIZE=yes
     else
-        create_btrfs
+        create_persistent_storage
     fi
 
     step2 "Creating FAT32 filesystem"
@@ -254,7 +240,7 @@ function make_disk_image() {
             sudo cp -r "$RFS" "$T/"
         fi
         step2 "Copying persistent filesystem backup..."
-        sudo cp "$WORKDIR/rootfs.${ROOT_TYPE}.${COMPRESSION_TYPE}" "$T/"
+        sudo cp "$WORKDIR/rootfs.default" "$T/"
     fi
     step2 "Syncing."
     sudo sync

@@ -1,152 +1,140 @@
 #MOVABLE ROOT PATCH
+# NO TRAILING SLASH ALLOWED !!
 
-export SQUASH_IMAGE={{ROOTIMAGE}}
-export STORAGE_IMAGE={{STORAGE}}
-export SESSION_FILE="session.txz"
+## vars:
+R="/new_root"
+SQUASH_IMAGE={{ROOTIMAGE}}
+DISKLABEL={{DISKLABEL}}
+STORAGE_IMAGE={{STORAGE}}
 
-# overlay fs for RAM session
-export F_TMPFS_ROOT="/run/overlay"
-export F_TMPFS_WORK_ROOT="/run/overlay_work"
+RAMFS_FOLDERS="/mnt /var/lib" # RAMFS mounts
+STORED_DIRECT="/home" # no overlay on SQUASHFS, direct mount
+STORABLE_FOLDERS="/etc /opt /srv /usr /var/db /var/lib/pacman" # mount with SQUASHFS overlay
 
-export F_BOOT_ROOT="/fat_root" # original root, includes squashfs image
-export F_SQUASH_ROOT="/squash_root" # squashfs mounted here
+F_RWPART="{{STORAGE_PATH}}"
+F_BOOT_ROOT="/fat_root" # original root, includes squashfs image
+F_TMPFS_ROOT="/run/overlay/ROOT" # rootdirs prefix for tmpfs overlay
+F_TMPFS_WORK_ROOT="/run/overlay/WORK" # workdirs prefix for tmpfs overlay
+F_PFX="$R$F_RWPART/ROOT" # new roots prefix
+F_WPFX="$R$F_RWPART/WORK" # new work prefix
+DEBUG=$shell
 
-
-mkdir "$F_BOOT_ROOT"
-mkdir "$F_SQUASH_ROOT"
-mkdir "$F_TMPFS_ROOT"
-mkdir "$F_TMPFS_WORK_ROOT"
-
-"$mount_handler" $F_BOOT_ROOT # Mount boot device
-
-# Simple init: remount boot device rw & mount Squashfs from it
-# Remount RW (we need it to write on BTRFS)
-
+## funcs:
 oops() {
     echo "Error occured, continuing in 1s..."
     sleep 1
 }
 
-remount_boot_root() {
-    echo "Loading filesystems..."
-    mount --move "$F_BOOT_ROOT" /new_root/boot || oops
-#    mount /new_root/boot -o remount,ro || oops
+fatal() {
+    echo "FATAL Error occured! $*"
+    echo" press ENTER to reboot"
+    read
+    reboot -f
 }
 
 mount_squash() {
     # Mount squash (base RO filesystem)
-    mount -o loop -t squashfs "$F_BOOT_ROOT/$SQUASH_IMAGE" /new_root || oops
-    echo "- squash image loaded"
+    E_MSG="$SQUASH_IMAGE not found in $DISKLABEL !"
+    mount -o loop -t squashfs "$F_BOOT_ROOT/$SQUASH_IMAGE" "$R" || fatal "$E_MSG"
+    [ -n "$DEBUG" ] && echo "- squash image loaded"
 }
 
-# Loading key map
 load_kmap() {
-    if [ -e "/new_root/usr/share/kbd/keymaps/initrd.map" ]; then
-        loadkmap < "/new_root/usr/share/kbd/keymaps/initrd.map" || oops
-        echo "- keymap"
+    if [ -e "$R/usr/share/kbd/keymaps/initrd.map" ]; then
+        loadkmap < "$R/usr/share/kbd/keymaps/initrd.map" || oops
+        [ -n "$DEBUG" ] && echo "- keymap"
     fi
-}
-
-##### Choices:
-##  - shell:  run an interactive shell after mounts
-##  - nobtr:  100% volatile system (in RAM)
-##  - homeonly:  /home is non-volatile
-##    else       / is non-volatile
-
-# Mount huge RAMFS overlay
-
-RAMFS_FOLDERS="etc opt srv usr mnt var/db var/lib home"
-PERSIST_FOLDERS="/etc /opt /srv /usr /var/db /var/lib/pacman"
-
-create_mega_overlay() {
-    for FOLD in $RAMFS_FOLDERS; do
-        mkdir -p "$F_TMPFS_ROOT/$FOLD" "$F_TMPFS_WORK_ROOT/$FOLD"
-        mount tmpfs-ov -t overlay -o "lowerdir=/new_root/$FOLD,upperdir=$F_TMPFS_ROOT/$FOLD,workdir=$F_TMPFS_WORK_ROOT/$FOLD" "/new_root/$FOLD" || oops
-    done
 }
 
 run_newroot() {
-    LD_LIBRARY_PATH="/new_root/lib" /new_root/bin/$*
+    PATH="$R/bin:$PATH" LD_LIBRARY_PATH="$R/lib" $*
 }
 
-mount_squash
-load_kmap
-remount_boot_root
-create_mega_overlay
-
-mount_overlays() {
-    for FOLD in "$@"; do
-        echo " [M] $FOLD"
-        FLAT_NAME=$(echo $FOLD | sed 's#/#_#g')
-        FLAT_NAME=${FLAT_NAME:1}
-        if [ ! -d "$PFX$FLAT_NAME" ]; then
-            mkdir "$PFX$FLAT_NAME"
-            mkdir "$WPFX$FLAT_NAME"
-        fi
-        M_OPTS="lowerdir=/new_root$FOLD,upperdir=$PFX$FLAT_NAME,workdir=$WPFX$FLAT_NAME"
-        DEST_DIR="/new_root$FOLD"
-        if grep " $DEST_DIR " /etc/mtab > /dev/null ; then
-            umount "$DEST_DIR"
-        fi
-        mount ${DEV} -t overlay -o "$M_OPTS" "$DEST_DIR" || oops
-    done
+process_mountname() {
+    NAME="$1"
+    if [ -z "$2" ]; then
+        P="$F_PFX"
+        WP="$F_WPFX"
+    else
+        P="$F_TMPFS_ROOT"
+        WP="$F_TMPFS_WORK_ROOT"
+    fi
+    FLAT_NAME=$(echo $1 | sed 's#/#_#g')
+    FLAT_NAME=${FLAT_NAME:1}
+    if [ ! -d "$P/$FLAT_NAME" ]; then
+        mkdir -p "$P/$FLAT_NAME"
+    fi
+    if [ ! -d "$WP/$FLAT_NAME" ]; then
+        mkdir -p "$WP/$FLAT_NAME"
+    fi
+    echo $FLAT_NAME
 }
 
-if [ -e "/new_root/boot/$STORAGE_IMAGE" ] || [ -e "/dev/disk/by-label/{{DISKLABEL}}-RW" ] && [ -z "$nobtr" ]; then
-    echo "- mode: STORED"
+mount_as_tmpfs_overlay() {
+    [ -n "$DEBUG" ] && echo "[M] $1 (volatile)"
+    FOLD="$1"
+    UPFOLD=$(process_mountname "$FOLD" volatile)
+    M_OPTS="lowerdir=$R$FOLD,upperdir=$F_TMPFS_ROOT/$UPFOLD,workdir=$F_TMPFS_WORK_ROOT/$UPFOLD"
+    mount /dev/null -t overlay -o "$M_OPTS" "$R$FOLD" || oops
+}
+mount_as_stored_overlay() {
+    [ -n "$DEBUG" ] && echo "[M] $1 (stored overlay)"
+    FOLD="$1"
+    UPFOLD=$(process_mountname "$FOLD")
+    M_OPTS="lowerdir=$R$FOLD,upperdir=$F_PFX/$UPFOLD,workdir=$F_WPFX/$UPFOLD"
+    mount ${DEV} -t overlay -o "$M_OPTS" "$R$FOLD" || oops
+}
+mount_as_no_overlay() {
+    [ -n "$DEBUG" ] && echo "[M] $1 (stored)"
+    FOLD="$1"
+    mount --bind "$F_PFX/$FOLD" "$R$FOLD" || oops
+}
 
-    if [ -e "/dev/disk/by-label/{{DISKLABEL}}-RW" ] ; then
-        DEV="/dev/disk/by-label/{{DISKLABEL}}-RW"
-    else
-        # WE HAVE PERSISTENCE HERE
-        DEV="/dev/loop1"
-        losetup $DEV "/new_root/boot/$STORAGE_IMAGE"
-    fi
+## main code:
 
+mkdir "$F_BOOT_ROOT"
+"$mount_handler" $F_BOOT_ROOT # Mount boot device
+mount_squash # Mount SQUASH in /
+load_kmap # loading kmap from it
+mount --move "$F_BOOT_ROOT" "$R/boot" || oops # make original root accessible as /boot (ro)
+rmdir "$F_BOOT_ROOT" # now it's moved, we can remove original mountpoint
 
-    if [ "$STORAGE_IMAGE" != "${STORAGE_IMAGE%.btr}" ]; then
-        echo "FS: BTR"
-        FS_OPTS="ssd,compress,discard,relatime"
-        run_newroot btrfs check -p --repair --check-data-csum "$DEV" || oops
-    else
-        echo "FS: EXT4"
-        run_newroot fsck.ext4 "$DEV" -y
-        FS_OPTS="discard,relatime"
-    fi
+# default mount types
+STORED=0
+STD_MOUNT_TYPE="tmpfs"
+DIRECT_MOUNT_TYPE="tmpfs"
+DEV="/dev/disk/by-label/${DISKLABEL}-RW"
 
-    mkdir /new_root/mnt/storage # create ghost folder & mount Stored there
-    mount "$DEV" /new_root/mnt/storage -o $FS_OPTS || oops
-    PFX="/new_root/mnt/storage/ROOT/" # new prefix
-    WPFX="/new_root/mnt/storage/WORK/" # new work prefix
+# Mount PURE VOLATILE folders
+for FOLD in $RAMFS_FOLDERS; do
+    mount_as_tmpfs_overlay "$FOLD"
+done
 
-    # Mount filesytems
-    echo " [M] /home"
-    umount /new_root/home
-    mount --bind "$PFX/home" /new_root/home || oops
-    if [ -n "$homeonly" ]; then
-        true
-    else
-        mount_overlays $PERSIST_FOLDERS
+# check persistant
+if [ -z "$nobtr" ] && [ -e "$DEV" ] ; then # We have a storage device, Yey !!
+    echo "[STORED]"
+    run_newroot btrfs check -p --repair --check-data-csum "$DEV" > "$R/var/lib/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
+    run_newroot fsck.ext4 -p "$DEV" > "$R/var/lib/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
+
+    mount "$DEV" "$R/$F_RWPART" -o $FS_OPTS
+    if  [ -n "$FS_OPTS" ] && [ "$?" -eq "0" ] ; then
+        STORED=1
+        STD_MOUNT_TYPE="stored"
+        DIRECT_MOUNT_TYPE="no"
     fi
 else
-    # RAMFS + SQUASH on /
-    echo "- mode: VOLATILE"
-    RR="$F_SQUASH_ROOT/bin"
-    if [ -n "$nobtr" ] && [ -e "$F_BOOT_ROOT/$SESSION_FILE" ]; then # check session file/unpack
-        echo "- recovering saved session"
-        "$RR/xzcat" "$F_BOOT_ROOT/$SESSION_FILE" | "$RR/tar" xvf - -C /new_root
-    fi
+    echo "[VOLATILE]"
 fi
 
-if [ -n "$recoverfs" ]; then
-    touch "$F_TMPFS_ROOT/.reset_state"
-fi
+# Mount direct/standard mountpoints
+for FOLD in $STORED_DIRECT; do # VOLATILE or RW MOUNTED
+    mount_as_${DIRECT_MOUNT_TYPE}_overlay "$FOLD"
+done
 
-if [ -n "$shell" ] ; then
-    LD_LIBRARY_PATH=/new_root/lib PATH="/new_root/bin:$PATH" sh -i
-    unset shell
-fi
+# Mount overlaid mountpoints
+for FOLD in $STORABLE_FOLDERS; do # VOLATILE or RW OVERLAID
+    mount_as_${STD_MOUNT_TYPE}_overlay "$FOLD"
+done
 
-echo 'Starting, yey !'
-
+[ -n "$shell" ] && run_newroot sh -i # start a shell if requested
 #MOVABLE ROOT PATCH END
