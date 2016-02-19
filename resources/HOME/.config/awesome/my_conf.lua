@@ -1,5 +1,5 @@
 WEB_BROWSER = 'firefox'
-FILE_MANAGER = 'thunar'
+FILE_MANAGER = 'nemo'
 NETWORK_MONITOR = 'sudo iptraf-ng'
 PROCESS_MONITOR = 'htop'
 
@@ -10,7 +10,7 @@ editor = os.getenv("EDITOR") or "nano"
 terminal = "terminator"
 terminal_run = "terminator -x "
 fancy_terminal = "terminator -x"
-editor_cmd = 'gvim -reverse '
+editor_cmd = 'geany'
 
 -- Tags --
 local awful = require("awful")
