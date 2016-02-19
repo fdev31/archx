@@ -29,7 +29,7 @@ LIVE_SYSTEM="/mnt/storage" # enables stored extra partition in that mountpoint
 USE_RWDISK=1 # "loop" (loopback in first part), "" (no) or anything else (yes)
 
 # if USE_RWDISK=loop:
-ROOT_TYPE="ext4" # or ext4
+ROOT_TYPE="ext4" # btrfs or ext4
 
 # Customize names
 ROOTNAME="rootfs.s"
