@@ -1,14 +1,15 @@
-
 install_pkg pulseaudio
-install_pkg pulseaudio-gconf
 install_pkg pulseaudio-bluetooth
 install_pkg pulseaudio-equalizer
 install_pkg pulseaudio-zeroconf
-install_pkg paman
-install_pkg pavucontrol
-install_pkg pavumeter
-install_pkg paprefs
-install_pkg pasystray
+if have_xorg ; then
+    install_pkg pulseaudio-gconf
+    install_pkg paman
+    install_pkg pavucontrol
+    install_pkg pavumeter
+    install_pkg paprefs
+    install_pkg pasystray
+fi
 
 pat="# MOVABLE PATCH"
 

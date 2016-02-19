@@ -98,6 +98,7 @@ mount_squash # Mount SQUASH in /
 load_kmap # loading kmap from it
 mount --move "$F_BOOT_ROOT" "$R/boot" || oops # make original root accessible as /boot (ro)
 rmdir "$F_BOOT_ROOT" # now it's moved, we can remove original mountpoint
+mount -t tmpfs tmpfs "$R/run"
 
 # default mount types
 STORED=0
@@ -105,18 +106,21 @@ STD_MOUNT_TYPE="tmpfs"
 DIRECT_MOUNT_TYPE="tmpfs"
 DEV="/dev/disk/by-label/${DISKLABEL}-RW"
 
-# Mount PURE VOLATILE folders
-for FOLD in $RAMFS_FOLDERS; do
-    mount_as_tmpfs_overlay "$FOLD"
-done
+## Mount PURE VOLATILE folders
+#for FOLD in $RAMFS_FOLDERS; do
+#    mount_as_tmpfs_overlay "$FOLD"
+#done
 
 # check persistant
 if [ -z "$nobtr" ] && [ -e "$DEV" ] ; then # We have a storage device, Yey !!
     echo "[STORED]"
-    run_newroot btrfs check -p --repair --check-data-csum "$DEV" > "$R/var/lib/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
-    run_newroot fsck.ext4 -p "$DEV" > "$R/var/lib/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
+    run_newroot btrfs check -p --repair --check-data-csum "$DEV" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
+    run_newroot fsck.ext4 -p "$DEV" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
 
-    mount "$DEV" "$R/$F_RWPART" -o $FS_OPTS
+    mount "$DEV" "$R/$F_RWPART" -o $FS_OPTS || oops
+
+    mv /tmp/*.log "$R/$F_RWPART"
+
     if  [ -n "$FS_OPTS" ] && [ "$?" -eq "0" ] ; then
         STORED=1
         STD_MOUNT_TYPE="stored"
@@ -124,17 +128,33 @@ if [ -z "$nobtr" ] && [ -e "$DEV" ] ; then # We have a storage device, Yey !!
     fi
 else
     echo "[VOLATILE]"
+    mount -t tmpfs tmpfs "$R/$F_RWPART"
+    run_newroot xzcat "$R/boot/rootfs.default" | run_newroot tar xf - -C "$R/$F_RWPART"
 fi
 
-# Mount direct/standard mountpoints
-for FOLD in $STORED_DIRECT; do # VOLATILE or RW MOUNTED
-    mount_as_${DIRECT_MOUNT_TYPE}_overlay "$FOLD"
+for d in home var_lib_pacman etc opt srv usr var_db; do
+    echo "$F_PFX/$d"
+    mkdir -p "$F_PFX/$d"
+    mkdir -p "$F_WPFX/$d"
 done
 
-# Mount overlaid mountpoints
-for FOLD in $STORABLE_FOLDERS; do # VOLATILE or RW OVERLAID
-    mount_as_${STD_MOUNT_TYPE}_overlay "$FOLD"
+for d in mnt var_lib; do
+    echo "$R/$F_TMPFS_ROOT/$d"
+    mkdir -p "$R/$F_TMPFS_ROOT/$d"
+    mkdir -p "$R/$F_TMPFS_WORK_ROOT/$d"
 done
+# mount /usr to make systemd happy
+mount -t overlay /dev/disk/by-label/${DISKLABEL}      "$R/usr"  -o "rw,relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
+
+## Mount direct/standard mountpoints
+#for FOLD in $STORED_DIRECT; do # VOLATILE or RW MOUNTED
+#    mount_as_${DIRECT_MOUNT_TYPE}_overlay "$FOLD"
+#done
+#
+## Mount overlaid mountpoints
+#for FOLD in $STORABLE_FOLDERS; do # VOLATILE or RW OVERLAID
+#    mount_as_${STD_MOUNT_TYPE}_overlay "$FOLD"
+#done
 
 [ -n "$shell" ] && run_newroot sh -i # start a shell if requested
 #MOVABLE ROOT PATCH END

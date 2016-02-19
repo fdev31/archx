@@ -1,2 +1,1 @@
-
-install_pkg filezilla
+have_xorg && install_pkg filezilla

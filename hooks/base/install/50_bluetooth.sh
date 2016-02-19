@@ -1,1 +1,2 @@
-install_pkg blueman
+install_pkg bluez
+have_xorg && install_pkg blueman

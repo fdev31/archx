@@ -91,8 +91,12 @@ function make_squash_root() {
     step "Cleaning FS & building SQUASHFS"
     IF=../ignored.files
     pushd "$R" >/dev/null || exit -2
-        sudo find boot/* > $IF
-        sudo find var/cache/ -type f >> $IF
+        sudo find boot/ | sed 1d > $IF
+        sudo find var/cache/ | sed 1d >> $IF
+        sudo find run/ | sed 1d >> $IF
+        sudo find home | sed 1d >> $IF
+        sudo find var/run/ -type f >> $IF
+        sudo find var/log/ -type f >> $IF
         sudo mkdir ".$LIVE_SYSTEM"
         if [ "$COMPRESSION_TYPE" = "xz" ]; then
             sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'

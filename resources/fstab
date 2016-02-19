@@ -1,9 +1,18 @@
-# <dev>    <dir>           <type>  <options>   <dump>  <pass>
-#LABEL=ARCHX /          auto    rw              0    	0
-LABEL=ARCHX /boot       auto    ro,nofail       0    	1
-tmpfs	/tmp	tmpfs	nodev,nosuid		0	1
-tmpfs	/var/cache	tmpfs	rw		0	2
-tmpfs	/var/log	tmpfs	rw		0	2
-tmpfs	/var/tmp	tmpfs	rw		0	2
-tmpfs	/var/spool	tmpfs	rw		0	2
+# vim: ts=8 sw=8 noet
+/dev/loop0      /         	squashfs ro,x-systemd.device-timeout=10,relatime	0 0
+LABEL=ARCHX     /boot     	vfat     ro,x-systemd.device-timeout=10,relatime,fmask=0022,dmask=0022,shortname=mixed,errors=remount-ro	0 1
+#LABEL=ARCHX-RW  /storage	ext4     rw,nofail,x-systemd.device-timeout=1,relatime,discard,data=ordered	0 1
 
+/storage/ROOT/home /home   	none     rw,x-systemd.device-timeout=60,relatime,discard,data=ordered,bind	0 2
+
+LABEL=ARCHX     /mnt      	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/mnt,upperdir=/run/overlay/ROOT/mnt,workdir=/run/overlay/WORK/mnt	0 2
+LABEL=ARCHX     /var/lib  	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib,upperdir=/run/overlay/ROOT/var_lib,workdir=/run/overlay/WORK/var_lib	0 2
+LABEL=ARCHX     /var/lib/pacman	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib/pacman,upperdir=/storage/ROOT/var_lib_pacman,workdir=/storage/WORK/var_lib_pacman	0 2
+LABEL=ARCHX     /etc      	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/etc,upperdir=/storage/ROOT/etc,workdir=/storage/WORK/etc	0 2
+LABEL=ARCHX     /opt      	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/opt,upperdir=/storage/ROOT/opt,workdir=/storage/WORK/opt	0 2
+LABEL=ARCHX     /srv      	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/srv,upperdir=/storage/ROOT/srv,workdir=/storage/WORK/srv	0 2
+LABEL=ARCHX     /usr      	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/usr,upperdir=/storage/ROOT/usr,workdir=/storage/WORK/usr	0 2
+LABEL=ARCHX     /var/db   	overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/db,upperdir=/storage/ROOT/var_db,workdir=/storage/WORK/var_db	0 2
+tmpfs		/var/log	tmpfs	 rw	0 2	
+tmpfs		/var/tmp	tmpfs	 rw	0 2	
+tmpfs		/var/cache	tmpfs	 rw	0 2	
