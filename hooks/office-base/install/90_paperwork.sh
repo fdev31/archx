@@ -1,6 +1,6 @@
-install_pkg --asdeps python2-simplebayes
-install_pkg --asdeps python2-joblib
-install_pkg --asdeps python2-pyocr
-install_pkg --asdeps python2-pyinsane-git
 install_pkg tesseract-data-${LANG_ISO3}
+l=$(LC_ALL=C raw_install_pkg -Si paperwork |grep "^Depends")
+for d in ${l#*: }; do
+    install_pkg --asdeps "$d"
+done
 install_pkg paperwork
