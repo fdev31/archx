@@ -26,9 +26,6 @@
 		<Exclude>
 			<Filename>org.gnome.font-viewer.desktop</Filename>
 		</Exclude>
-		<Exclude>
-			<Filename>bluetooth-sendto.desktop</Filename>
-		</Exclude>
 		<Include>
 			<Filename>Bulk Rename-fe609ca2-d43c-11e5-a628-525400123456.desktop</Filename>
 		</Include>
@@ -44,6 +41,12 @@
 		<Exclude>
 			<Filename>yelp.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>redshift-gtk.desktop</Filename>
+		</Exclude>
+		<Include>
+			<Filename>bluetooth-sendto.desktop</Filename>
+		</Include>
 	</Menu>
 	<Menu>
 		<Name>Universal Access</Name>
@@ -111,14 +114,14 @@
 			<Filename>Scribus-d0c79c40-d438-11e5-9b27-525400123456.desktop</Filename>
 		</Exclude>
 		<Exclude>
-			<Filename>blender.desktop</Filename>
-		</Exclude>
-		<Exclude>
 			<Filename>evince.desktop</Filename>
 		</Exclude>
 		<Exclude>
 			<Filename>Scribus-118f1298-d5b6-11e5-b327-525400123456.desktop</Filename>
 		</Exclude>
+		<Include>
+			<Filename>blender.desktop</Filename>
+		</Include>
 	</Menu>
 	<Menu>
 		<Name>Internet</Name>
@@ -344,6 +347,12 @@
 		</Include>
 		<Exclude>
 			<Filename>Wireshark (GTK+)-de2d6580-d5b5-11e5-b327-525400123456.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>ca.desrt.dconf-editor.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cryptkeeper.desktop</Filename>
 		</Exclude>
 	</Menu>
 	<DefaultLayout inline="false"/>
