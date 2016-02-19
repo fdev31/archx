@@ -1,6 +1,6 @@
 #!/bin/sh
 FSTYPE="${TYPE=ext4}"
-FORCE="${FORCE=no}"
+FORCE="${FORCE=yes}"
 BOOTPART=$(mount 2>/dev/null | grep " $R/boot ")
 BOOTPART=${BOOTPART%% *}
 BOOTDRIVE=${BOOTPART%?}
@@ -10,6 +10,12 @@ sudo partx "$BOOTDRIVE"
 DISKLABEL=$(blkid $BOOTPART -s LABEL -p)
 DISKLABEL=${DISKLABEL#*\"}
 DISKLABEL=${DISKLABEL%\"*}
+
+zenity --question --text "Proceed installing on $DISKLABEL (${BOOTDRIVE}2) ?"
+
+if [ "$?" -ne "0" ]; then
+	exit 1
+fi
 
 echo $BOOTDRIVE
 
@@ -62,3 +68,4 @@ echo "$FSTYPE FS BUILT"
 echo "---------------------------"
 echo " Reboot to enjoy changes !"
 echo "---------------------------"
+zenity --warning --text "Now reboot to apply changes"
