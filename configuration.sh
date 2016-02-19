@@ -25,7 +25,7 @@ SECUREBOOT=1 # enables secureboot compatibility
 
 USE_LIVE_SYSTEM=1 # 1= live system, empty= standard archlinux install
 # if USE_LIVE_SYSTEM=1:
-LIVE_SYSTEM="/mnt/storage" # enables stored extra partition in that mountpoint
+LIVE_SYSTEM="/storage" # enables stored extra partition in that mountpoint
 USE_RWDISK=1 # "loop" (loopback in first part), "" (no) or anything else (yes)
 
 # if USE_RWDISK=loop:
