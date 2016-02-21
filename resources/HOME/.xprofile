@@ -6,11 +6,16 @@
 #nm-applet &
 
 SCRIPT="create_storage.sh"
-FINAL_NAME=$(gettext cinnamon-settings-daemon 'Disk space')
-
-fold=$(xdg-user-dir DESKTOP)
 
 if [ -e ~/$SCRIPT ]; then
-    (sleep 30 ; mkdir "$fold" && mv $SCRIPT "$fold/$FINAL_NAME" && gvfs-set-attribute -t string "$fold/$FINAL_NAME" 'metadata::custom-icon' 'file:///usr/share/icons/Adwaita/48x48/actions/document-save.png') &
+    FINAL_NAME=$(gettext cinnamon-settings-daemon 'Disk space')
+
+    xdg-user-dirs-update
+    fold=$(xdg-user-dir DESKTOP)
+
+    #fold="$HOME/$(gettext cinnamon Desktop)"
+
+    mkdir "$fold" 2>/dev/null
+    mv $SCRIPT "$fold/$FINAL_NAME" && gvfs-set-attribute -t string "$fold/$FINAL_NAME" 'metadata::custom-icon' 'file:///usr/share/icons/Adwaita/48x48/actions/document-save.png'
 fi
 
