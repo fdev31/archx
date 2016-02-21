@@ -1,0 +1,1 @@
+install_pkg wpa_supplicant

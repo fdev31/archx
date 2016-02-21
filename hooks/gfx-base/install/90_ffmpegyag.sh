@@ -1,1 +1,1 @@
-install_pkg ffmpegyag
+have_xorg && install_pkg ffmpegyag

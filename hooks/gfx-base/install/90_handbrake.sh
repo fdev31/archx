@@ -1,1 +1,1 @@
-install_pkg handbrake
+have_xorg && install_pkg handbrake
