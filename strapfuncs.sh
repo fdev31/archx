@@ -127,7 +127,14 @@ function install_menu () {
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    sudo install -m 644 "resources/$1.menu" "$ASDIR"
+    sudo install -m 644 "resources/menus/$1.menu" "$ASDIR"
+}
+function install_application() {
+    ASDIR="resources/HOME/.local/share/applications"
+    if [ ! -d "$ASDIR" ]; then
+        mkdir "$ASDIR"
+    fi
+    sudo install -m 644 resourcer/applications/$1.desktop "$ASDIR"
 }
 
 function _set_pkgmgr() {
