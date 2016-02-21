@@ -10,6 +10,6 @@ echo "$_FILE
 
 # MOVABLE PATCH
 MODULES='squashfs vfat loop overlay btrfs ext4 ntfs'
-HOOKS='base udev keyboard block'
+HOOKS='base udev keyboard block rolinux shutdown'
 COMPRESSION='$COMPRESSION_TYPE'
 " | sudo dd "of=$I"
