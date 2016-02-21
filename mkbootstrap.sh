@@ -286,10 +286,6 @@ case "$PARAM" in
 #        qemu-system-x86_64 -m 1024 -enable-kvm -drive file=$D,format=raw -kernel $R/boot/vmlinuz-linux -initrd $R/boot/initramfs-linux.img -append root=LABEL=$DISKLABEL
         exit
         ;;
-	ins*)
-		shift # pop the first argument
-        install_pkg "$*"
-		;;
     m*)
         mount_root_from_image
         ;;
@@ -297,6 +293,16 @@ case "$PARAM" in
         shift
 		sudo arch-chroot "$R" $*
 		;;
+	ins*)
+		shift # pop the first argument
+        install_pkg "$*"
+		;;
+    pkg)
+        run_install_hooks
+        ;;
+    hook*)
+        source "$1"
+        ;;
     conf*)
         reconfigure
         ;;
@@ -312,16 +318,16 @@ case "$PARAM" in
         grub_on_img
         umount_part0
         ;;
-    pkg)
+    reb*)
+        reconfigure
         run_install_hooks
+        make_squash_root
+        make_disk_image
         ;;
     up*)
         run_install_hooks
         make_squash_root
         make_disk_image
-        ;;
-    hook*)
-        source "$1"
         ;;
     flash)
 		shift # pop the first argument
