@@ -84,6 +84,7 @@ function run_install_hooks() {
     if [ -n "$LIVE_SYSTEM" ]; then
         sudo cp -r extra_files/* "$R/boot/"
     fi
+    sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
 }
 

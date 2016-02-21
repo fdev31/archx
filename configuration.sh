@@ -22,6 +22,7 @@ DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,lo
 NO_EXTRA_PACKAGES= # set to 1 to disable extra packages
 SHARED_CACHE=1 # comment to not use host package cache
 SECUREBOOT=1 # enables secureboot compatibility
+BOOT_TARGET="graphical"
 
 USE_LIVE_SYSTEM=1 # 1= live system, empty= standard archlinux install
 # if USE_LIVE_SYSTEM=1:
