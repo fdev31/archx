@@ -30,7 +30,7 @@
 			<Filename>redshift-gtk.desktop</Filename>
 		</Exclude>
 		<Include>
-			<Filename>geany.desktop</Filename>
+			<Filename>bluetooth-sendto.desktop</Filename>
 		</Include>
 		<Exclude>
 			<Filename>org.gnome.Screenshot.desktop</Filename>
@@ -39,7 +39,7 @@
 			<Filename>thg.desktop</Filename>
 		</Include>
 		<Include>
-			<Filename>bluetooth-sendto.desktop</Filename>
+			<Filename>geany.desktop</Filename>
 		</Include>
 	</Menu>
 	<Menu>
@@ -168,48 +168,27 @@
 			<Filename>qv4l2.desktop</Filename>
 		</Exclude>
 		<AppDir>/home/user/.local/share/applications</AppDir>
-		<Exclude>
-			<Filename>pasystray.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>pavumeter-record.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>pavumeter.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>simplescreenrecorder.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>paman.desktop</Filename>
-		</Exclude>
-		<Exclude>
-			<Filename>pavucontrol.desktop</Filename>
-		</Exclude>
 		<Include>
 			<Filename>sunvox.desktop</Filename>
 		</Include>
-		<Layout>
-			<Merge type="menus"/>
-			<Filename>audacity.desktop</Filename>
-			<Filename>avidemux-gtk.desktop</Filename>
-			<Filename>pavucontrol.desktop</Filename>
-			<Filename>ffmpegyag.desktop</Filename>
-			<Filename>ghb.desktop</Filename>
-			<Filename>vlc.desktop</Filename>
-			<Filename>mixxx.desktop</Filename>
-			<Filename>mplayer.desktop</Filename>
-			<Filename>openshot.desktop</Filename>
-			<Filename>paman.desktop</Filename>
+		<Exclude>
 			<Filename>pasystray.desktop</Filename>
+		</Exclude>
+		<Exclude>
 			<Filename>pavumeter-record.desktop</Filename>
+		</Exclude>
+		<Exclude>
 			<Filename>pavumeter.desktop</Filename>
-			<Filename>qv4l2.desktop</Filename>
+		</Exclude>
+		<Exclude>
 			<Filename>simplescreenrecorder.desktop</Filename>
-			<Filename>org.gnome.Cheese.desktop</Filename>
-			<Filename>org.gnome.Totem.desktop</Filename>
-			<Merge type="files"/>
-		</Layout>
+		</Exclude>
+		<Exclude>
+			<Filename>paman.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>pavucontrol.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Education</Name>
@@ -285,11 +264,104 @@
 		<Exclude>
 			<Filename>nm-connection-editor.desktop</Filename>
 		</Exclude>
-		<Include>
-			<Filename>cinnamon-settings-keyboard.desktop</Filename>
-		</Include>
 		<Exclude>
 			<Filename>tracker-preferences.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-effects.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-backgrounds.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-fonts.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-universal-access-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-tiling.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-applets.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-desktop.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-hotcorner.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-privacy.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-user.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-screensaver.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-workspaces.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-general.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-notifications.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-startup.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-default.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-calendar.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-desklets.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-extensions.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-windows.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-display-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-keyboard.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-color-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-power.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-wacom-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-info.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-network-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-sound-nua-panel.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-mouse.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-settings-themes.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>lxappearance.desktop</Filename>
 		</Exclude>
 	</Menu>
 	<Menu>
