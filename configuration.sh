@@ -35,5 +35,5 @@ ROOT_TYPE="ext4" # btrfs or ext4
 # Customize names
 ROOTNAME="rootfs.s"
 R="$WORKDIR/ROOT"
-D="$WORKDIR/DISKIMAGE"
+D="$WORKDIR/$DISKLABEL.img"
 SQ="$WORKDIR/$ROOTNAME"
