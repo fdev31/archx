@@ -15,8 +15,6 @@ editor_cmd = 'geany'
 -- Tags --
 local awful = require("awful")
 
-awful.util.spawn('comp-switch')
-awful.util.spawn('shift-switch')
 
 -- shortcut for layouts
 
