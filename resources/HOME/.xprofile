@@ -1,9 +1,4 @@
 #!/bin/sh
-# if awesome, launch this:
-#comp-switch &
-#shift-switch &
-#pasystray &
-#nm-applet &
 
 SCRIPT="create_storage.sh"
 
@@ -12,8 +7,6 @@ if [ -e ~/$SCRIPT ]; then
 
     xdg-user-dirs-update
     fold=$(xdg-user-dir DESKTOP)
-
-    #fold="$HOME/$(gettext cinnamon Desktop)"
 
     mkdir "$fold" 2>/dev/null
     mv $SCRIPT "$fold/$FINAL_NAME" && gvfs-set-attribute -t string "$fold/$FINAL_NAME" 'metadata::custom-icon' 'file:///usr/share/icons/Adwaita/48x48/actions/document-save.png'
