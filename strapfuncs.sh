@@ -134,7 +134,7 @@ function install_application() {
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    sudo install -m 644 resourcer/applications/$1.desktop "$ASDIR"
+    sudo install -m 644 resources/applications/$1.desktop "$ASDIR"
 }
 
 function _set_pkgmgr() {
