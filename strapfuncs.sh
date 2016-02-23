@@ -109,10 +109,10 @@ function disable_service() {
 }
 
 function install_bin() {
-    sudo install -m 755 -o root -g root "$1" "$2"
+    sudo install -m 755 -o root -g root "$1" "$R$2"
 }
 function install_file() {
-    sudo install -m 644 -o root -g root "$1" "$2"
+    sudo install -m 644 -o root -g root "$1" "$R$2"
 }
 
 function autostart_app() {

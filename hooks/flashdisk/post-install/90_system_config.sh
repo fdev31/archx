@@ -7,8 +7,8 @@ done
 
 step2 "clean folders service"
 
-install_file resources/clean-folders.service "$R/etc/systemd/system/clean-folders.service"
-install_bin resources/cleanup_filesystem.sh "$R/usr/bin/"
+install_file resources/clean-folders.service "/etc/systemd/system/clean-folders.service"
+install_bin resources/cleanup_filesystem.sh "/usr/bin/"
 enable_service clean-folders
 
 step2 "no clear console"

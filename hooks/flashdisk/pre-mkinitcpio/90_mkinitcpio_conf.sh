@@ -1,4 +1,4 @@
-install_file resources/linux.preset "$R/etc/mkinitcpio.d/linux.preset"
+install_file resources/linux.preset "/etc/mkinitcpio.d/linux.preset"
 
 pat="# MOVABLE PATCH"
 
