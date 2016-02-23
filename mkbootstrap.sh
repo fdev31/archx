@@ -98,14 +98,16 @@ function make_squash_root() {
         sudo find home/ | sed 1d >> $IF
         sudo find var/run/ -type f >> $IF
         sudo find var/log/ -type f >> $IF
-        sudo mkdir ".$LIVE_SYSTEM"
+        if [ ! -d ".$LIVE_SYSTEM"; then
+            sudo mkdir ".$LIVE_SYSTEM"
+        fi
         if [ "$COMPRESSION_TYPE" = "xz" ]; then
             sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
         else
             sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M
         fi
     popd > /dev/null
-    rm ignored.files
+    sudo rm ignored.files
 }
 
 function grub_install() {
