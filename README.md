@@ -11,6 +11,13 @@ U-AI
 - Fast
 - Configurable
 
+### Minimal configuration
+
+- intel i3 CPU / probably any 64 bits CPU
+- 1GB RAM
+- 2GB Hard drive or USB stick (USB3 is a huge boost)
+    - A larger storages allows persistent settings & documents
+
 ## Why ?
 
 Because ArchLinux is a pure, lean and fast distribution, fitting most opensource standards.
