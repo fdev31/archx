@@ -13,7 +13,7 @@ PASSWORD="sexy"
 
 # Advanced users only:
 
-PACMAN_BIN=yaourt # alternative pacman frontend
+PACMAN_BIN=yaourt # alternative pacman frontend, else set "sudo pacman"
 WORKDIR="$PWD" # default workdir = script dir
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
 DISK_MARGIN=100 # extra space for persistence, also HOME size, used for loopback or disk images
