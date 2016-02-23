@@ -1,5 +1,7 @@
 # A4D (Arch for Dummies, say "afford")
 
+U-AI
+
 ## Project
 
 - "live" image builder for archlinux

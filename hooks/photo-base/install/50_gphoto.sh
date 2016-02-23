@@ -1,1 +1,4 @@
-install_pkg gvfs-gphoto2 gphoto2 mtpfs
+install_pkg gphoto2
+install_pkg mtpfs
+install_pkg gvfs-gphoto2
+install_pkg gvfs-mtp

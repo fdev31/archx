@@ -29,9 +29,6 @@
 		<Exclude>
 			<Filename>redshift-gtk.desktop</Filename>
 		</Exclude>
-		<Include>
-			<Filename>bluetooth-sendto.desktop</Filename>
-		</Include>
 		<Exclude>
 			<Filename>org.gnome.Screenshot.desktop</Filename>
 		</Exclude>
@@ -41,6 +38,9 @@
 		<Include>
 			<Filename>geany.desktop</Filename>
 		</Include>
+		<Exclude>
+			<Filename>bluetooth-sendto.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Office</Name>
@@ -106,6 +106,9 @@
 		<Exclude>
 			<Filename>ristretto.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>scribus.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Internet</Name>
@@ -168,9 +171,6 @@
 			<Filename>qv4l2.desktop</Filename>
 		</Exclude>
 		<AppDir>/home/user/.local/share/applications</AppDir>
-		<Include>
-			<Filename>sunvox.desktop</Filename>
-		</Include>
 		<Exclude>
 			<Filename>pasystray.desktop</Filename>
 		</Exclude>
@@ -188,6 +188,12 @@
 		</Exclude>
 		<Exclude>
 			<Filename>pavucontrol.desktop</Filename>
+		</Exclude>
+		<Include>
+			<Filename>sunvox.desktop</Filename>
+		</Include>
+		<Exclude>
+			<Filename>org.gnome.Totem.desktop</Filename>
 		</Exclude>
 	</Menu>
 	<Menu>
@@ -363,13 +369,19 @@
 		<Exclude>
 			<Filename>lxappearance.desktop</Filename>
 		</Exclude>
+		<Exclude>
+			<Filename>arandr.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>cinnamon-menu-editor.desktop</Filename>
+		</Exclude>
+		<Exclude>
+			<Filename>alacarte.desktop</Filename>
+		</Exclude>
 	</Menu>
 	<Menu>
 		<Name>Other</Name>
 		<AppDir>/home/user/.local/share/applications</AppDir>
-		<Exclude>
-			<Filename>sunvox.desktop</Filename>
-		</Exclude>
 		<Exclude>
 			<Filename>gnome-user-share-webdav.desktop</Filename>
 		</Exclude>

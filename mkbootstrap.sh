@@ -47,23 +47,23 @@ done
 }
 
 function reset_rootfs() {
-step "Clear old rootfs"
-sudo rm -fr "$R" 2> /dev/null
-sudo mkdir "$R" 2> /dev/null
+    step "Clear old rootfs"
+    sudo rm -fr "$R" 2> /dev/null
+    sudo mkdir "$R" 2> /dev/null
 }
 
 function base_install() {
-# TODO configuration step
-step "Installing base packages & patch root files"
-# install packages
-sudo pacstrap -cd "$R" base
-# configure fstab
-sudo chown root.root "$R"
+    # TODO configuration step
+    step "Installing base packages & patch root files"
+    # install packages
+    sudo pacstrap -cd "$R" base
+    # configure fstab
+    sudo chown root.root "$R"
 }
 
 function reconfigure() {
-step "Re-generating RAMFS and low-level config" 
-run_hooks pre-mkinitcpio
+    step "Re-generating RAMFS and low-level config" 
+    run_hooks pre-mkinitcpio
     sudo arch-chroot "$R" mkinitcpio -p linux
 }
 
@@ -81,9 +81,6 @@ function run_install_hooks() {
     fi
 
     distro_install_hook
-    if [ -n "$LIVE_SYSTEM" ]; then
-        sudo cp -r extra_files/* "$R/boot/"
-    fi
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
 }
@@ -197,7 +194,11 @@ function make_disk_image() {
     else
         _DM=0
     fi
-    BOOT_SZ=$(du -BM -s "$R/boot")
+    # copy extra files to /boot
+    if [ -n "$LIVE_SYSTEM" ]; then
+        sudo cp -r extra_files/* "$R/boot/"
+    fi
+    BOOT_SZ=$(du -BM -s "$R/boot") # compute size
     BOOT_SZ=${BOOT_SZ%%M*}
 
     CDS=$(( $(stat -c '%s' "${SQ}") / 1048576 + $BOOT_SZ + ${_DM} + ${BOOT_MARGIN} ))
