@@ -1,6 +1,9 @@
 syntax: glob
-ROOT/*
+ROOT
 *.xz
 *.swp
 *.s
 *.raw
+*.rej
+*.orig
+.installed_hooks
