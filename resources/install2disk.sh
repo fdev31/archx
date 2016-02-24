@@ -70,7 +70,7 @@ if [ -z "$REUSE" ]; then
     else 
         TOT_SIZE=$(LC_ALL=C fdisk -l $IDISK --bytes | sed -En '/^Disk / s/.*, (.*) bytes.*/\1/ p')
         HOME_LIMIT=15000000000
-        test  "11811160064" -gt "$TOT_SIZE" && (echo "Not enough space for this installation type, try another" ; exit)
+        test  "10000000000" -gt "$TOT_SIZE" && (echo "Not enough space for this installation type, try another" ; exit)
         test  "$HOME_LIMIT" -gt "$TOT_SIZE" && SMALL_STORAGE=1
 
         make_part 1 100M bootable
@@ -109,6 +109,8 @@ if [ -z "$REUSE" ]; then
 		arch-chroot "$TGT" grub-install --target x86_64-efi --modules "$MODZ linux linux16 video" --efi-directory  "/boot" ${IDISK}
         arch-chroot "$TGT" grub-install --target i386-pc    --modules "$MODZ"                     --boot-directory "/boot" ${IDISK}
         arch-chroot "$TGT" grub-mkconfig -o /boot/grub/grub.cfg || oops
+        umount "$TGT/home" 2>/dev/null
+        umount "$TGT/boot" 2>/dev/null
     fi
     umount "$TGT"
 fi
