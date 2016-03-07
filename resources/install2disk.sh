@@ -19,6 +19,11 @@ INSTALL_MODE=3
 TGT=/mnt/install_target
 MODZ="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 btrfs xfs"
 
+INSTALLATION_MEDIA=$(mount | grep ' /boot ')
+INSTALLATION_MEDIA=${INSTALLATION_MEDIA%% *}
+INSTALLATION_MEDIA=${INSTALLATION_MEDIA:0:-1}
+
+
 mkdir "$TGT"
 
 w_fdisk() {
@@ -143,6 +148,9 @@ if [ "$INSTALL_MODE" -lt 3 ]; then
 else # reuse existing partition
     PARTITIONS=$(fdisk -l |grep '^/dev' | sed 's/*/ /' | awk '{print $1 ":" $5}' |grep -v 'M$')
     for PART in $PARTITIONS ; do
+        if [ ${PART:0:8} = ${INSTALLATION_MEDIA} ]; then
+            continue
+        fi
         PART_INFO=$(blkid -o value -s LABEL -s TYPE ${PART%:*} | sed 'N; s/\n/ /' )
         case $PART_INFO in
             *" "*)
@@ -160,7 +168,7 @@ else # reuse existing partition
         read SQUASH_PART
     done
     mount ${SQUASH_PART} "$TGT" || oops
-    install_core ${SQUASH_PART} "$TGT" || oops
+    install_core ${SQUASH_PART:0:-1} "$TGT" || oops
 fi
 
 umount "$TGT"

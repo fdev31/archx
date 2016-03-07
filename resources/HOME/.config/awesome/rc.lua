@@ -406,7 +406,7 @@ client.connect_signal("manage", function (c, startup)
         end
     end
 
-    local titlebars_enabled = false
+    local titlebars_enabled = ENABLE_TITLEBARS
     if titlebars_enabled and (c.type == "normal" or c.type == "dialog") then
         -- buttons for the titlebar
         local buttons = awful.util.table.join(

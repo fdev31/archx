@@ -174,7 +174,11 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
 -- CUSTO
-    right_layout:add(separator)
+    if not ENABLE_TITLEBARS then
+        right_layout:add(separator)
+    end
+
+    if s == S_MAIN then right_layout:add(wibox.widget.systray()) end
 
     if ENABLE_NET_WID then
         right_layout:add(dnicon)
@@ -210,10 +214,8 @@ for s = 1, screen.count() do
 
     if ENABLE_DATE_WID then
         right_layout:add(mytextclock)
-        right_layout:add(separator)
     end
 
-    if s == S_MAIN then right_layout:add(wibox.widget.systray()) end
 
 -- END OF CUSTO
     right_layout:add(mylayoutbox[s])
@@ -221,7 +223,9 @@ for s = 1, screen.count() do
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
     layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
+    if not ENABLE_TITLEBARS then
+        layout:set_middle(mytasklist[s])
+    end
     layout:set_right(right_layout)
 
     mywibox[s]:set_widget(layout)

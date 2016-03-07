@@ -111,7 +111,7 @@ function grub_install() {
     F="$1"
     D="$2"
     BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+    sudo grub-install --target x86_64-efi --boot-directory "$F" --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
     if [ -n "$SECUREBOOT" ]; then
@@ -124,14 +124,14 @@ function grub_install() {
 
 function grub_on_img() {
     step "Installing bootloader"
-    ROOT_DEV=$(losetup --show -f "$D")
+    ROOT_DEV=$(sudo losetup --show -f "$D")
     grub_install "$T/" "$ROOT_DEV"
-    losetup -d "$ROOT_DEV"
+    sudo losetup -d "$ROOT_DEV"
 }
 
 function mount_part0() {
     OFFSET=$(($SECT_SZ * $(get_part_offset "$D" boot) ))
-    LO_DEV=$(losetup -o "$OFFSET" --show -f "$D")
+    LO_DEV=$(sudo losetup -o "$OFFSET" --show -f "$D")
 
     # Make final disk with boot + root
     T=tmpmnt
@@ -143,7 +143,7 @@ function mount_part0() {
 function umount_part0() {
     sudo umount "./$T"
     sudo rmdir "$T"
-    sudo losetup -d "$LO_DEV"
+    sudo sudo losetup -d "$LO_DEV"
 }
 
 function mount_root_from_image() {
@@ -162,7 +162,7 @@ function create_persistent_storage() {
         else
             step "Creating BTRFS image of ${DISK_MARGIN} MB"
             RFS="$WORKDIR/rootfs.${ROOT_TYPE}"
-            dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
+            sudo dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
         fi
         step2 "Building persistent filesystem"
         MPT="$WORKDIR/.storage_mnt_pt"
@@ -172,7 +172,7 @@ function create_persistent_storage() {
         sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
         
         pushd "$MPT"
-            tar cf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
+            sudo tar cf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
         popd > /dev/null
         sudo rm -fr "$MPT"
     fi
@@ -203,7 +203,7 @@ function make_disk_image() {
 
     CDS=$(( $(stat -c '%s' "${SQ}") / 1048576 + $BOOT_SZ + ${_DM} + ${BOOT_MARGIN} ))
 
-    step "Creating ${CDS} MB disk image (Free: /home = $_DM MB, /boot = $BOOT_MARGIN MB)"
+    step "Creating ${CDS} MB disk image (Free: /home = $_DM MB + /boot = $BOOT_MARGIN MB)"
 
     dd if=/dev/zero "of=${D}" bs=1M count=${CDS}
 
@@ -215,9 +215,9 @@ function make_disk_image() {
         echo -e "n\np\n2\n\n\nw" | LC_ALL=C fdisk "$D" >/dev/null
         _TO=$(get_part_offset "$D")
         _OFFSET=$(( $SECT_SZ * $_TO ))
-        LO_DEV=$(losetup -o "$_OFFSET" --show -f "$D")
+        LO_DEV=$(sudo losetup -o "$_OFFSET" --show -f "$D")
         create_persistent_storage "$LO_DEV"
-        losetup -d "$LO_DEV"
+        sudo losetup -d "$LO_DEV"
         LIMIT_FAT_SIZE=yes
     else
         create_persistent_storage
@@ -228,8 +228,8 @@ function make_disk_image() {
     if [ -n "$LIMIT_FAT_SIZE" ]; then
         LODEV_OPTS="--sizelimit $(( $_OFFSET - $OFFSET ))"
     fi
-    LO_DEV=$(losetup -o "$OFFSET" $LODEV_OPTS --show -f "$D")
-    mkdosfs -F 32 -n "$DISKLABEL" "$LO_DEV"
+    LO_DEV=$(sudo losetup -o "$OFFSET" $LODEV_OPTS --show -f "$D")
+    sudo mkdosfs -F 32 -n "$DISKLABEL" "$LO_DEV"
 
     step "Populating filesystem"
     # Make final disk with boot + root

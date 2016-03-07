@@ -2,6 +2,7 @@ WEB_BROWSER = 'firefox'
 FILE_MANAGER = 'nemo'
 NETWORK_MONITOR = 'sudo iptraf-ng'
 PROCESS_MONITOR = 'htop'
+ENABLE_TITLEBARS = true
 
 -- misc settings
 IS_LAPTOP = os.execute('laptop-detect')
@@ -33,6 +34,7 @@ local _ = {
 -- Available layouts (override defaults)
 layouts = {
     _.DEFAULT,
+    _.float,
     _.gradied,
     _.titlet,
     _.titleb,
@@ -53,7 +55,7 @@ tags = {
 _ = nil
 
 -- wibox widgets
-ENABLE_NET_WID    = true
+-- ENABLE_NET_WID    = true
 ENABLE_CPURAM_WID = true
 ENABLE_VOL_WID    = true
 ENABLE_HDD_WID    = true
