@@ -111,7 +111,7 @@ function grub_install() {
     F="$1"
     D="$2"
     BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
-    sudo grub-install --target x86_64-efi --boot-directory "$F" --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
     if [ -n "$SECUREBOOT" ]; then
