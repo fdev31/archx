@@ -107,3 +107,14 @@ This is alpha software: NEVER INTERRUPT THE SCRIPT WHILE RUNNING !!
 
 I am open to contributions
 
+
+##### UI
+
+[ Install ]
+    [ USB ]
+        [CHOICES]
+    [ DISK]
+        [CHOICES]
+
+[Trigger upgrade]
+    - check if already here, propose reboot

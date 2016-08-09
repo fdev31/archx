@@ -10,7 +10,7 @@ source ./strapfuncs.sh
 DEPS="grub arch-install-scripts sudo dosfstools squashfs-tools xz"
 
 if [ -n "$SECUREBOOT" ]; then
-    DEPS="$DEPS prebootloader"
+    DEPS="$DEPS efitools"
 fi
 
 pacman -Qq $DEPS > /dev/null || exit "Required packages: $DEPS"
@@ -57,7 +57,6 @@ function base_install() {
     step "Installing base packages & patch root files"
     # install packages
     sudo pacstrap -cd "$R" base
-    # configure fstab
     sudo chown root.root "$R"
 }
 
@@ -75,14 +74,19 @@ function run_install_hooks() {
         step2 "Distribution packages"
         install_pkg $DISTRO_PACKAGE_LIST
     fi
-    step2 "Extra packages"
-    if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
-        sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
-    fi
+
+    install_extra_packages
 
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
+}
+
+function install_extra_packages() {
+    step2 "Extra packages"
+    if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
+        sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
+    fi
 }
 
 function make_squash_root() {
@@ -115,9 +119,9 @@ function grub_install() {
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
     if [ -n "$SECUREBOOT" ]; then
-        sudo cp /usr/lib/prebootloader/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
-        sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
-        sudo mv "$F/EFI//BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
+        sudo cp resources/efi/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
+        sudo mv "$F/EFI/BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
+        sudo mv "$F/EFI/BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
     fi
 
 }
@@ -172,7 +176,7 @@ function create_persistent_storage() {
         sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
         
         pushd "$MPT"
-            sudo tar cf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
+            sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
         popd > /dev/null
         sudo rm -fr "$MPT"
     fi

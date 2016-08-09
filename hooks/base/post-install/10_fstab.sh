@@ -1,1 +1,1 @@
-install_file resources/fstab "/etc/fstab"
+make_symlink  "/run/fstab" "/etc/fstab"
