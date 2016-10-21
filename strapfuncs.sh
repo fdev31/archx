@@ -115,6 +115,20 @@ function install_file() {
     sudo install -m 644 -o root -g root "$1" "$R$2"
 }
 
+function extended_install_file () {
+    xx=$2
+    sudo cp -a "$1" "/tmp/ext.tmp"
+    sed -i "/tmp/ext.tmp" \
+        -e "s#{{ROOTIMAGE}}#$ROOTNAME#" \
+        -e "s#{{DISKLABEL}}#$DISKLABEL#" \
+        -e "s#{{STORAGE_PATH}}#$LIVE_SYSTEM#" \
+        -e "s#{{STORAGE}}#rootfs.$ROOT_TYPE#"
+    install_file "/tmp/ext.tmp" "$xx"
+    sudo rm /tmp/ext.tmp
+}
+
+
+
 function autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
