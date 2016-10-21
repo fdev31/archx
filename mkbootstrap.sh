@@ -125,6 +125,10 @@ function grub_install() {
     GRUB_MODS="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 linux linux16 configfile video"
     sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$GRUB_MODS" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
+    # This one is for EFI bootstrap
+    sudo mkdir -p "$F/boot/grub/"
+    echo "configfile /grub/grub.cfg" > plop
+    sudo mv plop "$F/boot/grub/grub.cfg"
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$GRUB_MODS" "$xx"
     if [ -n "$SECUREBOOT" ]; then
         sudo cp secureboot/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
