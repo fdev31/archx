@@ -1,0 +1,3 @@
+install_pkg empathy
+install_pkg telepathy
+install_pkg purple-facebook
