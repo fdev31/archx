@@ -10,10 +10,14 @@ source ./strapfuncs.sh
 DEPS="grub arch-install-scripts sudo dosfstools squashfs-tools xz"
 
 if [ -n "$SECUREBOOT" ]; then
-    DEPS="$DEPS prebootloader"
+    DEPS="$DEPS efitools"
 fi
 
-pacman -Qq $DEPS > /dev/null || exit "Required packages: $DEPS"
+ERROR=0
+pacman -Qq $DEPS > /dev/null || ERROR=1
+
+[ $ERROR -ne 0 ] && echo "Required packages: $DEPS" 
+[ $ERROR -ne 0 ] && exit 1
 
 SECT_SZ=512
 LO_DEV=''
@@ -57,7 +61,6 @@ function base_install() {
     step "Installing base packages & patch root files"
     # install packages
     sudo pacstrap -cd "$R" base
-    # configure fstab
     sudo chown root.root "$R"
 }
 
@@ -75,14 +78,19 @@ function run_install_hooks() {
         step2 "Distribution packages"
         install_pkg $DISTRO_PACKAGE_LIST
     fi
-    step2 "Extra packages"
-    if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
-        sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
-    fi
+
+    install_extra_packages
 
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
+}
+
+function install_extra_packages() {
+    step2 "Extra packages"
+    if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
+        sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
+    fi
 }
 
 function make_squash_root() {
@@ -93,6 +101,9 @@ function make_squash_root() {
         sudo find var/cache/ | sed 1d >> $IF
         sudo find run/ | sed 1d >> $IF
         sudo find home/ | sed 1d >> $IF
+        sudo find proc/ | sed 1d >> $IF
+        sudo find sys/ | sed 1d >> $IF
+        sudo find dev/ -type f >> $IF
         sudo find var/run/ -type f >> $IF
         sudo find var/log/ -type f >> $IF
         if [ ! -d ".$LIVE_SYSTEM" ]; then
@@ -109,15 +120,16 @@ function make_squash_root() {
 
 function grub_install() {
     F="$1"
-    D="$2"
-    BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+    xx="$2"
+    # FIXME: defined twice, installer & mkbootstrap
+    GRUB_MODS="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 linux linux16 configfile video"
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$GRUB_MODS" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
-    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
+    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$GRUB_MODS" "$xx"
     if [ -n "$SECUREBOOT" ]; then
-        sudo cp /usr/lib/prebootloader/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
-        sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
-        sudo mv "$F/EFI//BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
+        sudo cp secureboot/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
+        sudo mv "$F/EFI/BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
+        sudo mv "$F/EFI/BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
     fi
 
 }
@@ -302,6 +314,9 @@ case "$PARAM" in
 		;;
     pkg)
         run_install_hooks
+        ;;
+    ex*)
+        install_extra_packages
         ;;
     hook*)
         source "$1"
