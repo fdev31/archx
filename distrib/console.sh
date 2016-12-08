@@ -1,4 +1,4 @@
-PROFILES="base locales" # system installer
+PROFILES="base locales installer" # system installer
 
 DISK_MARGIN=10 # extra space for persistence, also HOME size, used for loopback or disk images
 BOOT_MARGIN=30 # extra space for /boot (first partition)

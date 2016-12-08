@@ -2,7 +2,8 @@ source ./configuration.sh
 
 # DETECT LANGUAGE
 
-COUNTRY=$(geoiplookup $(curl -s icanhazip.com))
+IPADDR=$(curl -s icanhazip.com)
+COUNTRY=$(geoiplookup $IPADDR)
 COUNTRY=${COUNTRY#*: }
 COUNTRY=${COUNTRY%,*}
 if [ -e country_codes/$COUNTRY ] ; then
@@ -83,6 +84,10 @@ $FOOTER" | sudo dd of="$I"
 function have_package() {
     _set_pkgmgr
     $PKGMGR $PKGMGR_OPTS -r "$R" -Qqq $* >/dev/null 2>&1
+}
+
+function make_symlink() {
+    sudo ln -fs $1 "$R/$2"
 }
 
 function raw_install_pkg() {

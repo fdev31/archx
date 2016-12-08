@@ -1,5 +1,5 @@
 install_pkg arch-install-scripts
-install_bin resources/install2disk.sh /bin/
+install_bin resources/installer.py /bin/
 
 install_pkg python-pythondialog
 

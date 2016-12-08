@@ -6,6 +6,10 @@ import math
 import pprint
 import subprocess
 from os.path import join as joinp , getsize
+from time import sleep
+
+FALLBACK_DISKLABEL="ARCHX"
+DEFAULT_DISKLABEL="NAAIV"
 
 class NoPartFound(Exception): pass
 
@@ -14,6 +18,9 @@ def runcmd(*a, stdin=None, err=False):
     if isinstance(stdin, str):
         stdin = stdin.encode('utf-8')
     t = p.communicate(stdin)
+    if p.returncode != 0:
+        print("%s returned %d !!!"%(' '.join(a[0]), p.returncode))
+        raise RuntimeError()
     return t[0]
 
 def optimistic_number(n):
@@ -52,20 +59,20 @@ class O:
         self.__dict__.update(kw)
 
     def __repr__(self):
-        if not hasattr(self, 'uuid'):
+        if not hasattr(self, 'size'):
             return pprint.pformat(self.__dict__)
         return """%(label)s %(fstype)s (%(size)s)"""%dict( fstype=getattr(self, 'type', '- not found -'),
                 label=getattr(self, 'label', 'NONE'),
                 size=getattr(self, 'size', 0.0))
 
 class Installer:
-    _parts = {}
-    _disks = {}
+    parts = {}
+    disks = {}
     info = O()
     info.boot_part_size = 0
 
     USE_EFI = True
-    TGT = '/mnt/install_target'
+    TGT = '/tmp/install_target'
     MODZ = "normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 btrfs xfs jfs"
 
     def __init__(self):
@@ -90,15 +97,20 @@ class Installer:
             if not line.strip(): # empty line = new device
                 if hasattr(cur_part, 'type') and cur_part.type in ('iso9660', 'squashfs', 'udf', 'cramfs'):
                     cur_part.ro = True
-                self._parts[cur_part.devname] = cur_part
+                self.parts[cur_part.devname] = cur_part
                 cur_part = O()
+                cur_part.ro = False
             else:
                 k, v = line.split(b'=')
                 setattr(cur_part, k.lower().decode(), v.decode())
 
-        self.DISKLABEL = self._parts[self.info.boot_partition].label
+        try:
+            self.DISKLABEL = self.parts[self.info.boot_partition].label
+        except KeyError:
+            self.DISKLABEL = FALLBACK_DISKLABEL
+        print("PARTS:", self.parts)
 
-        self._list_disks()
+        self._listdisks()
 
     def _get_dev_info(self, devname, what='size'):
         if '/' in devname:
@@ -108,11 +120,11 @@ class Installer:
             return int(val)*512 # convert blocks to bytes
         return val
 
-    def _list_disks(self):
+    def _listdisks(self):
         import re
         rex = re.compile('.*/([^0-9]+)[0-9]+') # <letter><digits>
         dm_rex = re.compile(r'.*\[([^\s[]+)\].*') # blah blah [<drive>] blah blah
-        drives = set( rex.match(x).groups()[0] for x in self._parts if not 'loop' in x)
+        drives = set( rex.match(x).groups()[0] for x in self.parts if not 'loop' in x)
         for line in runcmd('dmesg').split(b'\n'):
             if b'Attached SCSI' in line:
                 removable = b'removable' in line # currently unused
@@ -121,28 +133,29 @@ class Installer:
         drives.discard(self.info.boot_device.split('/')[-1])
         for drive in drives:
             try:
-                self._disks[drive] = O(
+                self.disks[drive] = O(
                         size  = Unit(self._get_dev_info(drive)),
                         label = "[%s] %s"%(self._get_dev_info(drive, 'device/vendor'), self._get_dev_info(drive, 'device/model'))
                         )
-            except KeyError as e:
-                pass
+            except (KeyError, FileNotFoundError) as e:
+                print("Error %s, ignoring %s"%(e, drive))
+                sleep(1)
         # cleanup parts
-        for part in list(self._parts):
-            if not any(part.startswith(x) for x in self._disks):
-                del self._parts[part]
+#        for part in list(self.parts):
+#            if not any(part.startswith(x) for x in self.disks):
+#                del self.parts[part]
 
         # compute size for partitions as well
-        for part in self._parts:
-            self._parts[part].size = self._get_dev_info(part)
+        for part in self.parts:
+            self.parts[part].size = Unit(self._get_dev_info(part))
 
     def get_partitions(self, disk, filter_ro=False):
         if not '/' in disk:
             disk = '/dev/'+disk
         p = []
-        for part in sorted(self._parts):
+        for part in sorted(self.parts):
             if part.startswith(disk):
-                d = self._parts[part]
+                d = self.parts[part]
                 if filter_ro and d.ro:
                     continue
                 d.disk = disk
@@ -165,25 +178,41 @@ class Installer:
                 opts = ['-f', '-L', label]
             runcmd(['mkfs.'+fmt] + opts + [drive])
 
-    def mount_and_fullcopy(self, device, where, disk):
+    def mount_and_fullcopy(self, device, where, disk, safe=False, fix=True):
         if not '/' in device:
             device = '/dev/'+device
         if not '/' in disk:
             disk = '/dev/'+disk
         UI.message('Installing EFI bootloader')
-        runcmd(['mount', device, where])
-        runcmd(['grub-install', '--target', 'x86_64-efi', '--modules', self.MODZ, '--boot-directory', where, '--efi-directory', where])
+        try:
+            runcmd(['mount', device, where])
+
+        except RuntimeError:
+            if not safe and UI.confirm('Space not formatted!','Proceed rebuilding a filesystem ?'):
+                DEFAULT_DISKLABEL = UI.get_word("What label you want to use (ie. %s)?"%DEFAULT_DISKLABEL)
+                self.mkfs(device, DEFAULT_DISKLABEL, 'ext4')
+                runcmd(['mount', device, where])
+            else:
+                raise
+
+        # TODO: replace with arch-chroot ?
+        ## TODO: detect EFI directory !!
+
+        runcmd(['dd', 'if='+disk, 'of=%s/backup.mbr'%where, 'bs=512', 'size=1'])
+#        runcmd(['grub-install', '--target', 'x86_64-efi', '--modules', self.MODZ, '--efi-directory', where])
         UI.message('Installing BIOS bootloader')
         runcmd(['grub-install', '--target', 'i386-pc',    '--modules', self.MODZ, '--boot-directory', where, disk])
-        UI.message('Last settings...')
+        UI.message('Installing system files...')
         runcmd(['cp', '-ar', '/boot/.', where]) # TODO: only copy needed files
+        if fix:
+            self.fix_boot_configuration(device)
         runcmd(['umount', where])
 
     def select_disk(self, min_size=0):
         choices = [(x.split('/')[-1], "%(size)s %(label)s"%dict(
-                size=self._disks[x].size,
-                label=self._disks[x].label,
-                )) for x in sorted(self._disks) if self._disks[x].size.value > min_size] # skip devices < 2.5GB
+                size=self.disks[x].size,
+                label=self.disks[x].label,
+                )) for x in sorted(self.disks) if self.disks[x].size.value > min_size] # skip devices < 2.5GB
 
         if len(choices) > 1:
             drive = UI.menu("Select the storage device", "", choices)
@@ -198,7 +227,7 @@ class Installer:
 
     def select_partition(self, drive, min_size=0, show_ro=True):
         # TODO: mount parts to really know available size
-        choices = [ (str(i+1), str(p)) for i,p in enumerate(self.get_partitions(drive, not show_ro))
+        choices = [ (str(i+1), p) for i,p in enumerate(self.get_partitions(drive, not show_ro))
                 if p.size.value > min_size]
 
         if len(choices) > 1:
@@ -206,7 +235,7 @@ class Installer:
         elif not choices:
             raise NoPartFound()
         else:
-            if not UI.confirm('Partition n°%s %s'%tuple(choices[0])):
+            if not UI.confirm('Selected partition', '%s'%choices[0][1]):
                 raise SystemExit()
             partno = choices[0][0]
 
@@ -246,19 +275,27 @@ class Installer:
         return True
 
     def MENU_A_embed_compact(self, drive=None, partno=None):
-        " Safe install or upgrade (can be uninstalled, SAFE for data) "
+        'Safe install or upgrade (can be uninstalled, SAFE for data)'
         drive = drive or self.select_disk(2500000)
         try:
             partno = partno or self.select_partition(drive, 2500000, show_ro=False)
         except NoPartFound:
-            return self.MENU_B_install_compact(drive)
+            UI.message('No partition found !')
         else:
-            self.mount_and_fullcopy(drive+partno, self.TGT, drive)
+            self.mount_and_fullcopy(drive+partno, self.TGT, drive, safe=True)
             return True
 
     def MENU_Z_exit(self):
         "Exit"
         raise SystemExit(0)
+
+    def fix_boot_configuration(self, part):
+        part = self.parts[part]
+        default_label = self.parts[self.info.boot_partition].label
+        new_label = part.label
+        grub_cfg = os.path.join(self.TGT, "grub/grub.cfg")
+        txt = open(grub_cfg).read()
+        open(grub_cfg, 'w').write( txt.replace(default_label, new_label) )
 
 global UI
 
@@ -271,6 +308,9 @@ class UI:
 
     def message(self, text, title=None):
         self.d.infobox( text )
+
+    def get_word(self, title):
+        return self.d.inputbox(title)[1]
 
     def menu(self, title, subtitle, choices):
         return self.d.menu( subtitle, title=title, choices=choices, width=self.w, height=self.h)[1]
@@ -325,7 +365,7 @@ def main():
 
     if tag:
         if choices[int(tag)-1]():
-            print("Reboot computer and have fun !")
+            print("When finished, type \"halt -p\" in the shell and remove the installation drive !")
 
 if __name__ == '__main__':
     main()

@@ -101,9 +101,6 @@ function make_squash_root() {
         sudo find var/cache/ | sed 1d >> $IF
         sudo find run/ | sed 1d >> $IF
         sudo find home/ | sed 1d >> $IF
-        sudo find proc/ | sed 1d >> $IF
-        sudo find sys/ | sed 1d >> $IF
-        sudo find dev/ -type f >> $IF
         sudo find var/run/ -type f >> $IF
         sudo find var/log/ -type f >> $IF
         if [ ! -d ".$LIVE_SYSTEM" ]; then
@@ -120,20 +117,15 @@ function make_squash_root() {
 
 function grub_install() {
     F="$1"
-    xx="$2"
-    # FIXME: defined twice, installer & mkbootstrap
-    GRUB_MODS="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 linux linux16 configfile video"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$GRUB_MODS" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+    D="$2"
+    BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
+    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
-    # This one is for EFI bootstrap
-    sudo mkdir -p "$F/boot/grub/"
-    echo "configfile /grub/grub.cfg" > plop
-    sudo mv plop "$F/boot/grub/grub.cfg"
-    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$GRUB_MODS" "$xx"
+    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
     if [ -n "$SECUREBOOT" ]; then
-        sudo cp secureboot/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
-        sudo mv "$F/EFI/BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
-        sudo mv "$F/EFI/BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
+        sudo cp /usr/lib/prebootloader/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
+        sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
+        sudo mv "$F/EFI//BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
     fi
 
 }

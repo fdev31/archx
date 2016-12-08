@@ -2,6 +2,7 @@ sed resources/rolinux.inithook \
     -e "s#{{ROOTIMAGE}}#$ROOTNAME#" \
     -e "s#{{DISKLABEL}}#$DISKLABEL#" \
     -e "s#{{STORAGE_PATH}}#$LIVE_SYSTEM#" \
+    -e "s#{{COMPRESSOR}}#$COMPRESSION_TYPE#" \
     -e "s#{{STORAGE}}#rootfs.$ROOT_TYPE#" | sudo dd "of=$R/lib/initcpio/hooks/rolinux"
 
 echo '
