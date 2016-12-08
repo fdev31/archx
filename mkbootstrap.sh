@@ -180,7 +180,7 @@ function create_persistent_storage() {
         sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
         
         pushd "$MPT"
-            sudo tar cf - . | ${COMPRESSION_TYPE} -z9 > ../rootfs.default
+            sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
         popd > /dev/null
         sudo rm -fr "$MPT"
     fi
