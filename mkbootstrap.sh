@@ -123,7 +123,7 @@ function grub_install() {
     sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
     sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
     if [ -n "$SECUREBOOT" ]; then
-        sudo cp /usr/lib/prebootloader/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
+        sudo cp secureboot/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
         sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
         sudo mv "$F/EFI//BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
     fi
