@@ -198,7 +198,7 @@ class Installer:
         # TODO: replace with arch-chroot ?
         ## TODO: detect EFI directory !!
 
-        runcmd(['dd', 'if='+disk, 'of=%s/backup.mbr'%where, 'bs=512', 'size=1'])
+        runcmd(['dd', 'if='+disk, 'of=%s/backup.mbr'%where, 'bs=512', 'count=1'])
 #        runcmd(['grub-install', '--target', 'x86_64-efi', '--modules', self.MODZ, '--efi-directory', where])
         UI.message('Installing BIOS bootloader')
         runcmd(['grub-install', '--target', 'i386-pc',    '--modules', self.MODZ, '--boot-directory', where, disk])
