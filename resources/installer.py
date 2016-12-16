@@ -59,7 +59,7 @@ class O:
         self.__dict__.update(kw)
 
     def __repr__(self):
-        if not hasattr(self, 'size'):
+        if not hasattr(self, 'uuid'):
             return pprint.pformat(self.__dict__)
         return """%(label)s %(fstype)s (%(size)s)"""%dict( fstype=getattr(self, 'type', '- not found -'),
                 label=getattr(self, 'label', 'NONE'),
@@ -110,7 +110,7 @@ class Installer:
             self.DISKLABEL = FALLBACK_DISKLABEL
         print("PARTS:", self.parts)
 
-        self._listdisks()
+        self._list_disks()
 
     def _get_dev_info(self, devname, what='size'):
         if '/' in devname:
@@ -120,7 +120,7 @@ class Installer:
             return int(val)*512 # convert blocks to bytes
         return val
 
-    def _listdisks(self):
+    def _list_disks(self):
         import re
         rex = re.compile('.*/([^0-9]+)[0-9]+') # <letter><digits>
         dm_rex = re.compile(r'.*\[([^\s[]+)\].*') # blah blah [<drive>] blah blah
@@ -227,7 +227,7 @@ class Installer:
 
     def select_partition(self, drive, min_size=0, show_ro=True):
         # TODO: mount parts to really know available size
-        choices = [ (str(i+1), p) for i,p in enumerate(self.get_partitions(drive, not show_ro))
+        choices = [ (str(i+1), str(p)) for i,p in enumerate(self.get_partitions(drive, not show_ro))
                 if p.size.value > min_size]
 
         if len(choices) > 1:
