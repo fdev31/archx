@@ -1,7 +1,7 @@
 # Name for this Linux distribution
 DISKLABEL="ARCHX"
 # Package set to install
-DISTRIB="full"
+DISTRIB="default"
 # Your login id
 USERNAME="user"
 USERID="1000"
