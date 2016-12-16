@@ -138,7 +138,6 @@ BOOTDEVICE      /boot           vfat     ro,x-systemd.device-timeout=90,relatime
 
 BOOTDEVICE     /mnt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/mnt,upperdir=/run/overlay/ROOT/mnt,workdir=/run/overlay/WORK/mnt     0 2
 BOOTDEVICE     /var/lib         overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib,upperdir=/run/overlay/ROOT/var_lib,workdir=/run/overlay/WORK/var_lib 0 2
-BOOTDEVICE     /var/lib/pacman  overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib/pacman,upperdir=/storage/ROOT/var_lib_pacman,workdir=/storage/WORK/var_lib_pacman    0 2
 BOOTDEVICE     /etc             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/etc,upperdir=/storage/ROOT/etc,workdir=/storage/WORK/etc     0 2
 BOOTDEVICE     /opt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/opt,upperdir=/storage/ROOT/opt,workdir=/storage/WORK/opt     0 2
 BOOTDEVICE     /srv             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/srv,upperdir=/storage/ROOT/srv,workdir=/storage/WORK/srv     0 2
