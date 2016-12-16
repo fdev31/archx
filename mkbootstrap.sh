@@ -103,6 +103,11 @@ function make_squash_root() {
         sudo find home/ | sed 1d >> $IF
         sudo find var/run/ -type f >> $IF
         sudo find var/log/ -type f >> $IF
+
+        sudo find proc/ | sed 1d >> $IF
+        sudo find sys/ | sed 1d >> $IF
+        sudo find dev/ -type f >> $IF
+
         if [ ! -d ".$LIVE_SYSTEM" ]; then
             sudo mkdir ".$LIVE_SYSTEM"
         fi
