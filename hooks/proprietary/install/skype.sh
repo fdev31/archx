@@ -1,1 +1,1 @@
-install_pkg skype
+install_pkg ghetto-skype-git
