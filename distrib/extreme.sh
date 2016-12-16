@@ -1,4 +1,9 @@
-PROFILES='base xorg env-cinnamon env-awesome env-gnome env-kde env-enlightenment net-utils system snd-base snd-more chat gfx-base gfx-more photo-base office-base office-more locales medical proprietary dev-base installer'
+PROFILES=''
+for dir in hooks/* ; do
+    if [ -d $dir ] && [ "$dir" != "alternatives" ] ; then
+        PROFILES="$PROFILES ${dir#*/}"
+    fi
+done
 PREFERRED_TOOLKIT=gtk
 DISTRO_PACKAGE_LIST='firefox-ublock-origin firefox-download-youtube-videos-as-mp4 firefox-flashgot'
 function distro_install_hook() {
