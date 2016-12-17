@@ -132,8 +132,6 @@ function extended_install_file () {
     sudo rm /tmp/ext.tmp
 }
 
-
-
 function autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
@@ -154,6 +152,9 @@ function install_application() {
         mkdir "$ASDIR"
     fi
     sudo install -m 644 resources/applications/$1.desktop "$ASDIR"
+}
+function install_resource() {
+    sudo install -m 644 resources/$1 "$R$2"
 }
 
 function _set_pkgmgr() {
