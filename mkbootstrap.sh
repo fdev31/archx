@@ -20,7 +20,6 @@ pacman -Qq $DEPS > /dev/null || ERROR=1
 [ $ERROR -ne 0 ] && exit 1
 
 SECT_SZ=512
-LO_DEV=''
 ROOT_DEV=''
 HOOK_BUILD_FLAG=0
 
@@ -200,6 +199,7 @@ function get_part_offset() {
 }
 
 function make_disk_image() {
+
     # computed disk size, in MB
     if [ -n "$USE_RWDISK" ]; then
         _DM="$DISK_MARGIN"
@@ -223,32 +223,22 @@ function make_disk_image() {
     echo -e "n\np\n1\n\n+$(( $CDS - $_DM ))M\nt\nef\na\nw" | LC_ALL=C fdisk "$D" >/dev/null 
 
      # create 2nd partition
-    if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ]; then
-        echo -e "n\np\n2\n\n\nw" | LC_ALL=C fdisk "$D" >/dev/null
-        _TO=$(get_part_offset "$D")
-        _OFFSET=$(( $SECT_SZ * $_TO ))
-        LO_DEV=$(sudo losetup -o "$_OFFSET" --show -f "$D")
-        create_persistent_storage "$LO_DEV"
-        sudo losetup -d "$LO_DEV"
-        LIMIT_FAT_SIZE=yes
-    else
-        create_persistent_storage
-    fi
+    echo -e "n\np\n2\n\n\nw" | LC_ALL=C fdisk "$D" >/dev/null
 
     step2 "Creating FAT32 filesystem"
-    OFFSET=$(( $SECT_SZ * $(get_part_offset "$D" boot) ))
-    if [ -n "$LIMIT_FAT_SIZE" ]; then
-        LODEV_OPTS="--sizelimit $(( $_OFFSET - $OFFSET ))"
+    LO_DEV=$(sudo losetup --show -f "$D")
+
+    sudo mkdosfs -F 32 -n "$DISKLABEL" "${LO_DEV}p1"
+    if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ]; then
+        create_persistent_storage ${LO_DEV}p2
     fi
-    LO_DEV=$(sudo losetup -o "$OFFSET" $LODEV_OPTS --show -f "$D")
-    sudo mkdosfs -F 32 -n "$DISKLABEL" "$LO_DEV"
 
     step "Populating filesystem"
     # Make final disk with boot + root
     T=tmpmnt
 	sudo rm -fr "$T" 2> /dev/null
     sudo mkdir "$T"
-    sudo mount "$LO_DEV" "$T"
+    sudo mount "${LO_DEV}p1" "$T"
 
     sudo cp -ar "$R/boot/"* "$T/"
 
