@@ -100,7 +100,6 @@ function make_squash_root() {
         sudo find boot/ | sed 1d > $IF
         sudo find var/cache/ | sed 1d >> $IF
         sudo find run/ | sed 1d >> $IF
-        sudo find home/ | sed 1d >> $IF
         sudo find var/run/ -type f >> $IF
         sudo find var/log/ -type f >> $IF
 
