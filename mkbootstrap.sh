@@ -112,9 +112,9 @@ function make_squash_root() {
             sudo mkdir ".$LIVE_SYSTEM"
         fi
         if [ "$COMPRESSION_TYPE" = "xz" ]; then
-            sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
-        else
-            sudo mksquashfs . "$SQ" -ef $IF -comp $COMPRESSION_TYPE -no-exports -noappend -no-recovery -b 1M
+            sudo mksquashfs . "$SQ" -ef $IF -comp xz   -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
+        else # gz == gzip
+            sudo mksquashfs . "$SQ" -ef $IF -comp gzip -no-exports -noappend -no-recovery -b 1M
         fi
     popd > /dev/null
     sudo rm ignored.files
