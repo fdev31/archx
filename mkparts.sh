@@ -10,6 +10,11 @@ SZ1=$2
 SQ=$3
 FS2=$4
 
+if [ -z $FS2 ]; then
+    echo "Syntax: $0 <image or device> <boot_part_size> <squash_image> <extra fs>"
+    exit 1
+fi
+
 tot_size=$(parted $DISK --script print |grep '^Disk /' | cut -d: -f2)
 sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1000000 ))
 
