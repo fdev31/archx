@@ -4,6 +4,8 @@
 # TODO/ make fixed squash size possible
 export LC_ALL=C
 
+DISKLABEL=LINUX
+
 function clean_exit() {
     sudo umount $rootfs/boot 2>/dev/null
     sudo umount $rootfs 2>/dev/null
@@ -32,11 +34,11 @@ echo -e 'n\np\n1\n\n+'$SZ1'M\nt\nef\nn\np\n2\n\n+'$sq_size'M\nn\n\n\n\n\na\n1\nw
 sudo partprobe
 
 loop=$(sudo losetup -P -f --show $DISK)
-sudo mkfs.fat -F 32 ${loop}p1 || clean_exit 1
+sudo mkfs.fat -n $DISKLABEL -F 32 ${loop}p1 || clean_exit 1
 echo " SQUASH ####################################################"
 sudo dd if=$SQ of=${loop}p2 bs=1M || clean_exit 1
 echo " XFS ####################################################"
-sudo mkfs.xfs -f ${loop}p3 || clean_exit 1
+sudo mkfs.ext4 -F ${loop}p3 || clean_exit 1
 
 rootfs=$(mktemp -d)
 
@@ -46,12 +48,13 @@ sudo mount ${loop}p1 $rootfs/boot
 sudo cp -ar ROOT/boot/* $rootfs/boot
 
 MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
-DISKLABEL=LINUX
 
 sudo mkdir "$rootfs/boot/boot"
 
 sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" --efi-directory "$rootfs/boot" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
 sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
+
+sudo sed -i "s/ARCHX/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
 
 echo "FINISHED"
 clean_exit 0

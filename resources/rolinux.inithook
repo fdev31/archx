@@ -3,53 +3,56 @@
 
 ## funcs:
 oops() {
-		echo "Error occured, continuing in 1s..."
-		sleep 1
+    echo "Error occured, continuing in 1s..."
+    sleep 1
 }
 
 fatal() {
-		echo "FATAL Error occured! $*"
-		echo" press ENTER to reboot"
-		read
-		reboot -f
+    echo "FATAL Error occured! $*"
+    echo" press ENTER to reboot"
+    read
+    reboot -f
 }
 
 mount_squash() {
-		# Mount squash (base RO filesystem)
-		E_MSG="$SQUASHROOT not found in $DISKLABEL !"
-		mount -o loop -t squashfs "$F_BOOT_ROOT/$SQUASHROOT" "$R" || fatal "$E_MSG"
-		[ -n "$DEBUG" ] && echo "- squash image loaded"
+    # Mount squash (base RO filesystem)
+    E_MSG="$SQUASHROOT not found in $1 !"
+    mount -o loop -t squashfs "$F_BOOT_ROOT/$SQUASHROOT" "$R" 2>/dev/null
+    if [ $? -ne 0 ]; then
+        mount -t squashfs "$1" "$R" || fatal "$E_MSG"
+    fi
+    [ -n "$DEBUG" ] && echo "- squash image loaded"
 }
 
 load_kmap() {
-		if [ -e "$R/usr/share/kbd/keymaps/initrd.map" ]; then
-			loadkmap < "$R/usr/share/kbd/keymaps/initrd.map" || oops
-			[ -n "$DEBUG" ] && echo "- keymap"
-		fi
+    if [ -e "$R/usr/share/kbd/keymaps/initrd.map" ]; then
+        loadkmap < "$R/usr/share/kbd/keymaps/initrd.map" || oops
+        [ -n "$DEBUG" ] && echo "- keymap"
+    fi
 }
 
 run_newroot() {
-		PATH="$R/bin:$PATH" LD_LIBRARY_PATH="$R/lib" $*
+    PATH="$R/bin:$PATH" LD_LIBRARY_PATH="$R/lib" $*
 }
 
 process_mountname() {
-		NAME="$1"
-		if [ -z "$2" ]; then
-				P="$F_PFX"
-				WP="$F_WPFX"
-		else
-				P="$F_TMPFS_ROOT"
-				WP="$F_TMPFS_WORK_ROOT"
-		fi
-		FLAT_NAME=$(echo $1 | sed 's#/#_#g')
-		FLAT_NAME=${FLAT_NAME:1}
-		if [ ! -d "$P/$FLAT_NAME" ]; then
-			mkdir -p "$P/$FLAT_NAME"
-		fi
-		if [ ! -d "$WP/$FLAT_NAME" ]; then
-			mkdir -p "$WP/$FLAT_NAME"
-		fi
-		echo $FLAT_NAME
+    NAME="$1"
+    if [ -z "$2" ]; then
+        P="$F_PFX"
+        WP="$F_WPFX"
+    else
+        P="$F_TMPFS_ROOT"
+        WP="$F_TMPFS_WORK_ROOT"
+    fi
+    FLAT_NAME=$(echo $1 | sed 's#/#_#g')
+    FLAT_NAME=${FLAT_NAME:1}
+    if [ ! -d "$P/$FLAT_NAME" ]; then
+        mkdir -p "$P/$FLAT_NAME"
+    fi
+    if [ ! -d "$WP/$FLAT_NAME" ]; then
+        mkdir -p "$WP/$FLAT_NAME"
+    fi
+    echo $FLAT_NAME
 }
 
 run_latehook() {
@@ -57,9 +60,6 @@ run_latehook() {
 
 	if [ -z "$SQUASHROOT" ] ; then
 		SQUASHROOT={{ROOTIMAGE}}
-	fi
-	if [ -z "$DISKLABEL" ] ; then
-		DISKLABEL={{DISKLABEL}}
 	fi
 	STORAGE_IMAGE={{STORAGE}}
 
@@ -74,9 +74,24 @@ run_latehook() {
 
 	## main code:
 
+    REAL_LABEL=$(cat /proc/cmdline)
+	REAL_LABEL=${REAL_LABEL#*root=}
+	REAL_LABEL=${REAL_LABEL% *}
+
+    LABELNAME=${REAL_LABEL#*=}
+
+    DEVICE=$(readlink -f /dev/disk/by-label/$LABELNAME)
+    DEVICE=${DEVICE:0:8}
+
+    SQ_DRIVE=${DEVICE}2
+    RW_DRIVE=${DEVICE}3
+
 	mkdir "$F_BOOT_ROOT"
 	"$mount_handler" $F_BOOT_ROOT # Mount boot device
-	mount_squash # Mount SQUASH in /
+#    echo "XXXXXX"
+#    echo "SQ: $SQ_DRIVE"
+#    echo "DEV: $DEVICE"
+	mount_squash $SQ_DRIVE # Mount SQUASH in /
 	load_kmap # loading kmap from it
 	mount --move "$F_BOOT_ROOT" "$R/boot" || oops # make original root accessible as /boot (ro)
 	rmdir "$F_BOOT_ROOT" # now it's moved, we can remove original mountpoint
@@ -86,15 +101,14 @@ run_latehook() {
 
 	# default mount types
 	STORED=0
-	DEV="/dev/disk/by-label/${DISKLABEL}-RW"
 
 	# check persistant
-	if [ -z "$nobtr" ] && [ -e "$DEV" ] ; then # We have a storage device, Yey !!
+	if [ -z "$nobtr" ] && [ -e "$RW_DRIVE" ] ; then # We have a storage device, Yey !!
 	    echo "[STORED]"
-	    run_newroot btrfs check -p --repair --check-data-csum "$DEV" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
-	    run_newroot fsck.ext4 -p "$DEV" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
+	    run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
+	    run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
 
-	    mount "$DEV" "$F_RWPART" -o $FS_OPTS || oops
+	    mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
 
 	    mv /tmp/*.log "$F_RWPART"
 
@@ -121,11 +135,8 @@ run_latehook() {
 	    mkdir -p "$R/$F_TMPFS_WORK_ROOT/$d"
 	done
 
-  REAL_LABEL=$(cat /proc/cmdline)
-	REAL_LABEL=${REAL_LABEL#*root=}
-	REAL_LABEL=${REAL_LABEL% *}
 	# mount /usr to make systemd happy
-	mount -t overlay "/dev/disk/by-label/${REAL_LABEL#*=}" "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
+	mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
 
 	# generate fstab
 	T_F="/new_root/run/fstab"
@@ -149,8 +160,6 @@ tmpfs          /var/cache      tmpfs    rw     0 2
 EOF
 
 sed "s#BOOTDEVICE#${REAL_LABEL}#" /tmp/fstab > $T_F
-
-	#ln -s "/dev/disk/by-label/${DISKLABEL}" BOOTDEVICE
 
 	[ -n "$shell" ] && run_newroot sh -i # start a shell if requested
 }
