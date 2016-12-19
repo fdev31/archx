@@ -9,9 +9,9 @@ source ./strapfuncs.sh
 
 DEPS="grub arch-install-scripts sudo dosfstools squashfs-tools xz"
 
-if [ -n "$SECUREBOOT" ]; then
-    DEPS="$DEPS efitools"
-fi
+#if [ -n "$SECUREBOOT" ]; then
+#    DEPS="$DEPS preloader-signed"
+#fi
 
 ERROR=0
 pacman -Qq $DEPS > /dev/null || ERROR=1
@@ -135,7 +135,7 @@ function grub_install() {
 
 function grub_on_img() {
     step "Installing bootloader"
-    ROOT_DEV=$(sudo losetup --show -f "$D")
+    ROOT_DEV=$(sudo losetup -P --show -f "$D")
     grub_install "$T/" "$ROOT_DEV"
     sudo losetup -d "$ROOT_DEV"
 }
@@ -226,7 +226,7 @@ function make_disk_image() {
     echo -e "n\np\n2\n\n\nw" | LC_ALL=C fdisk "$D" >/dev/null
 
     step2 "Creating FAT32 filesystem"
-    LO_DEV=$(sudo losetup --show -f "$D")
+    LO_DEV=$(sudo losetup -P --show -f "$D")
 
     sudo mkdosfs -F 32 -n "$DISKLABEL" "${LO_DEV}p1"
     if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ]; then
