@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # mkpart <device> <sizeMB> <squashfs> <extra_part_fs>
 # ex: mkparts.sh ARCHX.img 100 rootfs.s
 # TODO/ make fixed squash size possible
@@ -45,7 +45,13 @@ rootfs=$(mktemp -d)
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
 
-sudo cp -ar ROOT/boot/* $rootfs/boot
+if [ -d ROOT ]; then
+    sudo cp -ar ROOT/boot/* $rootfs/boot
+else
+    sudo cp -ar /boot/grub $rootfs/boot
+    sudo cp -ar /boot/EFI $rootfs/boot
+    sudo cp -ar /boot/*inux* $rootfs/boot
+fi
 
 MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
 
