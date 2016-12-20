@@ -377,7 +377,7 @@ case "$PARAM" in
 #        echo "      conf: re-create intial ramdisk"
 #        echo "    squash: re-create squash rootfs"
 #        echo "      disk: re-create disk image from current squash & ramdisk"
-        echo "     flash: install rootfs to some USB drive & make it bootable (arg = FAT partition)"
+#        echo "     flash: install rootfs to some USB drive & make it bootable (arg = FAT partition)"
         exit 0
 esac
 echo "Done"
