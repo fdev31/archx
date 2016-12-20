@@ -92,7 +92,7 @@ function make_symlink() {
 
 function raw_install_pkg() {
     _set_pkgmgr
-    $PKGMGR $PKGMGR_OPTS -r "$R" $*
+    $PKGMGR $PKGMGR_OPTS -r "$R" $* || echo "FAILED $*" >> /tmp/failedpkgs.log
 }
 
 function install_pkg() {
