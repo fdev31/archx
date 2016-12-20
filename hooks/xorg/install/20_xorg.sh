@@ -12,7 +12,8 @@ if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
 fi
 
 install_pkg libx264 mesa-libgl
-install_pkg nouveau-fw
+install_pkg mesa-libgl
+install_pkg lib32-mesa-libgl
 install_pkg libva-vdpau-driver
 install_pkg libva-intel-driver
 install_pkg mesa-vdpau
