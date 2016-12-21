@@ -51,14 +51,15 @@ sudo mount ${loop}p1 $rootfs/boot
 sudo mount ${loop}p3 $rootfs/storage
 
 if [ -d ROOT ]; then
-    tar xvf /boot/rootfs.default -C $rootfs/storage
+    RSRC=rootfs.default
     sudo cp -ar ROOT/boot/* $rootfs/boot
 else
-    tar xvf ./rootfs.default -C $rootfs/storage
+    RSRC=/boot/rootfs.default
     sudo cp -ar /boot/grub $rootfs/boot
     sudo cp -ar /boot/EFI $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
 fi
+sudo tar xvf $RSRC -C $rootfs/storage
 
 MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
 
