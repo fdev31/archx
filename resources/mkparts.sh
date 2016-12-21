@@ -53,13 +53,15 @@ sudo mount ${loop}p3 $rootfs/storage
 if [ -d ROOT ]; then
     RSRC=rootfs.default
     sudo cp -ar ROOT/boot/* $rootfs/boot
+    INSTALL_SECURE_BOOT=1
+
 else
     RSRC=/boot/rootfs.default
     sudo cp -ar /boot/grub $rootfs/boot
     sudo cp -ar /boot/EFI $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
 fi
-sudo tar xvf $RSRC -C $rootfs/storage
+sudo tar xf $RSRC -C $rootfs/storage
 
 MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
 
@@ -69,6 +71,13 @@ sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modu
 sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
 
 sudo sed -i "s/ARCHX/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
+
+if [ -n "$INSTALL_SECURE_BOOT" ]; then
+    sudo cp secureboot/{PreLoader,HashTool}.efi "$rootfs/boot/EFI/BOOT/"
+    sudo mv "$rootfs/boot/EFI//BOOT/BOOTX64.EFI"    "$rootfs/boot/EFI/BOOT/loader.efi" # loader = grub
+    sudo mv "$rootfs/boot/EFI//BOOT/PreLoader.efi"  "$rootfs/boot/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
+fi
+
 
 echo "FINISHED"
 clean_exit 0
