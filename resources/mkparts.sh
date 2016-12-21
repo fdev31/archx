@@ -7,6 +7,7 @@ export LC_ALL=C
 DISKLABEL=LINUX
 
 function clean_exit() {
+    sudo umount $rootfs/storage 2>/dev/null
     sudo umount $rootfs/boot 2>/dev/null
     sudo umount $rootfs 2>/dev/null
     sudo rmdir $rootfs 2>/dev/null
@@ -37,13 +38,15 @@ loop=$(sudo losetup -P -f --show $DISK)
 sudo mkfs.fat -n $DISKLABEL -F 32 ${loop}p1 || clean_exit 1
 echo " SQUASH ####################################################"
 sudo dd if=$SQ of=${loop}p2 bs=1M || clean_exit 1
-echo " XFS ####################################################"
+echo " EXT4 ####################################################"
 sudo mkfs.ext4 -F ${loop}p3 || clean_exit 1
 
 rootfs=$(mktemp -d)
 
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
+sudo mount ${loop}p3 $rootfs/storage
+tar xvf /boot/rootfs.default -C $rootfs/storage
 
 if [ -d ROOT ]; then
     sudo cp -ar ROOT/boot/* $rootfs/boot

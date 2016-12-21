@@ -83,6 +83,7 @@ function run_install_hooks() {
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
+    install_pkg -Sc --noconfirm
 }
 
 function install_extra_packages() {
@@ -109,11 +110,16 @@ function make_squash_root() {
         if [ ! -d ".$LIVE_SYSTEM" ]; then
             sudo mkdir ".$LIVE_SYSTEM"
         fi
-        if [ "$COMPRESSION_TYPE" = "xz" ]; then
-            sudo mksquashfs . "$SQ" -ef $IF -comp xz   -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
-        else # gz == gzip
-            sudo mksquashfs . "$SQ" -ef $IF -comp gzip -no-exports -noappend -no-recovery -b 1M
-        fi
+
+        if [ -n "$NOCOMPRESS" ]; then
+            sudo mksquashfs . "$SQ" -ef $IF  -noI -noD -noF -noX -no-exports -noappend -no-recovery
+        else
+            if [ "$COMPRESSION_TYPE" = "xz" ]; then
+                sudo mksquashfs . "$SQ" -ef $IF -comp xz   -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
+            else # gz == gzip
+                sudo mksquashfs . "$SQ" -ef $IF -comp gzip -no-exports -noappend -no-recovery -b 1M
+            fi
+        fi  
     popd > /dev/null
     sudo rm ignored.files
 }
@@ -208,7 +214,7 @@ function make_disk_image() {
     fi
     # copy extra files to /boot
     if [ -n "$LIVE_SYSTEM" ]; then
-        sudo cp -r extra_files/* "$R/boot/"
+        sudo cp -r extra_files/* "$R/boot/" 2>/dev/null || echo "No extra files to install"
     fi
     BOOT_SZ=$(du -BM -s "$R/boot") # compute size
     BOOT_SZ=${BOOT_SZ%%M*}
@@ -328,7 +334,6 @@ case "$PARAM" in
         ;;
     reb*)
         reconfigure
-        run_install_hooks
         make_squash_root
         make_disk_image
         ;;

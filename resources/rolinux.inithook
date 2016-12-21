@@ -17,10 +17,9 @@ fatal() {
 mount_squash() {
     # Mount squash (base RO filesystem)
     E_MSG="$SQUASHROOT not found in $1 !"
-    mount -o loop -t squashfs "$F_BOOT_ROOT/$SQUASHROOT" "$R" 2>/dev/null
-    if [ $? -ne 0 ]; then
-        mount -t squashfs "$1" "$R" || fatal "$E_MSG"
-    fi
+    orig=$1
+    shift
+    mount -t squashfs "$orig" "$R" $* || fatal "$E_MSG"
     [ -n "$DEBUG" ] && echo "- squash image loaded"
 }
 
@@ -83,17 +82,28 @@ run_latehook() {
     DEVICE=$(readlink -f /dev/disk/by-label/$LABELNAME)
     DEVICE=${DEVICE:0:8}
 
-    SQ_DRIVE=${DEVICE}2
-    RW_DRIVE=${DEVICE}3
-
 	mkdir "$F_BOOT_ROOT"
 	"$mount_handler" $F_BOOT_ROOT # Mount boot device
-#    echo "XXXXXX"
-#    echo "SQ: $SQ_DRIVE"
-#    echo "DEV: $DEVICE"
-	mount_squash $SQ_DRIVE # Mount SQUASH in /
-	load_kmap # loading kmap from it
+
+
+    # Mount SQUASH in /
+
+    if [ -e "$F_BOOT_ROOT/$SQUASHROOT" ]; then # squash file
+        mount_squash "$F_BOOT_ROOT/$SQUASHROOT" -o loop
+        RW_DRIVE=${DEVICE}2
+    else # squash partition
+        mount_squash ${DEVICE}2
+        RW_DRIVE=${DEVICE}3
+    fi
+
+    if [ -e "$F_BOOT_ROOT/rw_drive" ]; then
+        RW_DRIVE=$(cat "$F_BOOT_ROOT/rw_drive")
+    fi
+
+
 	mount --move "$F_BOOT_ROOT" "$R/boot" || oops # make original root accessible as /boot (ro)
+
+	load_kmap # loading kmap from it
 	rmdir "$F_BOOT_ROOT" # now it's moved, we can remove original mountpoint
 
     # Allow initial RW folder: run
@@ -104,16 +114,20 @@ run_latehook() {
 
 	# check persistant
 	if [ -z "$nobtr" ] && [ -e "$RW_DRIVE" ] ; then # We have a storage device, Yey !!
-	    echo "[STORED]"
 	    run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
 	    run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
 
-	    mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
+        if [ -n "$FS_OPTS" ]; then
+            mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
 
-	    mv /tmp/*.log "$F_RWPART"
+            mv /tmp/*.log "$F_RWPART"
 
-	    [ -n "$FS_OPTS" ] && [ "$?" -eq "0" ] && STORED=1
-	else
+            STORED=1
+            echo "[STORED]"
+        fi
+    fi
+
+	if [ $STORED -eq 0 ]; then
 	    echo "[VOLATILE]"
 	    mount -t tmpfs tmpfs "$F_RWPART"
 			if [ "$COMPRESSOR" = "gzip" ] ; then
@@ -143,7 +157,7 @@ run_latehook() {
 	cat > /tmp/fstab <<EOF
 /dev/loop0      /               squashfs ro,x-systemd.device-timeout=90,relatime        0 0
 BOOTDEVICE      /boot           vfat     ro,x-systemd.device-timeout=90,relatime,fmask=0022,dmask=0022,shortname=mixed,errors=remount-ro        0 1
-#BOOTDEVICE-RW  /storage        ext4     rw,nofail,x-systemd.device-timeout=1,relatime,discard,data=ordered     0 1
+$RWDRIVE  /storage        auto     rw,nofail,x-systemd.device-timeout=1,relatime,discard,data=ordered     0 1
 
 /storage/ROOT/home    /home     none     rw,x-systemd.device-timeout=60,relatime,discard,data=ordered,bind      0 2
 
@@ -160,7 +174,6 @@ tmpfs          /var/cache      tmpfs    rw     0 2
 EOF
 
 sed "s#BOOTDEVICE#${REAL_LABEL}#" /tmp/fstab > $T_F
-
 	[ -n "$shell" ] && run_newroot sh -i # start a shell if requested
 }
 

@@ -265,16 +265,19 @@ class Installer:
     def MENU_B_install_compact(self, drive=None):
         'Dedicate a disk (RECOMMENDED, requires an unused disk)'
         drive = drive or self.select_disk(2500000)
-        UI.message('Preparing Disks')
-        runcmd(['dd', 'if=/dev/zero', 'of=/dev/'+drive, 'bs=512', 'count=1'])
-        self.make_partition(drive, 1,
-                Unit(self.info.boot_part_size * 2.2).human(False, ''),
-                boot=True)
-        self.mkfs(drive+'1', self.DISKLABEL)
-        self.MENU_A_embed_compact(drive, '1')
+        UI.message('Installing...')
+        runcmd(['sudo', 'mkparts.sh', "/dev/"+drive, "50", '/boot/rootfs.s'])
+
+#        UI.message('Preparing Disks')
+#        runcmd(['dd', 'if=/dev/zero', 'of=/dev/'+drive, 'bs=512', 'count=1'])
+#        self.make_partition(drive, 1,
+#                Unit(self.info.boot_part_size * 2.2).human(False, ''),
+#                boot=True)
+#        self.mkfs(drive+'1', self.DISKLABEL)
+#        self.MENU_A_embed_compact(drive, '1')
         return True
 
-    def MENU_A_embed_compact(self, drive=None, partno=None):
+    def xMENU_A_embed_compact(self, drive=None, partno=None):
         'Safe install or upgrade (can be uninstalled, SAFE for data)'
         drive = drive or self.select_disk(2500000)
         try:
