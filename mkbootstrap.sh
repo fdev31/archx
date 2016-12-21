@@ -219,56 +219,7 @@ function make_disk_image() {
     BOOT_SZ=$(du -BM -s "$R/boot") # compute size
     BOOT_SZ=${BOOT_SZ%%M*}
 
-    CDS=$(( $(stat -c '%s' "${SQ}") / 1048576 + $BOOT_SZ + ${_DM} + ${BOOT_MARGIN} ))
-
-    step "Creating ${CDS} MB disk image (Free: /home = $_DM MB + /boot = $BOOT_MARGIN MB)"
-
-    dd if=/dev/zero "of=${D}" bs=1M count=${CDS}
-
-    #  Make partitions
-    echo -e "n\np\n1\n\n+$(( $CDS - $_DM ))M\nt\nef\na\nw" | LC_ALL=C fdisk "$D" >/dev/null 
-
-     # create 2nd partition
-    echo -e "n\np\n2\n\n\nw" | LC_ALL=C fdisk "$D" >/dev/null
-
-    step2 "Creating FAT32 filesystem"
-    LO_DEV=$(sudo losetup -P --show -f "$D")
-
-    sudo mkdosfs -F 32 -n "$DISKLABEL" "${LO_DEV}p1"
-    if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ]; then
-        create_persistent_storage ${LO_DEV}p2
-    fi
-
-    step "Populating filesystem"
-    # Make final disk with boot + root
-    T=tmpmnt
-	sudo rm -fr "$T" 2> /dev/null
-    sudo mkdir "$T"
-    sudo mount "${LO_DEV}p1" "$T"
-
-    sudo cp -ar "$R/boot/"* "$T/"
-
-    step2 "Copying base filesystem (can take a while)..."
-    sudo cp "$SQ" "$T/"
-    if [ -n "$USE_RWDISK" ]; then
-        if [ "$USE_RWDISK" = "loop" ] ; then
-            step2 "Copying persistent filesystem..."
-            sudo cp -r "$RFS" "$T/"
-        fi
-        step2 "Copying persistent filesystem backup..."
-        sudo cp "$WORKDIR/rootfs.default" "$T/"
-    fi
-    step2 "Syncing."
-    sudo sync
-    step "Grub..."
-    grub_on_img
-    umount_part0
-    if [ -n "$USE_RWDISK" ] && [ "$USE_RWDISK" != "loop" ] ; then
-        step2 "Making additional partition (TODO)"
-#        step2 "Copying persistent filesystem..."
-#        sudo cp -r "$RFS" "$T/"
-#        sudo cp "$RFS".xz "$T/"
-    fi
+    ./resources/mkparts.sh "$D" $(( $BOOT_SZ + $_DM )) "$SQ"
 }
 
 # MAIN

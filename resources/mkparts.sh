@@ -37,7 +37,10 @@ sudo partprobe
 loop=$(sudo losetup -P -f --show $DISK)
 sudo mkfs.fat -n $DISKLABEL -F 32 ${loop}p1 || clean_exit 1
 echo " SQUASH ####################################################"
-sudo dd if=$SQ of=${loop}p2 bs=1M || clean_exit 1
+sudo dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
+# TODO: alternative: mkfs + unsquashfs
+# - remove initcpio hook (rolinux) + regen
+# - regen grub-conf
 echo " EXT4 ####################################################"
 sudo mkfs.ext4 -F ${loop}p3 || clean_exit 1
 
@@ -46,11 +49,12 @@ rootfs=$(mktemp -d)
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
 sudo mount ${loop}p3 $rootfs/storage
-tar xvf /boot/rootfs.default -C $rootfs/storage
 
 if [ -d ROOT ]; then
+    tar xvf /boot/rootfs.default -C $rootfs/storage
     sudo cp -ar ROOT/boot/* $rootfs/boot
 else
+    tar xvf ./rootfs.default -C $rootfs/storage
     sudo cp -ar /boot/grub $rootfs/boot
     sudo cp -ar /boot/EFI $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
