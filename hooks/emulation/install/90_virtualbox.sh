@@ -1,2 +1,1 @@
-
-install_pkg  virtualbox virtualbox-host-modules
+install_pkg  virtualbox virtualbox-host-modules-arch
