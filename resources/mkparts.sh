@@ -4,7 +4,8 @@
 # TODO/ make fixed squash size possible
 export LC_ALL=C
 
-DISKLABEL=LINUX
+[ "x$DISKLABEL" = "x" ] && DISKLABEL=LINUX
+echo "DISKLABEL: $DISKLABEL"
 
 function clean_exit() {
     sudo umount $rootfs/storage 2>/dev/null
@@ -33,9 +34,10 @@ dd conv=notrunc if=/dev/zero of=$DISK bs=512 count=1 # clear MBR
 echo -e 'n\np\n1\n\n+'$SZ1'M\nt\nef\nn\np\n2\n\n+'$sq_size'M\nn\n\n\n\n\na\n1\nw\n' | fdisk $DISK || clean_exit 1
 
 sudo partprobe
-
 loop=$(sudo losetup -P -f --show $DISK)
-sudo mkfs.fat -n $DISKLABEL -F 32 ${loop}p1 || clean_exit 1
+sudo partprobe
+
+sudo mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
 echo " SQUASH ####################################################"
 sudo dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
 # TODO: alternative: mkfs + unsquashfs
@@ -60,6 +62,7 @@ else
     sudo cp -ar /boot/grub $rootfs/boot
     sudo cp -ar /boot/EFI $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
+    EFI_OPTS="--no-nvram"
 fi
 sudo tar xf $RSRC -C $rootfs/storage
 
@@ -67,7 +70,7 @@ MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt par
 
 sudo mkdir "$rootfs/boot/boot"
 
-sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" --efi-directory "$rootfs/boot" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
+sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" --efi-directory "$rootfs/boot" --bootloader-id "$DISKLABEL" $EFI_OPTS
 sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
 
 sudo sed -i "s/ARCHX/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
@@ -77,7 +80,6 @@ if [ -n "$INSTALL_SECURE_BOOT" ]; then
     sudo mv "$rootfs/boot/EFI//BOOT/BOOTX64.EFI"    "$rootfs/boot/EFI/BOOT/loader.efi" # loader = grub
     sudo mv "$rootfs/boot/EFI//BOOT/PreLoader.efi"  "$rootfs/boot/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
 fi
-
 
 echo "FINISHED"
 clean_exit 0
