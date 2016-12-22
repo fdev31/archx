@@ -13,8 +13,12 @@ DEFAULT_DISKLABEL="NAAIV"
 
 class NoPartFound(Exception): pass
 
-def runcmd(*a, stdin=None, err=False):
-    p = subprocess.Popen(*a, bufsize=1, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=(None if err else subprocess.PIPE))
+def runcmd(a, stdin=None, err=False, env=None):
+    if env:
+        g = os.environ.copy()
+        g.update(env)
+        env = g
+    p = subprocess.Popen(a, bufsize=1, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=(None if err else subprocess.PIPE), env=env)
     if isinstance(stdin, str):
         stdin = stdin.encode('utf-8')
     t = p.communicate(stdin)
@@ -79,11 +83,10 @@ class Installer:
         # Detect live boot devicea
         if not os.path.exists(self.TGT):
             os.mkdir(self.TGT)
-        for line in runcmd(['mount']).split(b'\n'):
-            if b' /boot ' in line:
-                self.info.boot_partition = line.split(None, 1)[0].decode()
-                self.info.boot_device = self.info.boot_partition[:-1]
-                break
+        cmdline = dict(x.split('=', 1) for x in open('/proc/cmdline').read().split() if "=" in x)
+        dev = '/dev/'+ os.readlink('/dev/disk/by-label/'+cmdline['root'].split('=')[1]).split('/')[-1]
+        self.info.boot_partition = dev
+        self.info.boot_device = dev[:-1]
 
         # Compute required size
         for root, dirs, files in os.walk('/boot'):
@@ -266,7 +269,11 @@ class Installer:
         'Dedicate a disk (RECOMMENDED, requires an unused disk)'
         drive = drive or self.select_disk(2500000)
         UI.message('Installing...')
-        runcmd(['sudo', 'mkparts.sh', "/dev/"+drive, "50", '/boot/rootfs.s'])
+        device = [line for line in open('/proc/mounts') if 'squashfs' in line][0].split()[0]
+
+        os.system('partprobe')
+
+        runcmd(['mkparts.sh', "/dev/"+drive, "50", device], env={'DISKLABEL': 'ARCHX'})
 
 #        UI.message('Preparing Disks')
 #        runcmd(['dd', 'if=/dev/zero', 'of=/dev/'+drive, 'bs=512', 'count=1'])

@@ -18,8 +18,8 @@ terminal-box: "terminal_*.png"
 + boot_menu {
   left = 0%
   width = 100%
-  top = 33%
-  height = 33%	
+  top = 20%
+  height = 60%	
 
   menu_pixmap_style = "boot_menu_*.png"
 
@@ -45,7 +45,7 @@ terminal-box: "terminal_*.png"
   id = "__timeout__"
   left = 33%
   width = 33%
-  top = 70%
+  top = 85%
   height = 1%
   show_text = false
   text = ""

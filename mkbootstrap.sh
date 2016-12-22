@@ -172,29 +172,6 @@ function mount_root_from_image() {
     umount_part0
 }
 
-function create_persistent_storage() {
-    if [ -n "$USE_RWDISK" ]; then
-        if [ -n "$1" ]; then
-            RFS="$1"
-        else
-            step "Creating BTRFS image of ${DISK_MARGIN} MB"
-            RFS="$WORKDIR/rootfs.${ROOT_TYPE}"
-            sudo dd if=/dev/zero "of=$RFS" "bs=${DISK_MARGIN}M" count=1
-        fi
-        step2 "Building persistent filesystem"
-        MPT="$WORKDIR/.storage_mnt_pt"
-        mkdir "$MPT"
-        mkdir "$MPT/ROOT"
-        mkdir "$MPT/WORK"
-        sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-        
-        pushd "$MPT"
-            sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
-        popd > /dev/null
-        sudo rm -fr "$MPT"
-    fi
-}
-
 function get_part_offset() {
     _DISK="$1"
     _IS_BOOT="$2"
@@ -207,19 +184,33 @@ function get_part_offset() {
 function make_disk_image() {
 
     # computed disk size, in MB
-    if [ -n "$USE_RWDISK" ]; then
-        _DM="$DISK_MARGIN"
-    else
-        _DM=0
-    fi
     # copy extra files to /boot
     if [ -n "$LIVE_SYSTEM" ]; then
         sudo cp -r extra_files/* "$R/boot/" 2>/dev/null || echo "No extra files to install"
     fi
-    BOOT_SZ=$(du -BM -s "$R/boot") # compute size
-    BOOT_SZ=${BOOT_SZ%%M*}
+#    BOOT_SZ=$(du -BM -s "$R/boot") # compute size
+#    BOOT_SZ=${BOOT_SZ%%M*}
 
-    ./resources/mkparts.sh "$D" $(( $BOOT_SZ + $_DM )) "$SQ"
+
+    rsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
+    rsize=$(( $rsize + $DISK_MARGIN + $BOOT_MARGIN ))
+
+    sudo dd if=/dev/zero of="$D" bs=1M count=$rsize
+
+        step2 "Building persistent filesystem"
+        MPT="$WORKDIR/.storage_mnt_pt"
+        mkdir "$MPT"
+        mkdir "$MPT/ROOT"
+        mkdir "$MPT/WORK"
+        sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
+        
+        pushd "$MPT"
+            sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
+            sudo mv ../rootfs.default $R/boot/
+        popd > /dev/null
+        sudo rm -fr "$MPT"
+
+    DISKLABEL="ARCHINST" ./resources/mkparts.sh "$D" $BOOT_MARGIN "$SQ"
 }
 
 # MAIN

@@ -3,6 +3,7 @@
 # ex: mkparts.sh ARCHX.img 100 rootfs.s
 # TODO/ make fixed squash size possible
 export LC_ALL=C
+rootfs=$(mktemp -d)
 
 [ "x$DISKLABEL" = "x" ] && DISKLABEL=LINUX
 echo "DISKLABEL: $DISKLABEL"
@@ -27,7 +28,12 @@ if [ -z $SQ ]; then
 fi
 
 tot_size=$(parted $DISK --script print |grep '^Disk /' | cut -d: -f2)
-sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
+
+if [[ "$SQ" == "/dev/"* ]]; then # partition
+    sq_size=$(( $(df $SQ | grep ^/ | awk '{print $2}') / 1024 + 1 ))
+else # file
+    sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
+fi
 
 dd conv=notrunc if=/dev/zero of=$DISK bs=512 count=1 # clear MBR
 
@@ -46,23 +52,21 @@ sudo dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
 echo " EXT4 ####################################################"
 sudo mkfs.ext4 -F ${loop}p3 || clean_exit 1
 
-rootfs=$(mktemp -d)
 
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
 sudo mount ${loop}p3 $rootfs/storage
 
 if [ -d ROOT ]; then
-    RSRC=rootfs.default
+    RSRC=ROOT/boot/rootfs.default
     sudo cp -ar ROOT/boot/* $rootfs/boot
     INSTALL_SECURE_BOOT=1
-
+    EFI_OPTS="--no-nvram"
 else
     RSRC=/boot/rootfs.default
     sudo cp -ar /boot/grub $rootfs/boot
     sudo cp -ar /boot/EFI $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
-    EFI_OPTS="--no-nvram"
 fi
 sudo tar xf $RSRC -C $rootfs/storage
 
@@ -74,6 +78,7 @@ sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modu
 sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
 
 sudo sed -i "s/ARCHX/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
+sudo sed -i "s/ARCHINST/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
 
 if [ -n "$INSTALL_SECURE_BOOT" ]; then
     sudo cp secureboot/{PreLoader,HashTool}.efi "$rootfs/boot/EFI/BOOT/"
