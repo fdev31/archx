@@ -54,6 +54,13 @@ process_mountname() {
     echo $FLAT_NAME
 }
 
+dprint() {
+    if [ -n "$debug" ]; then
+        echo $*
+        sleep 1
+    fi
+}
+
 run_latehook() {
 	R="/new_root" # just a shortcut
 
@@ -75,23 +82,29 @@ run_latehook() {
 
     REAL_LABEL=$(cat /proc/cmdline)
 	REAL_LABEL=${REAL_LABEL#*root=}
-	REAL_LABEL=${REAL_LABEL% *}
+	REAL_LABEL=${REAL_LABEL%% *}
+    dprint "REAL LABEL: " $REAL_LABEL
 
     LABELNAME=${REAL_LABEL#*=}
+
+    dprint "LABELNAME: " $LABELNAME
 
     DEVICE=$(readlink -f /dev/disk/by-label/$LABELNAME)
     DEVICE=${DEVICE:0:8}
 
+    dprint "DEVICE: " $DEVICE and "F_BOOT_ROOT: " $F_BOOT_ROOT
+
 	mkdir "$F_BOOT_ROOT"
 	"$mount_handler" $F_BOOT_ROOT # Mount boot device
-
 
     # Mount SQUASH in /
 
     if [ -e "$F_BOOT_ROOT/$SQUASHROOT" ]; then # squash file
+        dprint mount_squash "$F_BOOT_ROOT/$SQUASHROOT" -o loop
         mount_squash "$F_BOOT_ROOT/$SQUASHROOT" -o loop
         RW_DRIVE=${DEVICE}2
     else # squash partition
+        dprint mount_squash ${DEVICE}2
         mount_squash ${DEVICE}2
         RW_DRIVE=${DEVICE}3
     fi
@@ -100,6 +113,7 @@ run_latehook() {
         RW_DRIVE=$(cat "$F_BOOT_ROOT/rw_drive")
     fi
 
+    dprint "RW DRIVE/ " $RW_DRIVE
 
 	mount --move "$F_BOOT_ROOT" "$R/boot" || oops # make original root accessible as /boot (ro)
 
@@ -114,10 +128,18 @@ run_latehook() {
 
 	# check persistant
 	if [ -z "$nobtr" ] && [ -e "$RW_DRIVE" ] ; then # We have a storage device, Yey !!
-	    run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
-	    run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
+        if [ -z "$debug" ]; then
+            run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
+            run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
+        else
+            dprint run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" && FS_OPTS="ssd,compress=lzo,discard,relatime"
+            run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" && FS_OPTS="ssd,compress=lzo,discard,relatime"
+            dprint run_newroot fsck.ext4 -p "$RW_DRIVE" && FS_OPTS="discard,relatime"
+            run_newroot fsck.ext4 -p "$RW_DRIVE" && FS_OPTS="discard,relatime"
+        fi
 
         if [ -n "$FS_OPTS" ]; then
+            dprint mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
             mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
 
             mv /tmp/*.log "$F_RWPART"
@@ -129,6 +151,7 @@ run_latehook() {
 
 	if [ $STORED -eq 0 ]; then
 	    echo "[VOLATILE]"
+	    dprint mount -t tmpfs tmpfs "$F_RWPART"
 	    mount -t tmpfs tmpfs "$F_RWPART"
 			if [ "$COMPRESSOR" = "gzip" ] ; then
 				CCAT="gzcat"
@@ -150,6 +173,7 @@ run_latehook() {
 	done
 
 	# mount /usr to make systemd happy
+	dprint mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
 	mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
 
 	# generate fstab
@@ -172,6 +196,11 @@ tmpfs          /var/log        tmpfs    rw     0 2
 tmpfs          /var/tmp        tmpfs    rw     0 2
 tmpfs          /var/cache      tmpfs    rw     0 2
 EOF
+
+if [ -n "$debug" ]; then
+    cat /tmp/fstab
+    dprint "$T_F"
+fi
 
 sed "s#BOOTDEVICE#${REAL_LABEL}#" /tmp/fstab > $T_F
 	[ -n "$shell" ] && run_newroot sh -i # start a shell if requested
