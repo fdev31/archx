@@ -1,0 +1,1 @@
+../.././alternatives/install/login_manager.sh
