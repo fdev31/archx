@@ -5,6 +5,20 @@
 export LC_ALL=C
 rootfs=$(mktemp -d)
 
+function call_fdisk() {
+    DRIVE=$1
+    shift
+    longcmd=""
+    for cmd in $*; do
+        if [ "$cmd" = "-" ]; then
+            longcmd="${longcmd}\n"
+        else
+            longcmd="${longcmd}${cmd}\n"
+        fi
+    done
+    echo -e $longcmd | fdisk $DRIVE
+}
+
 [ "x$DISKLABEL" = "x" ] && DISKLABEL=LINUX
 echo "DISKLABEL: $DISKLABEL"
 
@@ -35,24 +49,25 @@ else # file
     sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
 fi
 
-#dd conv=notrunc if=/dev/zero of=$DISK bs=512 count=1 # clear MBR
-sudo wipefs -a $DISK
+echo "############################################################## wipe disk "
+wipefs -a $DISK
+echo "############################################################## make disk structure "
 
-echo -e 'n\np\n1\n\n+'$SZ1'M\nt\nef\nn\np\n2\n\n+'$sq_size'M\nn\n\n\n\n\na\n1\nw\n' | fdisk $DISK || clean_exit 1
+call_fdisk $DISK n p 1 - +${SZ1}M t ef n p 2 - +${sq_size}M n - - - - a 1 w || clean_exit 1
 
 sudo partprobe
 loop=$(sudo losetup -P -f --show $DISK)
 sudo partprobe
 
-sudo mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
-echo " SQUASH ####################################################"
-sudo dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
+echo "############################################################## create BOOT/EFI partition "
+mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
+echo "############################################################## copy ROOT filesystem"
+dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
 # TODO: alternative: mkfs + unsquashfs
 # - remove initcpio hook (rolinux) + regen
 # - regen grub-conf
-echo " EXT4 ####################################################"
-sudo mkfs.ext4 -F ${loop}p3 || clean_exit 1
-
+echo "############################################################## create data partition"
+mkfs.ext4 -F ${loop}p3 || clean_exit 1
 
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
@@ -65,14 +80,14 @@ if [ -d ROOT ]; then
     EFI_OPTS="--no-nvram"
 else
     RSRC=/boot/rootfs.default
-    sudo cp -ar /boot/grub $rootfs/boot
-    sudo cp -ar /boot/EFI $rootfs/boot
+    sudo cp -ar /boot/{grub,EFI} $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
 fi
 sudo tar xf $RSRC -C $rootfs/storage
 
 MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
 
+echo "############################################################## install Boot loader"
 sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" --efi-directory "$rootfs/boot" --bootloader-id "$DISKLABEL" $EFI_OPTS
 
 sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
