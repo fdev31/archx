@@ -35,7 +35,8 @@ else # file
     sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
 fi
 
-dd conv=notrunc if=/dev/zero of=$DISK bs=512 count=1 # clear MBR
+#dd conv=notrunc if=/dev/zero of=$DISK bs=512 count=1 # clear MBR
+sudo wipefs -a $DISK
 
 echo -e 'n\np\n1\n\n+'$SZ1'M\nt\nef\nn\np\n2\n\n+'$sq_size'M\nn\n\n\n\n\na\n1\nw\n' | fdisk $DISK || clean_exit 1
 
@@ -72,9 +73,8 @@ sudo tar xf $RSRC -C $rootfs/storage
 
 MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
 
-sudo mkdir "$rootfs/boot/boot"
-
 sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" --efi-directory "$rootfs/boot" --bootloader-id "$DISKLABEL" $EFI_OPTS
+
 sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
 
 sudo sed -i "s/ARCHX/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
