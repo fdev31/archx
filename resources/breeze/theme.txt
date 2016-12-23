@@ -16,8 +16,8 @@ terminal-font: "DejaVu Regular 16"
 terminal-box: "terminal_*.png"
 
 + boot_menu {
-  left = 0%
-  width = 100%
+  left = 10%
+  width = 80%
   top = 20%
   height = 60%	
 
