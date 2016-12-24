@@ -6,6 +6,9 @@ IPADDR=$(curl -s icanhazip.com)
 COUNTRY=$(geoiplookup $IPADDR)
 COUNTRY=${COUNTRY#*: }
 COUNTRY=${COUNTRY%,*}
+if [ -z "$COUNTRY" ]; then
+    COUNTRY=FR
+fi
 if [ -e country_codes/$COUNTRY ] ; then
     echo "** Adding i18n-$COUNTRY support"
     source country_codes/$COUNTRY
