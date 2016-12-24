@@ -1,1 +1,1 @@
-install_pkg systemd-ui
+have_xorg && install_pkg systemd-ui

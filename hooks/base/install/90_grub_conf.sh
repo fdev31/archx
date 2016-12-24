@@ -1,3 +1,4 @@
+install_pkg os-prober
 install_pkg grub
 sudo mkdir -p "$R/boot/grub/fonts/" 2> /dev/null
 sudo mkdir -p "$R/boot/grub/themes/" 2> /dev/null

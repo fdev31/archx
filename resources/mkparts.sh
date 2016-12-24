@@ -4,20 +4,7 @@
 # TODO/ make fixed squash size possible
 export LC_ALL=C
 rootfs=$(mktemp -d)
-
-function call_fdisk() {
-    DRIVE=$1
-    shift
-    longcmd=""
-    for cmd in $*; do
-        if [ "$cmd" = "-" ]; then
-            longcmd="${longcmd}\n"
-        else
-            longcmd="${longcmd}${cmd}\n"
-        fi
-    done
-    echo -e $longcmd | fdisk $DRIVE
-}
+. ./resources/instlib.sh
 
 [ "x$DISKLABEL" = "x" ] && DISKLABEL=LINUX
 echo "DISKLABEL: $DISKLABEL"
@@ -50,7 +37,7 @@ else # file
 fi
 
 echo "############################################################## wipe disk "
-wipefs -a $DISK
+wipefs --force -a $DISK
 echo "############################################################## make disk structure "
 
 call_fdisk $DISK n p 1 - +${SZ1}M t ef n p 2 - +${sq_size}M n - - - - a 1 w || clean_exit 1
@@ -74,32 +61,19 @@ sudo mount ${loop}p1 $rootfs/boot
 sudo mount ${loop}p3 $rootfs/storage
 
 if [ -d ROOT ]; then
+    UPDATE_EFI=
     RSRC=ROOT/boot/rootfs.default
     sudo cp -ar ROOT/boot/* $rootfs/boot
     INSTALL_SECURE_BOOT=1
-    EFI_OPTS="--no-nvram"
 else
+    UPDATE_EFI=1
     RSRC=/boot/rootfs.default
     sudo cp -ar /boot/{grub,EFI} $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
 fi
 sudo tar xf $RSRC -C $rootfs/storage
 
-MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
-
-echo "############################################################## install Boot loader"
-sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" --efi-directory "$rootfs/boot" --bootloader-id "$DISKLABEL" $EFI_OPTS
-
-sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$rootfs/boot" $loop
-
-sudo sed -i "s/ARCHX/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
-sudo sed -i "s/ARCHINST/$DISKLABEL/g" "$rootfs/boot/grub/grub.cfg"
-
-if [ -n "$INSTALL_SECURE_BOOT" ]; then
-    sudo cp secureboot/{PreLoader,HashTool}.efi "$rootfs/boot/EFI/BOOT/"
-    sudo mv "$rootfs/boot/EFI//BOOT/BOOTX64.EFI"    "$rootfs/boot/EFI/BOOT/loader.efi" # loader = grub
-    sudo mv "$rootfs/boot/EFI//BOOT/PreLoader.efi"  "$rootfs/boot/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
-fi
+install_grub "${loop}" "$rootfs/boot" $DISKLABEL "$UPDATE_EFI"
 
 echo "FINISHED"
 clean_exit 0

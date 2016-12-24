@@ -1,5 +1,7 @@
 #!/usr/bin/ash
 # vim: filetype=sh
+W_ROOTDIR="/run/overlay/ROOT" # rootdirs prefix for tmpfs overlay
+W_WORKDIR="/run/overlay/WORK" # workdirs prefix for tmpfs overlay
 
 ## funcs:
 oops() {
@@ -20,13 +22,13 @@ mount_squash() {
     orig=$1
     shift
     mount -t squashfs "$orig" "$R" $* || fatal "$E_MSG"
-    [ -n "$DEBUG" ] && echo "- squash image loaded"
+    [ -n "$shell" ] && echo "- squash image loaded"
 }
 
 load_kmap() {
     if [ -e "$R/usr/share/kbd/keymaps/initrd.map" ]; then
         loadkmap < "$R/usr/share/kbd/keymaps/initrd.map" || oops
-        [ -n "$DEBUG" ] && echo "- keymap"
+        [ -n "$shell" ] && echo "- keymap"
     fi
 }
 
@@ -37,11 +39,11 @@ run_newroot() {
 process_mountname() {
     NAME="$1"
     if [ -z "$2" ]; then
-        P="$F_PFX"
-        WP="$F_WPFX"
+        P="$F_RWPART/ROOT"
+        WP="$F_RWPART/WORK"
     else
-        P="$F_TMPFS_ROOT"
-        WP="$F_TMPFS_WORK_ROOT"
+        P="$W_ROOTDIR"
+        WP="$W_WORKDIR"
     fi
     FLAT_NAME=$(echo $1 | sed 's#/#_#g')
     FLAT_NAME=${FLAT_NAME:1}
@@ -56,6 +58,7 @@ process_mountname() {
 
 dprint() {
     if [ -n "$debug" ]; then
+        echo "-------------------------------------------------------------"
         echo $*
         sleep 1
     fi
@@ -63,29 +66,24 @@ dprint() {
 
 run_latehook() {
 	R="/new_root" # just a shortcut
+	F_BOOT_ROOT="/fat_root" # original root, includes squashfs image
+
+	F_RWPART="$R{{STORAGE_PATH}}"
+
 
 	if [ -z "$SQUASHROOT" ] ; then
 		SQUASHROOT={{ROOTIMAGE}}
 	fi
-	STORAGE_IMAGE={{STORAGE}}
-
-	COMPRESSOR={{COMPRESSOR}}
-	F_RWPART="$R{{STORAGE_PATH}}"
-	F_BOOT_ROOT="/fat_root" # original root, includes squashfs image
-	F_TMPFS_ROOT="/run/overlay/ROOT" # rootdirs prefix for tmpfs overlay
-	F_TMPFS_WORK_ROOT="/run/overlay/WORK" # workdirs prefix for tmpfs overlay
-	F_PFX="$F_RWPART/ROOT" # new roots prefix
-	F_WPFX="$F_RWPART/WORK" # new work prefix
-	DEBUG=$shell
 
 	## main code:
 
-    REAL_LABEL=$(cat /proc/cmdline)
-	REAL_LABEL=${REAL_LABEL#*root=}
-	REAL_LABEL=${REAL_LABEL%% *}
-    dprint "REAL LABEL: " $REAL_LABEL
 
-    LABELNAME=${REAL_LABEL#*=}
+    FULL_DISK_ID=$(cat /proc/cmdline)
+	FULL_DISK_ID=${FULL_DISK_ID#*root=}
+	FULL_DISK_ID=${FULL_DISK_ID%% *}
+    dprint "REAL LABEL: " $FULL_DISK_ID
+
+    LABELNAME=${FULL_DISK_ID#*=}
 
     dprint "LABELNAME: " $LABELNAME
 
@@ -93,42 +91,73 @@ run_latehook() {
     DEVICE=${DEVICE:0:8}
 
     dprint "DEVICE: " $DEVICE and "F_BOOT_ROOT: " $F_BOOT_ROOT
+    mkdir "$F_BOOT_ROOT"
 
-	mkdir "$F_BOOT_ROOT"
-	"$mount_handler" $F_BOOT_ROOT # Mount boot device
+    mount --move "$R" "$F_BOOT_ROOT"
+
+    if [ -e "$F_BOOT_ROOT/boot" ]; then
+        F_BR="$F_BOOT_ROOT/boot"
+        BOOTBOOTHACK=1
+    else
+        F_BR="$F_BOOT_ROOT"
+    fi
 
     # Mount SQUASH in /
 
     if [ -e "$F_BOOT_ROOT/$SQUASHROOT" ]; then # squash file
+        echo "Loading rootfs file"
         dprint mount_squash "$F_BOOT_ROOT/$SQUASHROOT" -o loop
         mount_squash "$F_BOOT_ROOT/$SQUASHROOT" -o loop
-        RW_DRIVE=${DEVICE}2
+        if [ -z "$BOOTBOOTHACK" ]; then
+            S_RW_DRIVE="/boot/rwdrive.disk"
+        else
+            S_RW_DRIVE="/run/bootpart/rwdrive.disk"
+        fi
+        RW_DRIVE="$R/$S_RW_DRIVE"
     else # squash partition
+        echo "Loading rootfs partition"
         dprint mount_squash ${DEVICE}2
         mount_squash ${DEVICE}2
         RW_DRIVE=${DEVICE}3
+        S_RW_DRIVE=$RW_DRIVE
     fi
 
-    if [ -e "$F_BOOT_ROOT/rw_drive" ]; then
-        RW_DRIVE=$(cat "$F_BOOT_ROOT/rw_drive")
+    # Allow initial RW folder: run
+	mount -t tmpfs tmpfs "$R/run"
+
+    if [ -e "$F_BR/rw_drive" ]; then
+        RW_DRIVE=$(cat "$F_BR/rw_drive")
     fi
 
     dprint "RW DRIVE/ " $RW_DRIVE
 
-	mount --move "$F_BOOT_ROOT" "$R/boot" || oops # make original root accessible as /boot (ro)
+    if [ -z "$BOOTBOOTHACK" ]; then # boot is root, just move it
+        BOOTPART="$R/boot"
+        mount --move "$F_BOOT_ROOT" "$BOOTPART" || oops # make original root accessible as /boot (ro)
+    else # boot is under /boot, mount in some folder then bind
+        BOOTPART="$R/run/bootpart"
+        mkdir "$BOOTPART"
+        mount --move "$F_BOOT_ROOT" "$BOOTPART" || oops # make original root accessible as /boot (ro)
+        mount --bind "$BOOTPART/boot" "$R/boot"
+    fi
 
-	load_kmap # loading kmap from it
+    if [ "${RW_DRIVE%/*}" != "/dev" ]; then
+        echo "remount rw"
+        mount "$BOOTPART" -o remount,rw
+    fi
+
+    # $R/ & $R/boot are properly setup now, proceeding with storage & co
+
 	rmdir "$F_BOOT_ROOT" # now it's moved, we can remove original mountpoint
 
-    # Allow initial RW folder: run
-	mount -t tmpfs tmpfs "$R/run"
+	load_kmap # loading kmap from it
 
 	# default mount types
 	STORED=0
 
 	# check persistant
 	if [ -z "$nobtr" ] && [ -e "$RW_DRIVE" ] ; then # We have a storage device, Yey !!
-        if [ -z "$debug" ]; then
+        if [ -z "$shell" ]; then
             run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
             run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
         else
@@ -139,6 +168,7 @@ run_latehook() {
         fi
 
         if [ -n "$FS_OPTS" ]; then
+
             dprint mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
             mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
 
@@ -153,23 +183,21 @@ run_latehook() {
 	    echo "[VOLATILE]"
 	    dprint mount -t tmpfs tmpfs "$F_RWPART"
 	    mount -t tmpfs tmpfs "$F_RWPART"
-			if [ "$COMPRESSOR" = "gzip" ] ; then
-				CCAT="gzcat"
-			else
-				CCAT="xzcat"
-			fi
-			#run_newroot $CCAT  | run_newroot tar xf - -C "$F_RWPART"
-			run_newroot tar xf "$R/boot/rootfs.default" -C "$F_RWPART"
 	fi
 
-	for d in home var_lib_pacman etc opt srv usr var_db; do
-	    mkdir -p "$F_PFX/$d"
-	    mkdir -p "$F_WPFX/$d"
+    if [ ! -d "$F_RWPART/ROOT" ]; then # populate if empty
+        echo "populating default"
+        run_newroot tar xf "$R/boot/rootfs.default" -C "$F_RWPART"
+    fi
+
+	for d in home etc opt srv usr var_db; do
+	    mkdir -p "$F_RWPART/ROOT/$d"
+	    mkdir -p "$F_RWPART/WORK/$d"
 	done
 
 	for d in mnt var_lib; do
-	    mkdir -p "$R/$F_TMPFS_ROOT/$d"
-	    mkdir -p "$R/$F_TMPFS_WORK_ROOT/$d"
+	    mkdir -p "$R/$W_ROOTDIR/$d"
+	    mkdir -p "$R/$W_WORKDIR/$d"
 	done
 
 	# mount /usr to make systemd happy
@@ -177,32 +205,28 @@ run_latehook() {
 	mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
 
 	# generate fstab
-	T_F="/new_root/run/fstab"
+	T_F="$R/run/fstab"
 	cat > /tmp/fstab <<EOF
 /dev/loop0      /               squashfs ro,x-systemd.device-timeout=90,relatime        0 0
-$REAL_LABEL     /boot           vfat     ro,x-systemd.device-timeout=90,relatime,fmask=0022,dmask=0022,shortname=mixed,errors=remount-ro        0 1
-$RWDRIVE  /storage        auto     rw,nofail,x-systemd.device-timeout=1,relatime,discard,data=ordered     0 1
+$FULL_DISK_ID     /boot           vfat     rw,x-systemd.device-timeout=90,relatime,fmask=0022,dmask=0022,shortname=mixed,errors=remount-ro        0 1
+$S_RW_DRIVE  /storage        auto     rw,nofail,x-systemd.device-timeout=1,relatime,discard,data=ordered     0 1
 
 /storage/ROOT/home    /home     none     rw,x-systemd.device-timeout=60,relatime,discard,data=ordered,bind      0 2
 
 none     /mnt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/mnt,upperdir=/run/overlay/ROOT/mnt,workdir=/run/overlay/WORK/mnt     0 2
 none     /var/lib         overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib,upperdir=/run/overlay/ROOT/var_lib,workdir=/run/overlay/WORK/var_lib 0 2
+none     /var/db          overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/db,upperdir=/storage/ROOT/var_db,workdir=/storage/WORK/var_db    0 2
 none     /etc             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/etc,upperdir=/storage/ROOT/etc,workdir=/storage/WORK/etc     0 2
 none     /opt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/opt,upperdir=/storage/ROOT/opt,workdir=/storage/WORK/opt     0 2
 none     /srv             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/srv,upperdir=/storage/ROOT/srv,workdir=/storage/WORK/srv     0 2
 none     /usr             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/usr,upperdir=/storage/ROOT/usr,workdir=/storage/WORK/usr     0 2
-none     /var/db          overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/db,upperdir=/storage/ROOT/var_db,workdir=/storage/WORK/var_db    0 2
-tmpfs          /var/log        tmpfs    rw     0 2
-tmpfs          /var/tmp        tmpfs    rw     0 2
-tmpfs          /var/cache      tmpfs    rw     0 2
+
+tmpfs    /var/log        tmpfs    rw     0 2
+tmpfs    /var/tmp        tmpfs    rw     0 2
+tmpfs    /var/cache      tmpfs    rw     0 2
 EOF
-
-    if [ -n "$debug" ]; then
-        cat /tmp/fstab
-        dprint "$T_F"
-    fi
-
     cp /tmp/fstab $T_F
+
     [ -n "$shell" ] && run_newroot sh -i # start a shell if requested
 }
 
