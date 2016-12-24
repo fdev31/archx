@@ -27,6 +27,17 @@ A4D aims at providing a smooth experience for unexperimented users,
 providing latest versions of popular graphical environments, allowing "real/normal" people to
 use this amazing opensource operating system.
 
+## Available Desktop environments
+
+From the most RAM consuming to the lightest:
+
+- *cinnamon* - very heavy
+- *gnome3* - very heavy
+- *gnome3-classique* - quite heavy
+- *xfce* - light
+- *mate* - lighter
+
+Note that **kodi** requires as little as **mate**
 
 ## Quickstart
 
