@@ -227,6 +227,6 @@ tmpfs    /var/cache      tmpfs    rw     0 2
 EOF
     cp /tmp/fstab $T_F
 
-    [ -n "$shell" ] && run_newroot sh -i # start a shell if requested
+    [ -n "$shell" ] && ash -i #run_newroot sh -i # start a shell if requested
 }
 
