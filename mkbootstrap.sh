@@ -83,11 +83,17 @@ function run_install_hooks() {
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
+    raw_install_pkg -Rns $(raw_install_pkg -Qtdq) # add one "t" to get rid of optional dependencies
     raw_install_pkg -Sc --noconfirm
 }
 
 function install_extra_packages() {
     step2 "Extra packages"
+    if [ -e "extra_packages/dependencies.txt" ]; then
+        sudo pacman -r "$R" -S --needed --noconfirm $(cat extra_packages/dependencies.txt)
+    else
+        echo "No extra packages dependencies declared"
+    fi
     if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
         sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
     fi
@@ -188,27 +194,25 @@ function make_disk_image() {
     if [ -n "$LIVE_SYSTEM" ]; then
         sudo cp -r extra_files/* "$R/boot/" 2>/dev/null || echo "No extra files to install"
     fi
-#    BOOT_SZ=$(du -BM -s "$R/boot") # compute size
-#    BOOT_SZ=${BOOT_SZ%%M*}
 
+    sqsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
+    rsize=$(( $sqsize + $DISK_MARGIN + $BOOT_MARGIN ))
 
-    rsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
-    rsize=$(( $rsize + $DISK_MARGIN + $BOOT_MARGIN ))
+    echo "Creating disk image..."
+    dd if=/dev/zero of="$D" bs=1M count=$rsize
 
-    sudo dd if=/dev/zero of="$D" bs=1M count=$rsize
-
-        step2 "Building persistent filesystem"
-        MPT="$WORKDIR/.storage_mnt_pt"
-        mkdir "$MPT"
-        mkdir "$MPT/ROOT"
-        mkdir "$MPT/WORK"
-        sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-        
-        pushd "$MPT"
-            sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
-            sudo mv ../rootfs.default $R/boot/
-        popd > /dev/null
-        sudo rm -fr "$MPT"
+    step2 "Building persistent filesystem"
+    MPT="$WORKDIR/.storage_mnt_pt"
+    mkdir "$MPT"
+    mkdir "$MPT/ROOT"
+    mkdir "$MPT/WORK"
+    sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
+    
+    pushd "$MPT"
+        sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
+        sudo mv ../rootfs.default $R/boot/
+    popd > /dev/null
+    sudo rm -fr "$MPT"
 
     sudo DISKLABEL="ARCHINST" ./resources/mkparts.sh "$D" $BOOT_MARGIN "$SQ"
 }
