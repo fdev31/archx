@@ -161,9 +161,9 @@ run_latehook() {
             run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
             run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
         else
-            dprint run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" && FS_OPTS="ssd,compress=lzo,discard,relatime"
+            dprint btrfs check -p --repair --check-data-csum "$RW_DRIVE" && FS_OPTS="ssd,compress=lzo,discard,relatime"
             run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" && FS_OPTS="ssd,compress=lzo,discard,relatime"
-            dprint run_newroot fsck.ext4 -p "$RW_DRIVE" && FS_OPTS="discard,relatime"
+            dprint fsck.ext4 -p "$RW_DRIVE" && FS_OPTS="discard,relatime"
             run_newroot fsck.ext4 -p "$RW_DRIVE" && FS_OPTS="discard,relatime"
         fi
 
