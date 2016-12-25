@@ -83,7 +83,7 @@ function run_install_hooks() {
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
-    install_pkg -Sc --noconfirm
+    raw_install_pkg -Sc --noconfirm
 }
 
 function install_extra_packages() {
