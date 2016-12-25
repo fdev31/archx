@@ -37,3 +37,17 @@ ROOTNAME="rootfs.s"
 R="$WORKDIR/ROOT"
 D="$WORKDIR/$DISKLABEL.img"
 SQ="$WORKDIR/$ROOTNAME"
+
+PKG_BASE="base flashdisk installer locales net-chat net-utils system"
+PKG_XORG="xorg www"
+PKG_EDIT="editors dev-base"
+PKG_GFX="gfx-base gfx-more photo-base"
+PKG_UI="lookandfeel"
+PKG_EMU="emulation"
+PKG_MED="medical"
+PKG_DOC="office-base office-more"
+PKG_SRV="servers"
+PKG_SND="snd-base snd-more snd-adv"
+
+# also: proprietary
+# envs: awesome, budgie, cinnamon, deepin, enlightenment, gnome, kde, lxde, mate, pantheon, xfce, zorin
