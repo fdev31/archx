@@ -16,7 +16,7 @@ PASSWORD="sexy"
 PACMAN_BIN=yaourt # alternative pacman frontend, else set "sudo pacman"
 WORKDIR="$PWD" # default workdir = script dir
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
-DISK_MARGIN=30 # extra space for persistence, also HOME size, used for loopback or disk images
+DISK_MARGIN=300 # extra space for persistence, also HOME size, used for loopback or disk images
 BOOT_MARGIN=50 # extra space for /boot (first partition)
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon,root"
 NO_EXTRA_PACKAGES= # set to 1 to disable extra packages
