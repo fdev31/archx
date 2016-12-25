@@ -208,10 +208,9 @@ run_latehook() {
 	# generate fstab
 	T_F="$R/run/fstab"
 	cat > /tmp/fstab <<EOF
-/dev/loop0      /               squashfs ro,x-systemd.device-timeout=90,relatime        0 0
-$FULL_DISK_ID     /boot           vfat     rw,x-systemd.device-timeout=90,relatime,fmask=0022,dmask=0022,shortname=mixed,errors=remount-ro        0 1
-$S_RW_DRIVE  /storage        auto     rw,nofail,x-systemd.device-timeout=1,relatime,discard,data=ordered     0 1
-
+/dev/loop0            /         squashfs ro,x-systemd.device-timeout=1m,relatime        0 0
+$FULL_DISK_ID         /boot     vfat     rw,x-systemd.device-timeout=1m,relatime,fmask=0022,dmask=0022,shortname=mixed,errors=remount-ro        0 1
+$S_RW_DRIVE           /storage  auto     rw,x-systemd.device-timeout=1m,relatime,discard,data=ordered     0 2
 /storage/ROOT/home    /home     none     rw,x-systemd.device-timeout=60,relatime,discard,data=ordered,bind      0 2
 
 none     /mnt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/mnt,upperdir=/run/overlay/ROOT/mnt,workdir=/run/overlay/WORK/mnt     0 2
