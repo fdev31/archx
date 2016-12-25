@@ -188,6 +188,7 @@ run_latehook() {
     if [ ! -d "$F_RWPART/ROOT" ]; then # populate if empty
         echo "populating default"
         run_newroot tar xf "$R/boot/rootfs.default" -C "$F_RWPART"
+        sync
     fi
 
 	for d in home etc opt srv usr var_db; do
