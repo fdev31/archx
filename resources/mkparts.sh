@@ -24,7 +24,7 @@ SZ1=$2
 SQ=$3
 
 if [ -z $SQ ]; then
-    echo "Syntax: $0 <image or device> <boot_part_size> <squash_image> <extra fs>"
+    echo "Syntax: $0 <image or device> <boot_part_size> <squash_image>"
     exit 1
 fi
 
