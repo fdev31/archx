@@ -27,6 +27,19 @@ A4D aims at providing a smooth experience for unexperimented users,
 providing latest versions of popular graphical environments, allowing "real/normal" people to
 use this amazing opensource operating system.
 
+## Status
+
+Currently WIP, starts to be useable.
+
+Target installation modes include:
+
+- Full disk [DONE]
+- Archlinux [TODO]
+- Re-use existing partition [DONE]
+
+To do: "clone" option, copying rw data as well
+    - could be split in "settings" & "personal folder"
+
 ## Available Desktop environments
 
 From the most RAM consuming to the lightest:
