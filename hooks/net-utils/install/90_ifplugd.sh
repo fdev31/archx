@@ -1,0 +1,2 @@
+install_pkg ifplugd
+install_pkg wpa_actiond

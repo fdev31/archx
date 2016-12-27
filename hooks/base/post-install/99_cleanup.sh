@@ -1,4 +1,3 @@
-
 enable_service fstrim.timer
 
 if [ -e "$R/etc/udev/hwdb.bin" ]; then
