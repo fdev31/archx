@@ -117,13 +117,14 @@ function make_squash_root() {
             sudo mkdir ".$LIVE_SYSTEM"
         fi
 
+        SQ_OPTS="-no-exports -noappend -no-recovery"
         if [ -n "$NOCOMPRESS" ]; then
-            sudo mksquashfs . "$SQ" -ef $IF  -noI -noD -noF -noX -no-exports -noappend -no-recovery
+            sudo mksquashfs . "$SQ" -ef $IF  -noI -noD -noF -noX $SQ_OPTS
         else
             if [ "$COMPRESSION_TYPE" = "xz" ]; then
-                sudo mksquashfs . "$SQ" -ef $IF -comp xz   -no-exports -noappend -no-recovery -b 1M  -Xdict-size '100%'
+                sudo mksquashfs . "$SQ" -ef $IF -comp xz   $SQ_OPTS -b 1M  -Xdict-size '100%'
             else # gz == gzip
-                sudo mksquashfs . "$SQ" -ef $IF -comp gzip -no-exports -noappend -no-recovery -b 1M
+                sudo mksquashfs . "$SQ" -ef $IF -comp gzip $SQ_OPTS -b 1M
             fi
         fi  
     popd > /dev/null
