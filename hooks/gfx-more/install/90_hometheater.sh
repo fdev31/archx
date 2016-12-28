@@ -2,7 +2,7 @@
 install_pkg kodi
 install_pkg kodi-audioencoder-vorbis kodi-audioencoder-lame
 
-echo "needs_root_rights = yes" | dd of="$R/etc/X11/Xwrapper.config"
+echo "needs_root_rights = yes" | sudo dd of="$R/etc/X11/Xwrapper.config"
 
 sudo useradd --system -R "$R" -G $DEFAULT_GROUPS -m kodiuser
 

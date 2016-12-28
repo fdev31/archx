@@ -6,6 +6,6 @@ if have_xorg ; then
     install_pkg pavucontrol
     install_pkg pavumeter
     install_pkg paprefs
-    install_pkg wayland-protocols
+    install_pkg wayland-protocols-git
     install_pkg pasystray
 fi
