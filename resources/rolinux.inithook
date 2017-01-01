@@ -171,15 +171,13 @@ run_latehook() {
 
             dprint mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
             mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
-
-            mv /tmp/*.log "$F_RWPART"
-
             STORED=1
             echo "[STORED]"
+            mv /tmp/*.log "$F_RWPART"
         fi
     fi
 
-	if [ $STORED -eq 0 ]; then
+	if [ $STORED -eq 0 ]; then # no storage = tmpfs roott
 	    echo "[VOLATILE]"
 	    dprint mount -t tmpfs tmpfs "$F_RWPART"
 	    mount -t tmpfs tmpfs "$F_RWPART"
@@ -190,16 +188,21 @@ run_latehook() {
         run_newroot tar xf "$R/boot/rootfs.default" -C "$F_RWPART"
         sync
     fi
+    # ensure overlay folders are created
+    for d in home etc opt srv usr var_db; do
+        if [ ! -d "$F_RWPART/ROOT/$d" ]; then
+            mkdir -p "$F_RWPART/ROOT/$d"
+            mkdir -p "$F_RWPART/WORK/$d"
+        fi
+    done
 
-	for d in home etc opt srv usr var_db; do
-	    mkdir -p "$F_RWPART/ROOT/$d"
-	    mkdir -p "$F_RWPART/WORK/$d"
-	done
+    for d in mnt var_lib; do
+        if [ ! -d "$R/$W_ROOTDIR/$d" ]; then
+            mkdir -p "$R/$W_ROOTDIR/$d"
+            mkdir -p "$R/$W_WORKDIR/$d"
+        fi
+    done
 
-	for d in mnt var_lib; do
-	    mkdir -p "$R/$W_ROOTDIR/$d"
-	    mkdir -p "$R/$W_WORKDIR/$d"
-	done
 
 	# mount /usr to make systemd happy
 	dprint mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
