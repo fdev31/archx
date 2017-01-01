@@ -26,7 +26,6 @@ HOOK_BUILD_FLAG=0
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
-    HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
     rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
     mkdir "$HOOK_BUILD_DIR"
     for PROFILE in $PROFILES; do
@@ -72,6 +71,7 @@ function reconfigure() {
 function run_install_hooks() {
     step "Triggering install hooks"
     run_hooks pre-install
+    source "$_net_mgr"
     run_hooks install
     if [ -n "$DISTRO_PACKAGE_LIST" ]; then
         step2 "Distribution packages"

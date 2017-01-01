@@ -7,6 +7,8 @@ step "Enabling multilib mode (32 bits applications allowed)"
 have_package gcc-libs && raw_install_pkg -Rdd --noconfirm gcc-libs && install_pkg --asdeps gcc-libs-multilib
 have_package gcc && raw_install_pkg -Rdd --noconfirm gcc && install_pkg --asdeps gcc-multilib
 
+install_pkg  netctl wpa_supplicant ifplugd
+
 #install_pkg --asdeps linux-headers
 #install_pkg virtualbox-guest-dkms 
 

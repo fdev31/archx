@@ -16,6 +16,9 @@ else
     echo "** No i18n support found for $COUNTRY"
 fi
 
+HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
+_net_mgr="$HOOK_BUILD_DIR/install/50_network_manager.sh"
+
 # LOAD OVERRIDES
 
 [ -e my_conf.sh ] && source ./my_conf.sh
@@ -106,6 +109,10 @@ function install_pkg() {
 function remove_pkg() {
     _set_pkgmgr
     $PKGMGR -r "$R" --noconfirm -R $*
+}
+
+function network_manager() {
+    ln -fs "../../hooks/alternatives/install/network_manager/50_network_$1.sh" "$_net_mgr"
 }
 
 function enable_service() {
