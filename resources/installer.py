@@ -69,20 +69,12 @@ class O:
                 label=getattr(self, 'label', 'NONE'),
                 size=getattr(self, 'size', 0.0))
 
-class Installer:
+class DiskInfo:
     parts = {}
     disks = {}
     info = O()
     info.boot_part_size = 0
-
-    USE_EFI = True
-    TGT = '/tmp/install_target'
-    MODZ = "normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 btrfs xfs jfs"
-
     def __init__(self):
-        # Detect live boot devicea
-        if not os.path.exists(self.TGT):
-            os.mkdir(self.TGT)
         cmdline = dict(x.split('=', 1) for x in open('/proc/cmdline').read().split() if "=" in x)
         dev = '/dev/'+ os.readlink('/dev/disk/by-label/'+cmdline['root'].split('=')[1]).split('/')[-1]
         self.info.boot_partition = dev
@@ -106,13 +98,7 @@ class Installer:
             else:
                 k, v = line.split(b'=')
                 setattr(cur_part, k.lower().decode(), v.decode())
-
-        try:
-            self.DISKLABEL = self.parts[self.info.boot_partition].label
-        except KeyError:
-            self.DISKLABEL = FALLBACK_DISKLABEL
         print("PARTS:", self.parts)
-
         self._list_disks()
 
     def _get_dev_info(self, devname, what='size'):
@@ -165,6 +151,24 @@ class Installer:
                 p.append( d )
         return p
 
+class Installer:
+
+    USE_EFI = True
+    TGT = '/tmp/install_target'
+    MODZ = "normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp ext2 btrfs xfs jfs"
+
+    def __init__(self):
+        # Detect live boot devicea
+        if not os.path.exists(self.TGT):
+            os.mkdir(self.TGT)
+
+        self.disks = DiskInfo()
+
+        try:
+            self.DISKLABEL = self.disks.parts[self.disks.info.boot_partition].label
+        except KeyError:
+            self.DISKLABEL = FALLBACK_DISKLABEL
+
     def mkfs(self, drive, label, fmt='fat'):
         if not '/' in drive:
             drive = '/dev/'+drive
@@ -213,9 +217,9 @@ class Installer:
 
     def select_disk(self, min_size=0):
         choices = [(x.split('/')[-1], "%(size)s %(label)s"%dict(
-                size=self.disks[x].size,
-                label=self.disks[x].label,
-                )) for x in sorted(self.disks) if self.disks[x].size.value > min_size] # skip devices < 2.5GB
+                size=self.disks.disks[x].size,
+                label=self.disks.disks[x].label,
+                )) for x in sorted(self.disks.disks) if self.disks.disks[x].size.value > min_size] # skip devices < 2.5GB
 
         if len(choices) > 1:
             drive = UI.menu("Select the storage device", "", choices)
@@ -230,7 +234,7 @@ class Installer:
 
     def select_partition(self, drive, min_size=0, show_ro=True):
         # TODO: mount parts to really know available size
-        choices = [ (str(i+1), str(p)) for i,p in enumerate(self.get_partitions(drive, not show_ro))
+        choices = [ (str(i+1), str(p)) for i,p in enumerate(self.disks.get_partitions(drive, not show_ro))
                 if p.size.value > min_size]
 
         if len(choices) > 1:
@@ -301,7 +305,7 @@ class Installer:
 
     def fix_boot_configuration(self, part):
         part = self.parts[part]
-        default_label = self.parts[self.info.boot_partition].label
+        default_label = self.disks.parts[self.info.boot_partition].label
         new_label = part.label
         grub_cfg = os.path.join(self.TGT, "grub/grub.cfg")
         txt = open(grub_cfg).read()

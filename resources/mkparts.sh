@@ -4,7 +4,12 @@
 # TODO/ make fixed squash size possible
 export LC_ALL=C
 rootfs=$(mktemp -d)
-. ./resources/instlib.sh
+
+if [ -e /usr/share/installer] ; then
+    . /usr/share/installer/instlib.sh
+else
+    . ./resources/instlib.sh
+fi
 
 [ "x$DISKLABEL" = "x" ] && DISKLABEL=LINUX
 echo "DISKLABEL: $DISKLABEL"
