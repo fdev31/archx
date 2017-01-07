@@ -8,7 +8,9 @@
 desktop-image: "background.png"
 
 title-text: "Meeow"
-message-font: "DejaVu Sans Regular 16"
+#title-font: "DejaVu Regular 16"
+#title-color: "#fcfcfc"
+message-font: "DejaVu Sans Regular 14"
 message-color: "#fcfcfc"
 terminal-font: "unifont regular 16"
 terminal-box: "terminal_*.png"
@@ -21,13 +23,13 @@ terminal-box: "terminal_*.png"
 
   menu_pixmap_style = "boot_menu_*.png"
 
-  item_font = "DejaVu Sans Regular 16"
+  item_font = "Cantarell Regular 20"
   item_color = "#6399d0"
   item_height = 88
   item_icon_space = 8
-  item_spacing = 2
+  item_spacing = 5
 
-  selected_item_font = "DejaVu Sans Regular 16"
+  selected_item_font = "Cantarell Bold 20"
   selected_item_color= "#fcfcfc"
   selected_item_pixmap_style = "select_*.png"
 
