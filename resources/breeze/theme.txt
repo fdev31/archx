@@ -7,34 +7,32 @@
 
 desktop-image: "background.png"
 
-title-text: ""
-#title-font: "DejaVu Regular 16"
-#title-color: "#fcfcfc"
-message-font: "DejaVu Regular 14"
+title-text: "Meeow"
+message-font: "DejaVu Sans Regular 16"
 message-color: "#fcfcfc"
-terminal-font: "DejaVu Regular 16"
+terminal-font: "unifont regular 16"
 terminal-box: "terminal_*.png"
 
 + boot_menu {
-  left = 10%
-  width = 80%
-  top = 20%
-  height = 60%	
+  left = 25%
+  width = 50%
+  top = 25%
+  height = 50%	
 
   menu_pixmap_style = "boot_menu_*.png"
 
-  item_font = "DejaVu Regular 14"
-  item_color = "#31363b"
-  item_height = 44
+  item_font = "DejaVu Sans Regular 16"
+  item_color = "#6399d0"
+  item_height = 88
   item_icon_space = 8
   item_spacing = 2
 
-  selected_item_font = "DejaVu Bold 14"
+  selected_item_font = "DejaVu Sans Regular 16"
   selected_item_color= "#fcfcfc"
   selected_item_pixmap_style = "select_*.png"
 
-  icon_height = 44
-  icon_width = 44
+  icon_height = 88
+  icon_width = 88
 
   scrollbar = true
   scrollbar_width = 20
