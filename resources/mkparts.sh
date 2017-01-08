@@ -5,7 +5,7 @@
 export LC_ALL=C
 rootfs=$(mktemp -d)
 
-if [ -e /usr/share/installer] ; then
+if [ -e /usr/share/installer ] ; then
     . /usr/share/installer/instlib.sh
 else
     . ./resources/instlib.sh
