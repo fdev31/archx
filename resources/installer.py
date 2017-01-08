@@ -23,7 +23,7 @@ def runcmd(a, stdin=None, err=False, env=None):
         stdin = stdin.encode('utf-8')
     t = p.communicate(stdin)
     if p.returncode != 0:
-        print("%s returned %d !!!"%(' '.join(a[0]), p.returncode))
+        print("%s returned %d !!!"%(' '.join(a), p.returncode))
         raise RuntimeError()
     return t[0]
 
