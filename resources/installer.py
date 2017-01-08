@@ -273,11 +273,11 @@ class Installer:
         'Dedicate a disk (RECOMMENDED, requires an unused disk)'
         drive = drive or self.select_disk(2500000)
         UI.message('Installing...')
-        device = [line for line in open('/proc/mounts') if 'squashfs' in line][0].split()[0]
+        squashfs = [line for line in open('/proc/mounts') if 'squashfs' in line][0].split()[0]
 
         os.system('partprobe')
 
-        runcmd(['mkparts.sh', "/dev/"+drive, "50", device], env={'DISKLABEL': 'ARCHX'})
+        runcmd(['mkparts.sh', "/dev/"+drive, "50", squashfs], env={'DISKLABEL': 'ARCHX'})
 
 #        UI.message('Preparing Disks')
 #        runcmd(['dd', 'if=/dev/zero', 'of=/dev/'+drive, 'bs=512', 'count=1'])
