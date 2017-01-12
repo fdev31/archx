@@ -103,7 +103,9 @@ function raw_install_pkg() {
 
 function install_pkg() {
     step2 "Installing $*"
-    raw_install_pkg --needed --noconfirm -S $*
+    for pkg in $*; do
+        raw_install_pkg --needed --noconfirm -S $pkg
+    done
 }
 
 function remove_pkg() {
