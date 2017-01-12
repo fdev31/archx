@@ -1,4 +1,4 @@
-PROFILES="base xorg net-utils snd-base env-awesome system locales installer"
+PROFILES="$PKG_BASE $PKG_XORG env-awesome snd-base gfx-base" 
 
 PREFERRED_TOOLKIT='gtk'
 
