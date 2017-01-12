@@ -1,4 +1,4 @@
-install_pkg evince-thumbnailer
+install_pkg evince
 install_pkg ffmpegthumbnailer
 install_pkg engrampa
 install_pkg libgsf
