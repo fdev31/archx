@@ -1,4 +1,4 @@
-PROFILES="$PKG_BASE $PKG_XORG env-awesome snd-base gfx-base" 
+PROFILES="$PKG_BASE $PKG_XORG env-awesome env-enlightenment snd-base gfx-base" 
 
 PREFERRED_TOOLKIT='gtk'
 
