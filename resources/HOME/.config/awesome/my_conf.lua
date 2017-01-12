@@ -1,5 +1,5 @@
 WEB_BROWSER = 'firefox'
-FILE_MANAGER = 'nemo'
+FILE_MANAGER = 'pcmanfm'
 NETWORK_MONITOR = 'sudo iptraf-ng'
 PROCESS_MONITOR = 'htop'
 ENABLE_TITLEBARS = true
