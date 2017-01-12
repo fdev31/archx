@@ -98,13 +98,13 @@ function make_symlink() {
 
 function raw_install_pkg() {
     _set_pkgmgr
-    $PKGMGR $PKGMGR_OPTS -r "$R" $* || echo "FAILED $*" >> /tmp/failedpkgs.log
+    $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* || echo "FAILED $*" >> /tmp/failedpkgs.log
 }
 
 function install_pkg() {
     step2 "Installing $*"
     for pkg in $*; do
-        raw_install_pkg --needed --noconfirm -S $pkg
+        raw_install_pkg --needed -S $pkg
     done
 }
 
