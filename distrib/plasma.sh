@@ -1,4 +1,4 @@
-PROFILES="base xorg gfx-base office-base env-kde"
+PROFILES="$PKG_BASE $PKG_XORG $PKG_DOC env-kde"
 
 PREFERRED_TOOLKIT='qt'
 
