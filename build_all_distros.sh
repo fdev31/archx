@@ -7,6 +7,6 @@ for n in distrib/*.sh; do
     n=${n%.sh}
     echo "DISTRIB=$n" > my_conf.sh
     sudo rm -fr "$R"
-    ./mkbootstrap.sh
+    yes O | ./mkbootstrap.sh
     mv ARCHX.img ARCHX-$n.img
 done
