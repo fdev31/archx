@@ -1,8 +1,9 @@
-if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
-    install_pkg  lightdm-gtk-greeter
-else
-    install_pkg  lightdm-kde-greeter
-fi
+#if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
+#    install_pkg  lightdm-gtk-greeter
+#else
+#    install_pkg  lightdm-kde-greeter
+#fi
+install_pkg  lightdm-gtk-greeter
 
 sudo mkdir "$R/run/lightdm" 2> /dev/null # fix warning
 
