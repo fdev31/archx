@@ -8,5 +8,6 @@ for n in distrib/*.sh; do
     echo "DISTRIB=$n" > my_conf.sh
     sudo rm -fr "$R"
     yes O | ./mkbootstrap.sh
+    sudo du -sh "$R" > "root_size-$n.txt"
     mv ARCHX.img ARCHX-$n.img
 done
