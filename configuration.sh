@@ -49,7 +49,7 @@ PKG_DOC="office-base office-more"
 PKG_SRV="servers"
 PKG_SND="snd-base snd-more snd-adv"
 PKG_CAD="cad-base"
-PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_MED $PKG_DOC $PKG_SRV $PKG_SND $PKG_CAD"
+PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_MED $PKG_DOC $PKG_SRV $PKG_SND $PKG_CAD proprietary games"
 
 # also: proprietary games
 # envs: awesome, budgie, cinnamon, deepin, enlightenment, gnome, kde, lxde, mate, pantheon, xfce, zorin

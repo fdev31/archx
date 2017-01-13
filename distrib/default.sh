@@ -1,6 +1,6 @@
-PROFILES="$PKG_BASE env-gnome $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMU $PKG_UI $PKG_EMU $PKG_DOC $PKG_SND proprietary"
+PROFILES="$PKG_BASE env-gnome $PKG_ALL"
 PREFERRED_TOOLKIT=gtk
-DISTRO_PACKAGE_LIST='firefox-ublock-origin firefox-download-youtube-videos-as-mp4 dropbox deluge handbrake vlc'
+DISTRO_PACKAGE_LIST='firefox-ublock-origin firefox-download-youtube-videos-as-mp4 dropbox deluge handbrake vlc firefox-flashgot'
 function distro_install_hook() {
     return
  }
