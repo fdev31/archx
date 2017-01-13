@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. configuration.sh
+source ./configuration.sh
 
 for n in distrib/*.sh; do
     n=${n##*/}
