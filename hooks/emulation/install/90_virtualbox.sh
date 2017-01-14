@@ -1,1 +1,1 @@
-install_pkg  virtualbox virtualbox-host-modules-arch
+have_xorg && install_pkg  virtualbox virtualbox-host-modules-arch

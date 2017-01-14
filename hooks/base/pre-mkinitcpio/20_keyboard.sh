@@ -1,3 +1,2 @@
-
 copy /etc/vconsole.conf
 

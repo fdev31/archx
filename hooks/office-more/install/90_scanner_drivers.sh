@@ -1,2 +1,1 @@
-
-install_pkg sane xsane-gimp
+have_xorg && install_pkg sane xsane-gimp

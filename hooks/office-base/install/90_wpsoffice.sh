@@ -1,3 +1,3 @@
-install_pkg ttf-wps-fonts
-install_pkg ttf-wps-win10
-install_pkg wps-office
+have_xorg && install_pkg ttf-wps-fonts
+have_xorg && install_pkg ttf-wps-win10
+have_xorg && install_pkg wps-office

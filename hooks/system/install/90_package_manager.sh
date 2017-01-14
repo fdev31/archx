@@ -7,5 +7,5 @@ if have_xorg ; then
     else
         install_pkg gnome-packagekit
     fi
+    install_pkg pamac-aur
 fi
-install_pkg pamac-aur

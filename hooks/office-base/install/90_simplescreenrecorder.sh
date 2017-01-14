@@ -1,1 +1,1 @@
-install_pkg simplescreenrecorder
+have_xorg && install_pkg simplescreenrecorder

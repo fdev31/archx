@@ -1,4 +1,3 @@
-
 copy /etc/localtime
 copy /etc/locale.gen
 copy /etc/locale.conf

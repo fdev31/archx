@@ -1,1 +1,1 @@
-install_pkg clonezilla
+have_xorg && install_pkg clonezilla

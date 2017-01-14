@@ -1,1 +1,1 @@
-install_pkg clipgrab
+have_xorg && install_pkg clipgrab

@@ -1,1 +1,1 @@
-install_pkg freecad
+have_xorg && install_pkg freecad

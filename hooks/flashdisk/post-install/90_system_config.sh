@@ -1,4 +1,3 @@
-
 step2 "conf.d"
 for FOLDERD in system journal coredump; do
     sudo mkdir "$R/etc/systemd/$FOLDERD.conf.d/" 2> /dev/null

@@ -1,3 +1,3 @@
 install_pkg encfs
-install_pkg cryptkeeper
-autostart_app cryptkeeper
+have_xorg && install_pkg cryptkeeper
+have_xorg && autostart_app cryptkeeper

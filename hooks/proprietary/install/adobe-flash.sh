@@ -1,1 +1,1 @@
-install_pkg flashplugin
+have_xorg && install_pkg flashplugin

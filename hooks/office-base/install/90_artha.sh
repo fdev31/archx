@@ -1,1 +1,1 @@
-install_pkg artha
+have_xorg && install_pkg artha

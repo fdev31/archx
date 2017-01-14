@@ -1,2 +1,1 @@
-install_pkg bup
-xorg && install_pkg bups
+have_xorg && install_pkg bups

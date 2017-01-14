@@ -1,1 +1,1 @@
-install_pkg audacity
+have_xorg && install_pkg audacity
