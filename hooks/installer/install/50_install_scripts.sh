@@ -2,6 +2,7 @@ install_pkg arch-install-scripts
 install_bin resources/installer.py /bin/
 install_bin resources/mkparts.sh /bin/
 sudo mkdir -p "$R/usr/share/installer"
+sudo cp -r resources/locales/gettext/*_* $R/usr/share/installer/
 install_bin resources/instlib.sh /usr/share/installer
 install_pkg parted # used for partprobe
 
