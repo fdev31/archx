@@ -10,4 +10,8 @@ sudo sed -i "s/DISKLABEL/$DISKLABEL/g" "$R/boot/grub/grub.cfg"
 
 echo 'GRUB_THEME="/boot/grub/themes/breeze/theme.txt"' | sudo dd of="$R/etc/default/grub" oflag=append conv=notrunc
 
-install_file "resources/locales/${LANG_ISO2}.gkb" "/boot/grub/keyboard.gkb"
+if [ -e "resources/locales/${LANG_ISO2}.gkb" ]; then
+    install_file "resources/locales/${LANG_ISO2}.gkb" "/boot/grub/keyboard.gkb"
+else
+    echo "No gkb file found for this locale. Grub will have incorrect keymap."
+fi
