@@ -76,7 +76,12 @@ class DiskInfo:
     info.boot_part_size = 0
     def __init__(self):
         cmdline = dict(x.split('=', 1) for x in open('/proc/cmdline').read().split() if "=" in x)
-        dev = '/dev/'+ os.readlink('/dev/disk/by-label/'+cmdline['root'].split('=')[1]).split('/')[-1]
+        if 'LABEL' in cmdline['root']:
+            dev = '/dev/'+ os.readlink('/dev/disk/by-label/'+cmdline['root'].split('=')[1]).split('/')[-1]
+        elif 'UUID' in cmdline['root']:
+            dev = '/dev/'+ os.readlink('/dev/disk/by-uuid/'+cmdline['root'].split('=')[1]).split('/')[-1]
+        else:
+            dev = '/dev/'+ os.readlink('/dev/'+cmdline['root'].split('=')[1]).split('/')[-1]
         self.info.boot_partition = dev
         self.info.boot_device = dev[:-1]
 
