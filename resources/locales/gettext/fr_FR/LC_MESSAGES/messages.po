@@ -3,20 +3,93 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 22:17+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: FR_fr.UTF-8\n"
+"POT-Creation-Date: 2017-01-17 00:01+0100\n"
+"PO-Revision-Date: 2017-01-17 00:02+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
 
-#: translations.py:1
+#: ../../installer.py:22
 msgid "Install"
 msgstr "Installer"
+
+#: ../../installer.py:107
+msgid "All modes are installing the same application set"
+msgstr "Tous les modes installent les mêmes applications"
+
+#: ../../installer.py:111
+msgid ""
+"When finished, type \"sudo halt -p\" in the shell and remove the "
+"installation drive !"
+msgstr ""
+"Si vous avez terminé, tapez \"sudo halt -p\" et enlevez la clé USB "
+"d'installation !"
+
+#: ../../installer.py:116
+msgid "Exit"
+msgstr "Sortir"
+
+#: ../../installer.py:120
+msgid "Safe install or upgrade (can be uninstalled, SAFE for data)"
+msgstr "Installation sans danger sur un disque existant"
+
+#: ../../installer.py:127
+msgid "No partition found !"
+msgstr "Aucune partition trouvée !"
+
+#: ../../installer.py:132
+msgid "Mounting partition"
+msgstr "Montage de la partition"
+
+#: ../../installer.py:136
+msgid "Space not formatted!"
+msgstr "Espace non formaté !"
+
+#: ../../installer.py:136
+msgid "Proceed rebuilding a filesystem ?"
+msgstr "Continuer en reconstruisant le système de fichiers ?"
+
+#: ../../installer.py:137
+#, python-format
+msgid "What label you want to use (ie. %s)?"
+msgstr "Quel nom voulez-vous utiliser (ex: %s) ?"
+
+#: ../../installer.py:143 ../../installer.py:152 ../../installer.py:161
+msgid "Installing..."
+msgstr "Installation..."
+
+#: ../../installer.py:148
+msgid "Dedicate a disk (RECOMMENDED, requires an unused disk)"
+msgstr "Dédier un disque (RECOMMANDÉ, efface tout un disque)"
+
+#: ../../installer.py:157
+msgid "Install ArchLinux instead"
+msgstr "Installer simplement ArchLinux (sur tout un disque)"
+
+#: ../../installer.py:170
+msgid "Select the storage device"
+msgstr "Choisissez le disque"
+
+#: ../../installer.py:174
+msgid "No acceptable drive found"
+msgstr "Aucun disque acceptable trouvé"
+
+#: ../../installer.py:178
+msgid "Drive selected"
+msgstr "Disque choisi"
+
+#: ../../installer.py:188
+msgid "Select the partition"
+msgstr "Choisissez une partition"
+
+#: ../../installer.py:192
+msgid "Selected partition"
+msgstr "Partition choisie"

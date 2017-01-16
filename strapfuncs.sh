@@ -6,6 +6,9 @@ IPADDR=$(curl -s icanhazip.com)
 COUNTRY=$(geoiplookup $IPADDR)
 COUNTRY=${COUNTRY#*: }
 COUNTRY=${COUNTRY%,*}
+
+[ -e my_conf.sh ] && source ./my_conf.sh
+
 if [ -z "$COUNTRY" ]; then
     COUNTRY=FR
 fi
@@ -20,8 +23,6 @@ HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
 _net_mgr="$HOOK_BUILD_DIR/install/50_network_manager.sh"
 
 # LOAD OVERRIDES
-
-[ -e my_conf.sh ] && source ./my_conf.sh
 
 source ./distrib/${DISTRIB}.sh
 

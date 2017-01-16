@@ -11,9 +11,15 @@ import sys
 import math
 import json
 import pprint
+import gettext
 import subprocess
-from os.path import join as joinp , getsize
 from time import sleep
+from os.path import join as joinp , getsize
+
+gettext.install('installer')
+
+def fake_trans():
+    _('Install')
 
 class DiskInfo:
     def __init__(self):
@@ -47,7 +53,6 @@ class DiskInfo:
             print("Detected EFI in %s"%', '.join(self.efi))
 
     def get(self, name=None, mountpoint=None):
-        print("Searching %s"%name)
         if name:
             for dev in self.devices:
                 if dev['name'] == name:
@@ -99,61 +104,61 @@ class Installer:
         choices.sort(key=lambda x: x.__name__)
         while True:
             tag = UI.menu("Select the installation modes",
-                    "All modes are installing the same application set",
-                    choices=( (str(o[0]+1), o[1].__doc__) for o in enumerate(choices) )
+                    _("All modes are installing the same application set"),
+                    choices=( (str(o[0]+1), getattr(self, o[1].__name__[5:])) for o in enumerate(choices) )
                 )
             if tag and choices[int(tag)-1]():
-                    print("When finished, type \"sudo halt -p\" in the shell and remove the installation drive !")
+                    print(_("When finished, type \"sudo halt -p\" in the shell and remove the installation drive !"))
                     break
             elif not tag: # cancel
                 break
 
+    Z_exit = _("Exit")
     def MENU_Z_exit(self):
-        "Exit"
         raise SystemExit(0)
 
+    A_embed_compact = _('Safe install or upgrade (can be uninstalled, SAFE for data)')
     def MENU_A_embed_compact(self, drive=None, partno=None):
-        'Safe install or upgrade (can be uninstalled, SAFE for data)'
         drive = drive or self.select_disk(2500000)
         if not drive: return
         try:
             partno = partno or self.select_partition(drive, 2500000, show_ro=False)
         except NoPartFound:
-            UI.message('No partition found !')
+            UI.message(_('No partition found !'))
         else:
             if not partno:
                 return
             else:
-                UI.message('Mounting partition')
+                UI.message(_('Mounting partition'))
                 try:
                     runcmd(['mount', '/dev/'+partno, self.TGT])
                 except RuntimeError:
-                    if not safe and UI.confirm('Space not formatted!','Proceed rebuilding a filesystem ?'):
-                        DEFAULT_DISKLABEL = UI.get_word("What label you want to use (ie. %s)?"%DEFAULT_DISKLABEL)
+                    if not safe and UI.confirm(_('Space not formatted!'),_('Proceed rebuilding a filesystem ?')):
+                        DEFAULT_DISKLABEL = UI.get_word(_("What label you want to use (ie. %s)?")%DEFAULT_DISKLABEL)
                         mkfs('/dev/'+partno, DEFAULT_DISKLABEL, 'ext4')
                         runcmd(['mount', '/dev/'+partno, self.TGT])
                     else:
                         raise
                 runcmd(['dd', 'if=/dev/'+drive, 'of=%s/backup.mbr'%self.TGT, 'bs=512', 'count=1'])
-                UI.message('Installing...')
+                UI.message(_('Installing...'))
                 runcmd(['installer-embed.sh', self.TGT])
                 runcmd(['umount', self.TGT])
                 return True
 
+    B_install_compact = _('Dedicate a disk (RECOMMENDED, requires an unused disk)')
     def MENU_B_install_compact(self, drive=None):
-        'Dedicate a disk (RECOMMENDED, requires an unused disk)'
         drive = drive or self.select_disk(2500000)
         if not drive: return
-        UI.message('Installing...')
+        UI.message(_('Installing...'))
         os.system('partprobe')
         runcmd(['installer-standard.sh', "/dev/"+drive, "50", self.di.squashfs], env={'DISKLABEL': 'ARCHX'})
         return True
 
+    C_install_archlinux = _('Install ArchLinux instead')
     def MENU_C_install_archlinux(self, drive=None):
-        'Install ArchLinux instead'
         drive = drive or self.select_disk(2500000)
         if not drive: return
-        UI.message('Installing...')
+        UI.message(_('Installing...'))
         os.system('partprobe')
         runcmd(['installer-archlinux.sh', "/dev/"+drive, "50", self.di.squashfs], env={'DISKLABEL': 'ARCHX'})
         return True
@@ -162,15 +167,15 @@ class Installer:
         choices = [(d['name'], prettify(d)) for d in self.di.disks if d['name'] != self.di.owndisk and d['size'] > min_size]
 
         if len(choices) > 1:
-            drive = UI.menu("Select the storage device", "", choices)
+            drive = UI.menu(_("Select the storage device"), "", choices)
             if not drive:
                 return
         elif not choices:
-            print("No acceptable drive found")
+            UI.message(_("No acceptable drive found"))
             sleep(2)
             return
         else:
-            if not UI.confirm('Drive selected', '%s: %s'%tuple(choices[0])):
+            if not UI.confirm(_('Drive selected'), '%s: %s'%tuple(choices[0])):
                 return
             drive = choices[0][0]
         return drive
@@ -180,11 +185,11 @@ class Installer:
         choices = [(d['name'], prettify(d)) for d in self.di.get_partitions(drive) if d['size'] > min_size]
 
         if len(choices) > 1:
-            partno = UI.menu("Select the partition", "", choices)
+            partno = UI.menu(_("Select the partition"), "", choices)
         elif not choices:
             raise NoPartFound()
         else:
-            if not UI.confirm('Selected partition', '%s'%choices[0][1]):
+            if not UI.confirm(_('Selected partition'), '%s'%choices[0][1]):
                 raise SystemExit()
             partno = choices[0][0]
 
