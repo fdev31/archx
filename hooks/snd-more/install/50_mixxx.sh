@@ -1,3 +1,1 @@
-
-install_pkg mixxx
-
+have_xorg && install_pkg mixxx

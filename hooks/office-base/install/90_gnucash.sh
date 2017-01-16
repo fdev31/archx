@@ -1,1 +1,1 @@
-install_pkg gnucash
+have_xorg && install_pkg gnucash

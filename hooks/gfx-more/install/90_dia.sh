@@ -1,1 +1,1 @@
-install_pkg dia
+have_xorg && install_pkg dia

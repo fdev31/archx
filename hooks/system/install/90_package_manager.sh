@@ -7,5 +7,6 @@ if have_xorg ; then
     else
         install_pkg gnome-packagekit
     fi
+    install_pkg pamac-aur
+    install_resource pamac.conf /etc/pamac.conf
 fi
-install_pkg pamac-aur

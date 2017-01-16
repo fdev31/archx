@@ -1,1 +1,1 @@
-install_pkg musescore
+have_xorg && install_pkg musescore

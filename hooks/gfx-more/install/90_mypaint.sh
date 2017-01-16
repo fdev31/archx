@@ -1,4 +1,3 @@
-
 if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
-    install_pkg mypaint
+    have_xorg && install_pkg mypaint
 fi

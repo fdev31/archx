@@ -44,12 +44,11 @@ PKG_EDIT="editors dev-base"
 PKG_GFX="gfx-base gfx-more photo-base"
 PKG_UI="lookandfeel"
 PKG_EMU="emulation"
-PKG_MED="medical"
 PKG_DOC="office-base office-more"
 PKG_SRV="servers"
 PKG_SND="snd-base snd-more snd-adv"
 PKG_CAD="cad-base"
-PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_MED $PKG_DOC $PKG_SRV $PKG_SND $PKG_CAD proprietary games"
 
-# also: proprietary games
+PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_DOC $PKG_SRV $PKG_SND $PKG_CAD proprietary games medical edu"
+
 # envs: awesome, budgie, cinnamon, deepin, enlightenment, gnome, kde, lxde, mate, pantheon, xfce, zorin

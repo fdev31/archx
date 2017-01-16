@@ -1,5 +1,5 @@
-install_pkg pinta
-install_pkg xnviewmp
-install_pkg digikam
-install_pkg abiword
-install_pkg gufw
+have_xorg && install_pkg pinta
+have_xorg && install_pkg xnviewmp
+have_xorg && install_pkg digikam
+have_xorg && install_pkg abiword
+have_xorg && install_pkg gufw

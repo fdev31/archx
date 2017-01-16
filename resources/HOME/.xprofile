@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT="create_storage.sh"
+SCRIPT="INSTALL.sh"
 
 if [ -e ~/$SCRIPT ]; then
     export TEXTDOMAINDIR=/usr/share/installer

@@ -1,4 +1,4 @@
-install_pkg ttf-dejavu artwiz-fonts
-install_pkg libreoffice-still
-install_pkg libreoffice-still-${LANG_ISO2}
-install_pkg libreoffice-extension-languagetool
+have_xorg && install_pkg ttf-dejavu artwiz-fonts
+have_xorg && install_pkg libreoffice-still
+have_xorg && install_pkg libreoffice-still-${LANG_ISO2}
+have_xorg && install_pkg libreoffice-extension-languagetool

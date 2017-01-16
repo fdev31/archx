@@ -1,1 +1,1 @@
-install_pkg kid3
+have_xorg && install_pkg kid3

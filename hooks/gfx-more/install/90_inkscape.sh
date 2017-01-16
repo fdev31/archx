@@ -1,1 +1,1 @@
-install_pkg inkscape
+have_xorg && install_pkg inkscape

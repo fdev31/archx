@@ -17,16 +17,22 @@ function call_fdisk() {
 function get_device_from_mtpoint() {
     x=$(df "$1" | tail -1)
     dev=${x%% *}
-    if [[ "$dev" = /dev/loop* ]]; then
-        echo ${dev:0:-2}
+    if [ $2 ]; then
+        echo $dev
     else
-        echo ${dev:0:-1}
+        if [[ "$dev" = /dev/loop* ]]; then
+            echo ${dev:0:-2}
+        else
+            echo ${dev:0:-1}
+        fi
     fi
 }
 
 function get_label_from_device() {
-    x=$(blkid -s LABEL |grep $1)
-    echo ${x#*: }
+    lsblk -o LABEL $1 | tail -1
+}
+function get_uuid_from_device() {
+    lsblk -o UUID $1 | tail -1
 }
 
 function install_grub() {
@@ -43,14 +49,20 @@ function install_grub() {
     fi
 
     echo "############################################################## install Boot loader"
-    echo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" --efi-directory "$BOOTDIR" --bootloader-id "$DISKLABEL" $EFI_OPTS $DEVICE
-    sudo grub-install --target x86_64-efi --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" --efi-directory "$BOOTDIR" --bootloader-id "$DISKLABEL" $EFI_OPTS $DEVICE
+    echo grub-install --target x86_64-efi  --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" --efi-directory "$BOOTDIR" --bootloader-id "$DISKLABEL" $EFI_OPTS $DEVICE
+    sudo grub-install --target x86_64-efi  --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" --efi-directory "$BOOTDIR" --bootloader-id "$DISKLABEL" $EFI_OPTS $DEVICE
 
-    echo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
-    sudo grub-install --target i386-pc    --recheck --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
+    echo grub-install --target i386-pc     --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
+    sudo grub-install --target i386-pc     --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
 
-    sudo sed -i "s/ARCHX/$DISKLABEL/g" "$BOOTDIR/grub/grub.cfg"
-    sudo sed -i "s/ARCHINST/$DISKLABEL/g" "$BOOTDIR/grub/grub.cfg"
+    for reflabel in ARCHX ARCHINST ; do
+        if [ -z $DISKUUID ]; then #  just rename label
+               sudo sed -i "s/$reflabel/$DISKLABEL/g" "$BOOTDIR/grub/grub.cfg"
+        else # switch to uuid identification
+               sudo sed -i "s/LABEL=$reflabel/UUID=$DISKUUID/g" "$BOOTDIR/grub/grub.cfg"
+               sudo sed -i "s/--label $reflabel/--uuid $DISKUUID/g" "$BOOTDIR/grub/grub.cfg"
+        fi
+    done
 
     sudo sed -i "s#/vmli#$BOOTROOT/vmli#g" "$BOOTDIR/grub/grub.cfg"
     sudo sed -i "s#/init#$BOOTROOT/init#g" "$BOOTDIR/grub/grub.cfg"

@@ -1,2 +1,2 @@
-install_pkg geany
-install_pkg geany-plugins
+have_xorg && install_pkg geany
+have_xorg && install_pkg geany-plugins

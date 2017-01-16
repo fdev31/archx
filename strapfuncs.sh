@@ -55,10 +55,6 @@ function step2() {
     printf "\\033[44m    %-${W}s>\\033[0m" "$1"
 }
 
-function copy() {
-    sudo cp -a "$1"  "$R$1"
-}
-
 function contains() {
     grep "$1" "$2" > /dev/null
 }

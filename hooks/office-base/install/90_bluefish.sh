@@ -1,1 +1,1 @@
-install_pkg bluefish
+have_xorg && install_pkg bluefish

@@ -1,1 +1,1 @@
-install_pkg darktable
+have_xorg && install_pkg darktable
