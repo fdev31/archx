@@ -92,9 +92,10 @@ class DiskInfo:
             if not line.strip(): # empty line = new device
                 if hasattr(cur_part, 'type') and cur_part.type in ('iso9660', 'squashfs', 'udf', 'cramfs'):
                     cur_part.ro = True
+                else:
+                    cur_part.ro = False
                 self.parts[cur_part.devname] = cur_part
                 cur_part = O()
-                cur_part.ro = False
             else:
                 k, v = line.split(b'=')
                 setattr(cur_part, k.lower().decode(), v.decode())
@@ -206,13 +207,9 @@ class Installer:
         ## TODO: detect EFI directory !!
 
         runcmd(['dd', 'if='+disk, 'of=%s/backup.mbr'%where, 'bs=512', 'count=1'])
+        UI.message('Installing...')
+        runcmd(['installer-embed.sh', where])
 #        runcmd(['grub-install', '--target', 'x86_64-efi', '--modules', self.MODZ, '--efi-directory', where])
-        UI.message('Installing BIOS bootloader')
-        runcmd(['grub-install', '--target', 'i386-pc',    '--modules', self.MODZ, '--boot-directory', where, disk])
-        UI.message('Installing system files...')
-        runcmd(['cp', '-ar', '/boot/.', where]) # TODO: only copy needed files
-        if fix:
-            self.fix_boot_configuration(device)
         runcmd(['umount', where])
 
     def select_disk(self, min_size=0):
@@ -267,7 +264,13 @@ class Installer:
         pass
 
     def install_standard(self):
-        pass
+        # detect EFI partition / Window install
+        # ask for existing partition or whole disk (install destination)
+        # undo rolinux hook + mkinitcpio, fstab link + genfstab, grub-install (mkconfig ?)
+        #     undo rolinux: copy mkinitcpio.conf while not #MOVABLE PATCH seen
+        # beware of the paths in grub.conf
+        # remove installer files
+        return False
 
     def MENU_B_install_compact(self, drive=None):
         'Dedicate a disk (RECOMMENDED, requires an unused disk)'
@@ -277,18 +280,10 @@ class Installer:
 
         os.system('partprobe')
 
-        runcmd(['mkparts.sh', "/dev/"+drive, "50", squashfs], env={'DISKLABEL': 'ARCHX'})
-
-#        UI.message('Preparing Disks')
-#        runcmd(['dd', 'if=/dev/zero', 'of=/dev/'+drive, 'bs=512', 'count=1'])
-#        self.make_partition(drive, 1,
-#                Unit(self.info.boot_part_size * 2.2).human(False, ''),
-#                boot=True)
-#        self.mkfs(drive+'1', self.DISKLABEL)
-#        self.MENU_A_embed_compact(drive, '1')
+        runcmd(['installer-standard.sh', "/dev/"+drive, "50", squashfs], env={'DISKLABEL': 'ARCHX'})
         return True
 
-    def xMENU_A_embed_compact(self, drive=None, partno=None):
+    def MENU_A_embed_compact(self, drive=None, partno=None):
         'Safe install or upgrade (can be uninstalled, SAFE for data)'
         drive = drive or self.select_disk(2500000)
         try:
@@ -330,7 +325,7 @@ class UI:
         return self.d.menu( subtitle, title=title, choices=choices, width=self.w, height=self.h)[1]
 
     def confirm(self, title, question):
-        return self.d.yesno(question, title=title, width=50, height=5)
+        return "cancel" != self.d.yesno(question, title=title, width=50, height=5)
 
 
 #            ('4', '[TODO] Replace existing partition'),
