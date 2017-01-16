@@ -1,6 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
-. ./resources/instlib.sh
+if [ -e /usr/share/installer ] ; then
+    . /usr/share/installer/instlib.sh
+    BOOTDIR="/boot"
+    RUNNING_LIVE=1
+else
+    . ./resources/instlib.sh
+    BOOTDIR="ROOT/boot"
+fi
+
 
 MNT=$1
 
@@ -10,19 +18,27 @@ if [ -z "$MNT" ]; then
 fi
 
 DEV=$(get_device_from_mtpoint "$MNT")
+PART=$(get_device_from_mtpoint "$MNT" part)
+
 if [[ "$DEV" != */* ]]; then
     echo "Invalid device !"
     exit 1
 fi
-echo "DEV=$DEV"
+
+echo "DEV=$PART ($DEV)"
 
 # POPULATE
 
-cp -ar ROOT/boot "$MNT"
-cp rootfs.s "$MNT"
+cp -ar $BOOTDIR "$MNT"
 
+uuid=$(get_uuid_from_device "$DEV")
 
-lbl=$(get_label_from_device "$DEV")
+DISKUUID=$uuid install_grub "$DEV" "$MNT/boot" "${lbl#*=}" "" "/boot"
 
-install_grub "$DEV" "$MNT/boot" "${lbl#*=}" "" "/boot"
+if [ $RUNNING_LIVE ]; then
+    d=$(get_device_from_mtpoint / partitions)
+    dd if=$d of="$MNT/rootfs.s"
+else
+    cp rootfs.s "$MNT"
+fi
 
