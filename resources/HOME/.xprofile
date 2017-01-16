@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT="create_storage.sh"
+SCRIPT="INSTALL.sh"
 
 if [ -e ~/$SCRIPT ]; then
     FINAL_NAME=$(gettext cinnamon-settings-daemon 'Disk space')
