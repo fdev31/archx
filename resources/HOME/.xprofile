@@ -3,7 +3,8 @@
 SCRIPT="INSTALL.sh"
 
 if [ -e ~/$SCRIPT ]; then
-    FINAL_NAME=$(gettext cinnamon-settings-daemon 'Disk space')
+    export TEXTDOMAINDIR=/usr/share/installer
+    FINAL_NAME=$(gettext messages 'Install')
 
     xdg-user-dirs-update
     fold=$(xdg-user-dir DESKTOP)

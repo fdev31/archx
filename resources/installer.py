@@ -236,19 +236,6 @@ def mkfs(drive, label, fmt='fat'):
             opts = ['-f', '-L', label]
         runcmd(['mkfs.'+fmt] + opts + [drive])
 
-def runcmd(a, stdin=None, err=False, env=None):
-    if env:
-        g = os.environ.copy()
-        g.update(env)
-        env = g
-    p = subprocess.Popen(a, bufsize=1, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=(None if err else subprocess.PIPE), env=env)
-    if isinstance(stdin, str):
-        stdin = stdin.encode('utf-8')
-    t = p.communicate(stdin)
-    if p.returncode != 0:
-        print("%s returned %d !!!"%(' '.join(a), p.returncode))
-        raise RuntimeError()
-    return t[0]
 
 def optimistic_number(n):
     try:
