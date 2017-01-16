@@ -103,7 +103,7 @@ class Installer:
         choices = [getattr(self, x) for x in dir(self) if x.startswith('MENU_')]
         choices.sort(key=lambda x: x.__name__)
         while True:
-            tag = UI.menu("Select the installation modes",
+            tag = UI.menu(_("Select the installation modes"),
                     _("All modes are installing the same application set"),
                     choices=( (str(o[0]+1), getattr(self, o[1].__name__[5:])) for o in enumerate(choices) )
                 )
