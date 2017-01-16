@@ -29,8 +29,10 @@ function get_device_from_mtpoint() {
 }
 
 function get_label_from_device() {
-    x=$(blkid -s LABEL |grep $1)
-    echo ${x#*: }
+    lsblk -o LABEL $1 | tail -1
+}
+function get_uuid_from_device() {
+    lsblk -o UUID $1 | tail -1
 }
 
 function install_grub() {
