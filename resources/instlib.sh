@@ -55,12 +55,14 @@ function install_grub() {
     echo grub-install --target i386-pc     --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
     sudo grub-install --target i386-pc     --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
 
-    if [ -z $DISKUUID ]; then # on installer we use uuid
-           sudo sed -i "s/ARCHX/$DISKLABEL/g" "$BOOTDIR/grub/grub.cfg"
-    else # else it's label based, the original files using ARCHX
-           sudo sed -i "s/LABEL=ARCHINST/UUID=$DISKUUID/g" "$BOOTDIR/grub/grub.cfg"
-           sudo sed -i "s/--label ARCHINST/--uuid $DISKUUID/g" "$BOOTDIR/grub/grub.cfg"
-    fi
+    for reflabel in ARCHX ARCHINST ; do
+        if [ -z $DISKUUID ]; then #  just rename label
+               sudo sed -i "s/$reflabel/$DISKLABEL/g" "$BOOTDIR/grub/grub.cfg"
+        else # switch to uuid identification
+               sudo sed -i "s/LABEL=$reflabel/UUID=$DISKUUID/g" "$BOOTDIR/grub/grub.cfg"
+               sudo sed -i "s/--label $reflabel/--uuid $DISKUUID/g" "$BOOTDIR/grub/grub.cfg"
+        fi
+    done
 
     sudo sed -i "s#/vmli#$BOOTROOT/vmli#g" "$BOOTDIR/grub/grub.cfg"
     sudo sed -i "s#/init#$BOOTROOT/init#g" "$BOOTDIR/grub/grub.cfg"

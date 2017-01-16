@@ -1,4 +1,8 @@
 #!/bin/python
+# TODO:
+# - do something clever about EFI / boot partitions
+# - add arch standard mode
+
 DEBUG=0
 
 import os
@@ -18,9 +22,11 @@ class DiskInfo:
         os.system('lsblk -blJ -o NAME,UUID,LABEL,PARTUUID,MOUNTPOINT,TYPE,FSTYPE,PARTFLAGS,RO,SIZE,STATE,VENDOR,TRAN,MODEL > /tmp/diskinfo.js')
         self.__info = json.load(open('/tmp/diskinfo.js'))
         self.efi = [] # efi partitions
+
         for d in self.devices:
             if 'size' in d:
                 d['size'] = int(d['size'])
+
         for disk in self.disks:
             for num, line in enumerate(subprocess.check_output(['fdisk', '-l', '/dev/%(name)s'%disk], encoding='utf-8').split('\n')):
                 if not line.startswith('/dev/'):
@@ -31,6 +37,9 @@ class DiskInfo:
                 self.get(p)['parttype'] = t
                 if 'EFI' in t:
                     self.efi.append(p)
+
+        self.owndisk = self.get(mountpoint='/')['name'][:-1]
+        self.squashfs = [line for line in open('/proc/mounts') if 'squashfs' in line][0].split()[0]
 
         if DEBUG:
             pprint.pprint(self.__info)
@@ -93,7 +102,7 @@ class Installer:
                     choices=( (str(o[0]+1), o[1].__doc__) for o in enumerate(choices) )
                 )
             if tag and choices[int(tag)-1]():
-                    print("When finished, type \"halt -p\" in the shell and remove the installation drive !")
+                    print("When finished, type \"sudo halt -p\" in the shell and remove the installation drive !")
                     break
             elif not tag: # cancel
                 break
@@ -112,46 +121,48 @@ class Installer:
             UI.message('No partition found !')
         else:
             if not partno:
-                return False
+                return
             else:
                 UI.message('Mounting partition')
                 try:
-                    runcmd(['mount', '/dev/'+partno, where])
+                    runcmd(['mount', '/dev/'+partno, self.TGT])
                 except RuntimeError:
                     if not safe and UI.confirm('Space not formatted!','Proceed rebuilding a filesystem ?'):
                         DEFAULT_DISKLABEL = UI.get_word("What label you want to use (ie. %s)?"%DEFAULT_DISKLABEL)
                         mkfs('/dev/'+partno, DEFAULT_DISKLABEL, 'ext4')
-                        runcmd(['mount', '/dev/'+partno, where])
+                        runcmd(['mount', '/dev/'+partno, self.TGT])
                     else:
                         raise
-                runcmd(['dd', 'if=/dev/'+drive, 'of=%s/backup.mbr'%where, 'bs=512', 'count=1'])
+                runcmd(['dd', 'if=/dev/'+drive, 'of=%s/backup.mbr'%self.TGT, 'bs=512', 'count=1'])
                 UI.message('Installing...')
-                runcmd(['installer-embed.sh', where])
-                runcmd(['umount', where])
+                runcmd(['installer-embed.sh', self.TGT])
+                runcmd(['umount', self.TGT])
                 return True
 
     def MENU_B_install_compact(self, drive=None):
         'Dedicate a disk (RECOMMENDED, requires an unused disk)'
         drive = drive or self.select_disk(2500000)
+        if not drive: return
         UI.message('Installing...')
-        squashfs = [line for line in open('/proc/mounts') if 'squashfs' in line][0].split()[0]
 
         os.system('partprobe')
-
-        runcmd(['installer-standard.sh', "/dev/"+drive, "50", squashfs], env={'DISKLABEL': 'ARCHX'})
+        runcmd(['installer-standard.sh', "/dev/"+drive, "50", self.di.squashfs], env={'DISKLABEL': 'ARCHX'})
         return True
 
     def select_disk(self, min_size=0):
-        choices = [(d['name'], prettify(d)) for d in self.di.disks if d['size'] > min_size]
+        choices = [(d['name'], prettify(d)) for d in self.di.disks if d['name'] != self.di.owndisk and d['size'] > min_size]
 
         if len(choices) > 1:
             drive = UI.menu("Select the storage device", "", choices)
+            if not drive:
+                return
         elif not choices:
             print("No acceptable drive found")
-            raise SystemExit()
+            sleep(2)
+            return
         else:
             if not UI.confirm('Drive selected', '%s: %s'%tuple(choices[0])):
-                raise SystemExit()
+                return
             drive = choices[0][0]
         return drive
 
