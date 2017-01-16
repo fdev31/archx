@@ -17,10 +17,14 @@ function call_fdisk() {
 function get_device_from_mtpoint() {
     x=$(df "$1" | tail -1)
     dev=${x%% *}
-    if [[ "$dev" = /dev/loop* ]]; then
-        echo ${dev:0:-2}
+    if [ $2 ]; then
+        echo $dev
     else
-        echo ${dev:0:-1}
+        if [[ "$dev" = /dev/loop* ]]; then
+            echo ${dev:0:-2}
+        else
+            echo ${dev:0:-1}
+        fi
     fi
 }
 
