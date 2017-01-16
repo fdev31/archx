@@ -2,6 +2,7 @@
 # TODO:
 # - do something clever about EFI / boot partitions
 # - add arch standard mode
+# - base min-size on build-time information ( /.volume_size ?)
 
 DEBUG=0
 
@@ -144,9 +145,17 @@ class Installer:
         drive = drive or self.select_disk(2500000)
         if not drive: return
         UI.message('Installing...')
-
         os.system('partprobe')
         runcmd(['installer-standard.sh', "/dev/"+drive, "50", self.di.squashfs], env={'DISKLABEL': 'ARCHX'})
+        return True
+
+    def menu_C_install_archlinux(self, drive=None):
+        'Install ArchLinux instead'
+        drive = drive or self.select_disk(2500000)
+        if not drive: return
+        UI.message('Installing...')
+        os.system('partprobe')
+        runcmd(['installer-archlinux.sh', "/dev/"+drive, "50", self.di.squashfs], env={'DISKLABEL': 'ARCHX'})
         return True
 
     def select_disk(self, min_size=0):
