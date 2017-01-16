@@ -4,7 +4,10 @@ install_bin resources/mkparts.sh /bin/installer-standard.sh
 install_bin resources/installhere.sh /bin/installer-embed.sh
 install_bin resources/mkarch.sh /bin/installer-archlinux.sh
 sudo mkdir -p "$R/usr/share/installer"
-sudo cp -r resources/locales/gettext/*_* $R/usr/share/installer/
+for path in resources/locales/gettext/*_*; do
+    loc=${path##*/}
+    install_file $path/LC_MESSAGES/messages.mo /usr/share/locale/${loc%_*}/LC_MESSAGES/installer.mo
+done
 install_bin resources/instlib.sh /usr/share/installer
 install_pkg parted # used for partprobe
 
