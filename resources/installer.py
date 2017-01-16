@@ -149,7 +149,7 @@ class Installer:
         runcmd(['installer-standard.sh', "/dev/"+drive, "50", self.di.squashfs], env={'DISKLABEL': 'ARCHX'})
         return True
 
-    def menu_C_install_archlinux(self, drive=None):
+    def MENU_C_install_archlinux(self, drive=None):
         'Install ArchLinux instead'
         drive = drive or self.select_disk(2500000)
         if not drive: return

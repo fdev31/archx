@@ -52,27 +52,36 @@ partprobe
 
 echo "############################################################## create BOOT/EFI partition "
 mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
-#echo "############################################################## copy ROOT filesystem"
-#dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
-# TODO: alternative: mkfs + unsquashfs
-# - remove initcpio hook (rolinux) + regen
-# - regen grub-conf
 echo "############################################################## create data partition"
-mkfs.ext4 -F ${loop}p3 || clean_exit 1
+mkfs.ext4 -F ${loop}p2 || clean_exit 1
 
-mount ${loop}p2 $rootfs
-mount ${loop}p1 $rootfs/boot
+mount ${loop}p2 "$rootfs"
 
-unsquashfs -d $rootfs $SQ
+mkdir "$rootfs/boot"
+mount ${loop}p1 "$rootfs/boot"
+
+mkdir $rootfs/boot/EFI
+
+unsquashfs -f -fr 64 -da 64 -d $rootfs $SQ
 cp -ar /boot/{grub,EFI} $rootfs/boot
 cp -ar /boot/*inux* $rootfs/boot
 
-tar xvf /boot/rootfs.default -C "$rootfs" './ROOT' --wildcards --wildcards-match-slash --strip-components 2
-strip_end "# MOVABLE PATCH" $rootfs/etc/mkinitcpio.conf
+tar xf /boot/rootfs.default -C "$rootfs" './ROOT' --wildcards --wildcards-match-slash --strip-components 2
+
+# undo some changes / update confs
+sudo sed -i "/^# MOVABLE PATCH/,$ d" $rootfs/etc/mkinitcpio.conf
 rm -f $rootfs/etc/fstab
 genfstab -U $rootfs >> $rootfs/etc/fstab
 arch-chroot $rootfs grub-mkconfig -o /boot/grub/grub.cfg
-arch-chroot grub-install
+arch-chroot $rootfs grub-install --boot-directory BOOT --target i386-pc ${loop}
+arch-chroot $rootfs grub-install --efi-directory /boot/EFI --boot-directory /boot ${loop}
+
+arch-chroot $rootfs mkinitcpio -p linux
+
+rm -f $rootfs/lib/initcpio/hooks/rolinux
+rm -f $rootfs/bin/installer-*.sh
+rm -f $rootfs/bin/installer.py
+rm -fr $rootfs/usr/share/installer
 
 echo "FINISHED"
 clean_exit 0
