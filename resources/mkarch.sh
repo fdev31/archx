@@ -73,7 +73,7 @@ sudo sed -i "/^# MOVABLE PATCH/,$ d" $rootfs/etc/mkinitcpio.conf
 rm -f $rootfs/etc/fstab
 genfstab -U $rootfs >> $rootfs/etc/fstab
 arch-chroot $rootfs grub-mkconfig -o /boot/grub/grub.cfg
-arch-chroot $rootfs grub-install --boot-directory BOOT --target i386-pc ${loop}
+arch-chroot $rootfs grub-install --boot-directory /boot --target i386-pc ${loop}
 arch-chroot $rootfs grub-install --efi-directory /boot/EFI --boot-directory /boot ${loop}
 
 arch-chroot $rootfs mkinitcpio -p linux
