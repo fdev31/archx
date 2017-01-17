@@ -1,4 +1,4 @@
-(cd "$R/etc" && ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
+(cd "$R/etc" && sudo ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
 echo "
 LANG=\"${LANG}\"
 LC_CTYPE=\"${LANG}\"
