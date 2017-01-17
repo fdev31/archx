@@ -1,8 +1,8 @@
 install_pkg arch-install-scripts
 install_bin resources/installer.py /bin/
-install_bin resources/mkparts.sh /bin/installer-standard.sh
-install_bin resources/installhere.sh /bin/installer-embed.sh
-install_bin resources/mkarch.sh /bin/installer-archlinux.sh
+install_bin resources/installer-embed.sh /bin/
+install_bin resources/installer-standard.sh /bin/
+install_bin resources/installer-archlinux.sh /bin/
 sudo mkdir -p "$R/usr/share/installer"
 for path in resources/locales/gettext/*_*; do
     loc=${path##*/}
