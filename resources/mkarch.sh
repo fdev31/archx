@@ -76,6 +76,8 @@ arch-chroot $rootfs grub-mkconfig -o /boot/grub/grub.cfg
 arch-chroot $rootfs grub-install --boot-directory /boot --target i386-pc ${loop}
 arch-chroot $rootfs grub-install --efi-directory /boot/EFI --boot-directory /boot ${loop}
 
+sudo cp -r /boot/EFI/* $rootfs/boot/EFI/
+
 arch-chroot $rootfs mkinitcpio -p linux
 
 rm -f $rootfs/lib/initcpio/hooks/rolinux
