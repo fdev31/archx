@@ -132,6 +132,21 @@ You can run the **reconfigure.sh** scripts, it will ask a few questions (or much
 
 Then follow the *Quickstart* instructions to build the OS image.
 
+### Configuration example
+
+Build a console distribution in german language with gzip compression:
+
+Write a `my_conf.sh` file with this content:
+
+    DISTRIB=console
+    COMPRESSION_TYPE=gzip
+    COUNTRY=DE
+
+Then, build from scratch:
+
+    % rm -fr ROOT
+    % ./mkbootstrap.sh
+
 ## TODO
 
 - share disk images for each distrib
