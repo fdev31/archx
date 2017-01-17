@@ -72,6 +72,7 @@ From the most RAM consuming to the lightest:
 - *cinnamon* - very heavy
 - *gnome3* - very heavy
 - *gnome3-classique* - quite heavy
+- *plasma* - medium
 - *xfce* - light
 - *mate* - lighter
 

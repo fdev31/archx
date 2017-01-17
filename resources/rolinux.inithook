@@ -141,7 +141,7 @@ run_latehook() {
         mount --bind "$BOOTPART/boot" "$R/boot"
     fi
 
-    if [ "${RW_DRIVE%/*}" != "/dev" ]; then
+    if [ "${RW_DRIVE%/*}" != "/dev" ]; then # file on disk
         echo "remount rw"
         mount "$BOOTPART" -o remount,rw
     fi
@@ -156,7 +156,10 @@ run_latehook() {
 	STORED=0
 
 	# check persistant
-	if [ -z "$nobtr" ] && [ -e "$RW_DRIVE" ] ; then # We have a storage device, Yey !!
+	if [ -z "$volatile" ] && [ -e "$RW_DRIVE" ] ; then # We have a storage device, Yey !!
+        if [ -n "$wipefs" ]; then
+            run_newroot mkfs.ext4 -F "$RW_DRIVE" > "/tmp/mkfs_ext4.log" 2>&1
+        fi
         if [ -z "$shell" ]; then
             run_newroot btrfs check -p --repair --check-data-csum "$RW_DRIVE" > "/tmp/btrfs_check.log" 2>&1 && FS_OPTS="ssd,compress=lzo,discard,relatime"
             run_newroot fsck.ext4 -p "$RW_DRIVE" > "/tmp/ext4_check.log" 2>&1 && FS_OPTS="discard,relatime"
