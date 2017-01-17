@@ -10,3 +10,4 @@ if have_xorg ; then
         install_pkg sardi-icons
     fi
 fi
+install_pkg ttf-roboto otf-hack
