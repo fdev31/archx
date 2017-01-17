@@ -149,6 +149,13 @@ Then, build from scratch:
     % rm -fr ROOT
     % ./mkbootstrap.sh
 
+### Custom ArchLinux partitionning
+
+- Prepare your partitions using cfdisk, parted, fdisk or gparted if you are running a graphical session
+- Mount your partitions according to desired layout somewhere (ie. **/mnt**), then type:
+
+    sudo installer-archlinux.sh /mnt
+
 ## TODO
 
 - share disk images for each distrib

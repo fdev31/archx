@@ -2,8 +2,19 @@
 # mkarch <device> <sizeMB> <squashfs> <extra_part_fs>
 # ex: mkparts.sh ARCHX.img 100 rootfs.s
 # TODO/ make fixed squash size possible
+
 export LC_ALL=C
-rootfs=$(mktemp -d)
+
+if [ -n $RUNNING_FROM_INSTALLER ] ; then
+    DISK=$1
+    SZ1=$2
+    SQ=$3
+    rootfs=$(mktemp -d)
+else
+    rootfs="$1"
+    SQ=$(lsblk -fl |grep squashfs)
+    SQ="/dev/${rootfs%% *}"
+fi
 
 if [ -e /usr/share/installer ] ; then
     . /usr/share/installer/instlib.sh
@@ -15,17 +26,15 @@ fi
 echo "DISKLABEL: $DISKLABEL"
 
 function clean_exit() {
-    sudo umount $rootfs/boot 2>/dev/null
-    sudo umount $rootfs 2>/dev/null
-    sudo rmdir $rootfs 2>/dev/null
-    sudo losetup -d $loop 2>/dev/null
-    exit $1
+    if [ -z $RUNNING_FROM_INSTALLER ]; then
+        sudo umount $rootfs/boot 2>/dev/null
+        sudo umount $rootfs 2>/dev/null
+        sudo rmdir $rootfs 2>/dev/null
+        sudo losetup -d $loop 2>/dev/null
+        exit $1
+    fi
 }
 
-DISK=$1
-FS1=fat32
-SZ1=$2
-SQ=$3
 
 if [ -z $SQ ]; then
     echo "Syntax: $0 <image or device> <boot_part_size> <squash_image>"
@@ -40,25 +49,29 @@ else # file
     sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
 fi
 
-echo "############################################################## wipe disk "
-wipefs --force -a $DISK
-echo "############################################################## make disk structure "
+if [ -z $RUNNING_FROM_INSTALLER ] && [ -n $rootfs ] ; then
+    echo "############################################################## wipe disk "
+    wipefs --force -a $DISK
+    echo "############################################################## make disk structure "
 
-call_fdisk $DISK n p 1 - +${SZ1}M t ef n - - - - a 1 w || clean_exit 1
+    call_fdisk $DISK n p 1 - +${SZ1}M t ef n - - - - a 1 w || clean_exit 1
 
-partprobe
-loop=$(losetup -P -f --show $DISK)
-partprobe
+    partprobe
+    loop=$(losetup -P -f --show $DISK)
+    partprobe
 
-echo "############################################################## create BOOT/EFI partition "
-mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
-echo "############################################################## create data partition"
-mkfs.ext4 -F ${loop}p2 || clean_exit 1
+    echo "############################################################## create BOOT/EFI partition "
+    mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
+    echo "############################################################## create data partition"
+    mkfs.ext4 -F ${loop}p2 || clean_exit 1
 
-mount ${loop}p2 "$rootfs"
+    mount ${loop}p2 "$rootfs"
 
-mkdir "$rootfs/boot"
-mount ${loop}p1 "$rootfs/boot"
+    mkdir "$rootfs/boot"
+    mount ${loop}p1 "$rootfs/boot"
+else
+    mkdir "$rootfs/boot"
+fi
 
 mkdir $rootfs/boot/EFI
 
