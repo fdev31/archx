@@ -189,7 +189,6 @@ function get_part_offset() {
 }
 
 function make_disk_image() {
-
     # computed disk size, in MB
     # copy extra files to /boot
     if [ -n "$LIVE_SYSTEM" ]; then
@@ -216,6 +215,7 @@ function make_disk_image() {
     sudo rm -fr "$MPT"
 
     sudo DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
+    sudo pacman -r "$R" -Qtt | sort > $DISTRIB-pkglist.txt
 }
 
 # MAIN
