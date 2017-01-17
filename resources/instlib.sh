@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -d ROOT ]; then
+    export RUNNING_FROM_BOOTSTRAP=1
+fi
+
 function call_fdisk() {
     DRIVE=$1
     shift

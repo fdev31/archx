@@ -16,6 +16,8 @@ import subprocess
 from time import sleep
 from os.path import join as joinp , getsize
 
+os.environ['RUNNING_FROM_INSTALLER'] = '1'
+
 gettext.install('installer')
 
 MIN_SIZE = int(open('/.diskusage').read()) + 10000 # add 1MB for safety
