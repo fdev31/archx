@@ -12,7 +12,7 @@ Arch made easy
 - Installable on **pen drives** or standard hard drives
 - **Storage & installation** of apps possible even in "live" mode
 - Can be run from windows withe Qemu, vmware or Virtualbox
-- Unmodified system **can be restored** if things get broke [WIP]
+- Unmodified system **can be restored** if things get broke
 - Failsafe install with **"rollback" option** [WIP]
 - Fast - maybe the **fastest Linux** installer on earth
 - Small - the live system usually takes less than **30% of the original size**
@@ -42,7 +42,7 @@ Also, I might target in the future:
 
 ## Status
 
-Currently WIP, starts to be usable.
+Currently WIP, but starts to be usable.
 
 Target installation modes include:
 
