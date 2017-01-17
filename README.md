@@ -87,7 +87,7 @@ Note that **kodi** requires as little as **mate**
 
 #### Windows
 
-    Install https://rufus.akeo.ie/ and run it
+Install https://rufus.akeo.ie/ and run it
 
 TODO: steps
 
