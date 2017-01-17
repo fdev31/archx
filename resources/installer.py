@@ -18,6 +18,8 @@ from os.path import join as joinp , getsize
 
 gettext.install('installer')
 
+MIN_SIZE = int(open('/.diskusage').read()) + 10000 # add 1MB for safety
+
 def fake_trans():
     _('Install')
 
@@ -119,10 +121,10 @@ class Installer:
 
     A_embed_compact = _('Safe install or upgrade (can be uninstalled, SAFE for data)')
     def MENU_A_embed_compact(self, drive=None, partno=None):
-        drive = drive or self.select_disk(2500000)
+        drive = drive or self.select_disk(MIN_SIZE)
         if not drive: return
         try:
-            partno = partno or self.select_partition(drive, 2500000, show_ro=False)
+            partno = partno or self.select_partition(drive, MIN_SIZE, show_ro=False)
         except NoPartFound:
             UI.message(_('No partition found !'))
         else:
@@ -147,7 +149,7 @@ class Installer:
 
     B_install_compact = _('Dedicate a disk (RECOMMENDED, requires an unused disk)')
     def MENU_B_install_compact(self, drive=None):
-        drive = drive or self.select_disk(2500000)
+        drive = drive or self.select_disk(MIN_SIZE)
         if not drive: return
         UI.message(_('Installing...'))
         os.system('partprobe')
@@ -156,7 +158,7 @@ class Installer:
 
     C_install_archlinux = _('Install ArchLinux instead')
     def MENU_C_install_archlinux(self, drive=None):
-        drive = drive or self.select_disk(2500000)
+        drive = drive or self.select_disk(MIN_SIZE)
         if not drive: return
         UI.message(_('Installing...'))
         os.system('partprobe')
