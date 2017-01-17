@@ -8,6 +8,7 @@ Arch made easy
 - Easy **installer for ArchLinux** including with non-destructive option
 - **Pre-configuration** for most elementary parts
 - **Multi-lingual** with minimal effort to add a country support
+- **Unmodifed** you have all the manpages, translations & co
 - Installable on **pen drives** or standard hard drives
 - **Storage & installation** of apps possible even in "live" mode
 - Can be run from windows withe Qemu, vmware or Virtualbox
