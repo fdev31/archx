@@ -131,28 +131,6 @@ function make_squash_root() {
     sudo rm ignored.files
 }
 
-function grub_install() {
-    F="$1"
-    D="$2"
-    BIOS_MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
-    sudo grub-install --target x86_64-efi --efi-directory "$F" --removable --modules "$BIOS_MOD linux linux16 video" --bootloader-id "$DISKLABEL" --no-nvram --force-file-id
-    sudo cp -r /usr/lib/grub/x86_64-efi "$F/grub/"
-    sudo grub-install --target i386-pc --boot-directory "$F" --removable --modules "$BIOS_MOD" "$D"
-    if [ -n "$SECUREBOOT" ]; then
-        sudo cp secureboot/{PreLoader,HashTool}.efi "$F/EFI/BOOT/"
-        sudo mv "$F/EFI//BOOT/BOOTX64.EFI"  "$F/EFI/BOOT/loader.efi" # loader = grub
-        sudo mv "$F/EFI//BOOT/PreLoader.efi"  "$F/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
-    fi
-
-}
-
-function grub_on_img() {
-    step "Installing bootloader"
-    ROOT_DEV=$(sudo losetup -P --show -f "$D")
-    grub_install "$T/" "$ROOT_DEV"
-    sudo losetup -d "$ROOT_DEV"
-}
-
 function mount_part0() {
     OFFSET=$(($SECT_SZ * $(get_part_offset "$D" boot) ))
     LO_DEV=$(sudo losetup -o "$OFFSET" --show -f "$D")
@@ -274,11 +252,6 @@ case "$PARAM" in
     d*)
         make_disk_image
         ;;
-    gr*)
-        mount_part0
-        grub_on_img
-        umount_part0
-        ;;
     reb*)
         reconfigure
         make_squash_root
@@ -288,23 +261,6 @@ case "$PARAM" in
         run_install_hooks
         make_squash_root
         make_disk_image
-        ;;
-    flash)
-		shift # pop the first argument
-        drive=$1
-        mkdir usb_drive_tmpmnt 2>/dev/null
-        sudo mount $drive usb_drive_tmpmnt || exit 1
-        step "Copying boot..."
-        sudo cp -ar "$R/boot/"* usb_drive_tmpmnt/ || exit 1
-        step "Copying root (can take a while)..."
-        sudo cp "$SQ" usb_drive_tmpmnt/ || exit 1
-        step "Installing GRUB..."
-        grub_install usb_drive_tmpmnt/ "${drive:0:-1}"
-        step "Syncing."
-        sudo umount ./usb_drive_tmpmnt
-        sudo sync
-        sudo rm -fr usb_drive_tmpmnt
-        sudo dosfslabel "$drive" "$DISKLABEL"
         ;;
     zip)
         (cd 3rdparty && ./get.sh)
@@ -331,7 +287,7 @@ case "$PARAM" in
 	*)
         echo "Usage: $0 <command> [options]"
         echo "Commands:"
-        echo "       all: build the full system from scratch (RUN THIS FIRST)"
+        echo "       all: build the full system from scratch (RUN THIS FIRST - default if first run)"
         echo "       run: runs QEMU emulator"
         echo "        up: re-create rootfs after a manual update (default)"
         echo "     shell: start a shell"
@@ -339,7 +295,6 @@ case "$PARAM" in
 #        echo "      conf: re-create intial ramdisk"
 #        echo "    squash: re-create squash rootfs"
 #        echo "      disk: re-create disk image from current squash & ramdisk"
-#        echo "     flash: install rootfs to some USB drive & make it bootable (arg = FAT partition)"
         exit 0
 esac
 echo "Done"
