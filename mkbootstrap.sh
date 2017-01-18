@@ -214,7 +214,7 @@ function make_disk_image() {
     popd > /dev/null
     sudo rm -fr "$MPT"
 
-    sudo DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
+    sudo ROOT_TYPE="$ROOT_TYPE" DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
     sudo pacman -r "$R" -Qtt | sort > $DISTRIB-pkglist.txt
 }
 
