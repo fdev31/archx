@@ -2,10 +2,6 @@
 install_pkg  xorg xterm xorg-xinit
 install_pkg accountsservice
 
-install_resource xorg/*.conf /etc/X11/xorg.conf.d/
-sudo sed -i "s/fr/$LANG_ISO2/" "$R/etc/X11/xorg.conf.d/10-keyboard-layout.conf"
-
-
 enable_service accounts-daemon
 if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
     install_pkg gtk-engines
