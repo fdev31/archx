@@ -84,7 +84,6 @@ for s = 1, scount do screen[s]:connect_signal("arrange", function ()
 end
 
 awful.util.spawn('comp-switch')
-awful.util.spawn('dex -a -e Awesome')
 awful.util.spawn('nm-applet')
 
 return {
