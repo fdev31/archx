@@ -70,13 +70,11 @@ run_latehook() {
 
 	F_RWPART="$R{{STORAGE_PATH}}"
 
-
 	if [ -z "$SQUASHROOT" ] ; then
 		SQUASHROOT={{ROOTIMAGE}}
 	fi
 
 	## main code:
-
 
     FULL_DISK_ID=$(cat /proc/cmdline)
 	FULL_DISK_ID=${FULL_DISK_ID#*root=}
