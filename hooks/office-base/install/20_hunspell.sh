@@ -1,1 +1,2 @@
-install_pkg hunspell hunspell-${LANG_ISO2}
+install_pkg hunspell
+install_pkg hunspell-${LANG_ISO2}

@@ -1,2 +1,7 @@
-install_pkg thunar 
-install_pkg thunar-archive-plugin thunar-media-tags-plugin thunar-volman tumbler ffmpegthumbnailer raw-thumbnailer
+install_pkg thunar
+install_pkg thunar-archive-plugin
+install_pkg thunar-media-tags-plugin
+install_pkg thunar-volman
+install_pkg tumbler
+install_pkg ffmpegthumbnailer
+install_pkg raw-thumbnailer

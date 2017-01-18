@@ -1,1 +1,4 @@
-have_xorg && install_pkg openshot frei0r-plugins
+if [ have_xorg ]; then
+   install_pkg openshot
+   install_pkg frei0r-plugins
+fi

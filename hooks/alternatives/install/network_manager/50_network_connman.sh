@@ -1,3 +1,4 @@
-install_pkg  connman wpa_supplicant
+install_pkg connman
+install_pkg wpa_supplicant
 
 enable_service connman

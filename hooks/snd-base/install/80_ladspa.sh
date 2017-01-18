@@ -1,1 +1,3 @@
-install_pkg cmt ladspa swh-plugins
+install_pkg cmt
+install_pkg ladspa
+install_pkg swh-plugins

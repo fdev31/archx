@@ -1,2 +1,2 @@
-
-install_pkg  terminator terminus-font
+install_pkg terminator
+install_pkg terminus-font

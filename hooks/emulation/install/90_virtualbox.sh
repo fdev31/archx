@@ -1,1 +1,4 @@
-have_xorg && install_pkg  virtualbox virtualbox-host-modules-arch
+if [ have_xorg ]; then
+    install_pkg virtualbox
+    install_pkg virtualbox-host-modules-arch
+fi

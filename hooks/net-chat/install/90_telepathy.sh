@@ -1,1 +1,7 @@
-have_xorg && install_pkg telepathy telepathy-gabble telepathy-idle telepathy-salut telepathy-rakia 
+if [ have_xorg ]; then
+    install_pkg telepathy
+    install_pkg telepathy-gabble
+    install_pkg telepathy-idle
+    install_pkg telepathy-salut
+    install_pkg telepathy-rakia
+fi

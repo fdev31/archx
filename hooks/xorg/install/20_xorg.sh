@@ -1,5 +1,6 @@
 
-install_pkg  xorg xterm xorg-xinit
+install_pkg xorg
+install_pkg xorg-xinit
 install_pkg accountsservice
 
 enable_service accounts-daemon

@@ -100,9 +100,7 @@ function raw_install_pkg() {
 
 function install_pkg() {
     step2 "Installing $*"
-    for pkg in $*; do
-        raw_install_pkg --needed -S $pkg
-    done
+    raw_install_pkg --needed -S $*
 }
 
 function remove_pkg() {
