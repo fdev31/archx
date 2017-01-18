@@ -1,4 +1,4 @@
-if [ have_xorg ]; then
+if have_xorg ; then
     install_pkg telepathy
     install_pkg telepathy-gabble
     install_pkg telepathy-idle
