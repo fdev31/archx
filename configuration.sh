@@ -10,6 +10,7 @@ USERGID="100"
 PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
 PASSWORD="sexy"
+LOW_MEM=1
 
 # Advanced users only:
 
