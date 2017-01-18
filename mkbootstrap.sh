@@ -306,6 +306,16 @@ case "$PARAM" in
         sudo rm -fr usb_drive_tmpmnt
         sudo dosfslabel "$drive" "$DISKLABEL"
         ;;
+    zip)
+        (cd 3rdparty && ./get.sh)
+        mkdir $DISKLABEL
+        ln 3rdparty/* $DISKLABEL
+        rm $DISKLABEL/get.sh
+        ln "$D" $DISKLABEL/
+        rm $DISKLABEL.zip 2>/dev/null
+        zip -r0 $DISKLABEL.zip $DISKLABEL
+        rm -fr $DISKLABEL
+        ;;
     all*)
         reset_rootfs
         base_install
