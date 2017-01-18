@@ -15,7 +15,6 @@ fi
 echo "DISKLABEL: $DISKLABEL"
 
 function clean_exit() {
-    sudo umount $rootfs/storage 2>/dev/null
     sudo umount $rootfs/boot 2>/dev/null
     sudo umount $rootfs 2>/dev/null
     sudo rmdir $rootfs 2>/dev/null
@@ -55,28 +54,26 @@ echo "############################################################## create BOOT
 mkfs.fat -n $DISKLABEL ${loop}p1 || clean_exit 1
 echo "############################################################## copy ROOT filesystem"
 dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
-# TODO: alternative: mkfs + unsquashfs
-# - remove initcpio hook (rolinux) + regen
-# - regen grub-conf
 echo "############################################################## create data partition"
-mkfs.ext4 -F ${loop}p3 || clean_exit 1
+
+if [ "x$ROOT_TYPE" = "xbtrfs" ]; then
+    sudo mkfs.btrfs -f -M -n 4096 -s 4096 "${loop}p3" || clean_exit 1
+else
+    mkfs.ext4 -F -m 1 ${loop}p3 || clean_exit 1
+fi
 
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
-sudo mount ${loop}p3 $rootfs/storage
 
 if [ -d ROOT ]; then
     UPDATE_EFI=
-    RSRC=ROOT/boot/rootfs.default
     sudo cp -ar ROOT/boot/* $rootfs/boot
     INSTALL_SECURE_BOOT=1
 else
     UPDATE_EFI=1
-    RSRC=/boot/rootfs.default
     sudo cp -ar /boot/{grub,EFI} $rootfs/boot
     sudo cp -ar /boot/*inux* $rootfs/boot
 fi
-sudo tar xf $RSRC -C $rootfs/storage
 
 install_grub "${loop}" "$rootfs/boot" $DISKLABEL "$UPDATE_EFI"
 
