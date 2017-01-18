@@ -228,6 +228,8 @@ none     /usr             overlay  rw,x-systemd.device-timeout=10,relatime,lower
 tmpfs    /var/log        tmpfs    rw     0 2
 tmpfs    /var/tmp        tmpfs    rw     0 2
 tmpfs    /var/cache      tmpfs    rw     0 2
+
+tmpfs          /home/user/.cache       tmpfs   noatime,nodev,nosuid,size=1000M 0       2
 EOF
     cp /tmp/fstab $T_F
 
