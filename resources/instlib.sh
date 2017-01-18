@@ -40,14 +40,13 @@ function get_uuid_from_device() {
 }
 
 function install_grub() {
-
     DEVICE=$1
     BOOTDIR=$2
     DISKLABEL=$3
     EFIUPDATE=$4
     BOOTROOT=$5
 
-    MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb"
+    MOD="normal search chain search_fs_uuid search_label search_fs_file part_gpt part_msdos fat usb ntfs ntfscomp"
     if [ -n $EFIUPDATE ]; then
         EFI_OPTS="--no-nvram"
     fi
