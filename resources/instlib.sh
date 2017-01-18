@@ -69,7 +69,7 @@ function install_grub() {
     sudo sed -i "s#/grub#$BOOTROOT/grub#g" "$BOOTDIR/grub/grub.cfg"
 
     if [ -n "$INSTALL_SECURE_BOOT" ]; then
-        sudo cp secureboot/{PreLoader,HashTool}.efi "$BOOTDIR/EFI/BOOT/"
+        sudo cp resources/secureboot/{PreLoader,HashTool}.efi "$BOOTDIR/EFI/BOOT/"
         sudo mv "$BOOTDIR/EFI/BOOT/BOOTX64.EFI"    "$BOOTDIR/EFI/BOOT/loader.efi" # loader = grub
         sudo mv "$BOOTDIR/EFI/BOOT/PreLoader.efi"  "$BOOTDIR/EFI/BOOT/BOOTX64.EFI" # default loader = preloader
     fi
