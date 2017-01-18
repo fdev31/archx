@@ -7,6 +7,8 @@ function distro_install_hook() {
     # comment out to disable autologin
     sudo sed -i "s/^#autologin-user=.*/autologin-user=user/" "$R/etc/lightdm/lightdm.conf"
     sudo sed -i "s/^#autologin-user-timeout=.*/autologin-user-timeout=5/" "$R/etc/lightdm/lightdm.conf"
+    sudo sed -i "s/^#autologin-in-background=.*/autologin-in-background=true/" "$R/etc/lightdm/lightdm.conf"
+
     sudo groupadd -R "$R" -r autologin
     sudo gpasswd  -Q "$R" -a user autologin
 
