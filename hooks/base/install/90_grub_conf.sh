@@ -8,7 +8,7 @@ sudo cp -r resources/breeze "$R/boot/grub/themes/"
 install_file resources/grub.cfg "/boot/grub/grub.cfg"
 sudo sed -i "s/DISKLABEL/$DISKLABEL/g" "$R/boot/grub/grub.cfg"
 
-echo 'GRUB_THEME="/boot/grub/themes/breeze/theme.txt"' | sudo dd of="$R/etc/default/grub" oflag=append conv=notrunc
+echo 'GRUB_THEME="/boot/grub/themes/breeze/theme.txt"' | append_text "/etc/default/grub"
 
 if [ -e "resources/locales/${LANG_ISO2}.gkb" ]; then
     install_file "resources/locales/${LANG_ISO2}.gkb" "/boot/grub/keyboard.gkb"
