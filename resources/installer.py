@@ -24,6 +24,7 @@ MIN_SIZE = int(open('/.diskusage').read()) + 10000 # add 1MB for safety
 
 def fake_trans():
     _('Install')
+    _('Login as "%s", default password is "%s"'%('user', 'sexy'))
 
 class DiskInfo:
     def __init__(self):

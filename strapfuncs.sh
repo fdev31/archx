@@ -12,9 +12,9 @@ COUNTRY=${COUNTRY%,*}
 if [ -z "$COUNTRY" ]; then
     COUNTRY=FR
 fi
-if [ -e country_codes/$COUNTRY ] ; then
+if [ -e resources/locales/country_codes/$COUNTRY ] ; then
     echo "** Adding i18n-$COUNTRY support"
-    source country_codes/$COUNTRY
+    source resources/locales/country_codes/$COUNTRY
 else
     echo "** No i18n support found for $COUNTRY"
 fi
