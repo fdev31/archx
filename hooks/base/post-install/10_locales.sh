@@ -18,5 +18,4 @@ LC_MEASUREMENT=\"${LANG}\"
 LC_IDENTIFICATION=\"${LANG}\"
 LC_NUMERIC=\"C\"" | sudo dd of="$R/etc/locale.conf"
 
-sudo arch-chroot "$R" set-x11-keymap ${LANG_ISO2} '' '' terminate:ctrl_alt_bksp
-
+sudo arch-chroot "$R" localectl set-x11-keymap ${LANG_ISO2} '' '' terminate:ctrl_alt_bksp
