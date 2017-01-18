@@ -3,5 +3,7 @@ if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
 Style=GTK+" | sudo dd of="$R/etc/xdg/Trolltech.conf"
     sudo chmod 644 "$R/etc/xdg/Trolltech.conf"
 
-    append_text "/etc/environment" 'QT_STYLE_OVERRIDE=GTK+'
+    append_text "/etc/environment" <<EOF
+QT_STYLE_OVERRIDE=GTK+
+EOF
 fi
