@@ -60,6 +60,25 @@ function contains() {
     grep "$1" "$2" > /dev/null
 }
 
+function append_text() {
+    pat="# GENERATED AT INSTALL:"
+
+    I="$R/$1"
+
+    if contains "$pat" "$I"; then
+        strip_end "$pat" "$I"
+    fi
+
+    _FILE=$(cat "$I")
+    _DATA=$(cat /dev/stdin)
+    echo "$_FILE
+
+$pat
+
+$_DATA
+" | sudo dd "of=$I"
+}
+
 function strip_end() {
     PATTERN="$1"
     FILE="$2"
