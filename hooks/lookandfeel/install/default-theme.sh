@@ -5,9 +5,11 @@ if have_xorg ; then
     else
         install_pkg arc-gtk-theme
         install_pkg vertex-themes
-        install_pkg xcursor-archcursorblue
-        install_pkg xcursor-pinux
-        install_pkg sardi-icons
     fi
 fi
 install_pkg ttf-roboto otf-hack
+install_pkg faience-icon-theme
+install_pkg sardi-icons
+install_pkg breeze-icons
+install_pkg breeze-gtk
+install_pkg xcursor-pinux
