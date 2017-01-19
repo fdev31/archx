@@ -7,4 +7,4 @@ install_pkg deepin-music
 install_pkg deepin-screenshot
 install_pkg deepin-terminal
 
-
+install_pkg deepin-gtk-theme
