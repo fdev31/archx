@@ -1,1 +1,2 @@
 install_pkg safeeyes
+autostart_app safeeyes
