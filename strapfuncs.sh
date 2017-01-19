@@ -114,7 +114,15 @@ function make_symlink() {
 
 function raw_install_pkg() {
     _set_pkgmgr
-    $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* || echo "FAILED $*" >> /tmp/failedpkgs.log
+    $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* 2>&1 | tee /tmp/pkginst.log
+   if [ ${PIPESTATUS[0]} -ne 0 ] ; then
+       cat >> /tmp/failedpkgs.log <<EOF
+>>>>>>>>>>>>>>>> FAILED to execute $*
+$(cat /tmp/pkginst.log)
+
+- end -
+EOF
+   fi
 }
 
 function install_pkg() {
