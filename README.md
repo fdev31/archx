@@ -179,3 +179,6 @@ This is alpha software: NEVER INTERRUPT THE SCRIPT WHILE RUNNING !!
 
 I am open to contributions of course (translations, fixes, etc...)
 
+### Known bugs
+
+- gnome keyboard set to US at first boot even if locale available
