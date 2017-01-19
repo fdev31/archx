@@ -5,4 +5,3 @@ install_pkg tcpstat
 install_pkg mtr 
 install_pkg gnu-netcat
 install_pkg iftop 
-install_pkg vim
