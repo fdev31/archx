@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "" > /tmp/failedpkgs.log
+
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
     exit 1
@@ -69,6 +71,8 @@ function reconfigure() {
 }
 
 function run_install_hooks() {
+    step "Installing pacman hooks"
+    sudo cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
     step "Triggering install hooks"
     run_hooks pre-install
     source "$_net_mgr"
@@ -173,10 +177,13 @@ function make_disk_image() {
         sudo cp -r extra_files/* "$R/boot/" 2>/dev/null || echo "No extra files to install"
     fi
 
-    sqsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
-    rsize=$(( $sqsize + $DISK_MARGIN + $BOOT_MARGIN ))
-
-    echo "Creating disk image..."
+    if [ $DISK_TOTAL_SIZE ] ; then
+        rsize=${DISK_TOTAL_SIZE}000
+    else
+        sqsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
+        rsize=$(( $sqsize + $DISK_MARGIN + $BOOT_MARGIN ))
+    fi
+    echo "Creating disk image of ${rsize}MB"
     dd if=/dev/zero of="$D" bs=1M count=$rsize
 
     step2 "Building persistent filesystem"

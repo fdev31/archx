@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = teamviewer
+
+[Action]
+When = PostTransaction
+Exec = /etc/pacman.d/hooks/teamviewer.sh
+
