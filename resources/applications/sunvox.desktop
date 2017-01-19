@@ -1,7 +1,0 @@
-[Desktop Entry]
-Comment=Synthetizer with pattern based sequencer (tracker)
-Terminal=false
-Name=Sunvox
-Exec=sunvox
-Type=Application
-Icon=audio-headphones
