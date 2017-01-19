@@ -7,9 +7,11 @@ if have_xorg ; then
         install_pkg vertex-themes
     fi
 fi
-install_pkg ttf-roboto otf-hack
+install_pkg ttf-roboto
+install_pkg otf-hack
 install_pkg faience-icon-theme
 install_pkg sardi-icons
 install_pkg breeze-icons
 install_pkg breeze-gtk
 install_pkg xcursor-pinux
+install_pkg flatplat-theme
