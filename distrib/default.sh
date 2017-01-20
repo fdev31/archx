@@ -1,4 +1,4 @@
-ENV=mate # or gnome
+ENV=mate # mate or gnome
 PROFILES="$PKG_ALL env-awesome env-$ENV"
 PREFERRED_TOOLKIT=gtk
 DISTRO_PACKAGE_LIST='firefox-ublock-origin firefox-download-youtube-videos-as-mp4 dropbox deluge handbrake vlc firefox-flashgot'
@@ -9,7 +9,7 @@ function distro_install_hook() {
 
     # comment out to disable autologin
     sudo sed -i "s/^#autologin-user=.*/autologin-user=user/" "$R/etc/lightdm/lightdm.conf"
-    sudo sed -i "s/^#autologin-user-timeout=.*/autologin-user-timeout=5/" "$R/etc/lightdm/lightdm.conf"
+    sudo sed -i "s/^#autologin-user-timeout=.*/autologin-user-timeout=10/" "$R/etc/lightdm/lightdm.conf"
     sudo sed -i "s/^#autologin-in-background=.*/autologin-in-background=true/" "$R/etc/lightdm/lightdm.conf"
 
     sudo groupadd -R "$R" -r autologin
