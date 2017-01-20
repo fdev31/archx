@@ -1,6 +1,8 @@
 echo "${LANG} UTF-8" | sudo dd of="$R/etc/locale.gen"
 sudo arch-chroot "$R" locale-gen
 
+install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
+
 (cd "$R/etc" && sudo ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
 echo "
 LANG=\"${LANG}\"
