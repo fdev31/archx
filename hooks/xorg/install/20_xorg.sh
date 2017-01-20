@@ -16,5 +16,4 @@ install_pkg libva-vdpau-driver
 install_pkg libva-intel-driver
 install_pkg mesa-vdpau
 install_pkg libvdpau
-
-install_pkg xcursor-oxygen
+install_pkg gnome-keyring

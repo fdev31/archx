@@ -7,6 +7,7 @@ if have_xorg ; then
         install_pkg vertex-themes
     fi
     install_pkg xcursor-pinux
+install_pkg xcursor-oxygen
 
     install_pkg faience-icon-theme
 #    install_pkg mint-themes mint-x-icons # TOO SLOW TO LOAD!
