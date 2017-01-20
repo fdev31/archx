@@ -276,7 +276,7 @@ case "$PARAM" in
         rm $DISKLABEL/get.sh
         ln "$D" $DISKLABEL/
         rm $DISKLABEL.zip 2>/dev/null
-        zip -r0 $DISKLABEL.zip $DISKLABEL
+        zip -r4 $DISKLABEL.zip $DISKLABEL
         rm -fr $DISKLABEL
         ;;
     all*)
