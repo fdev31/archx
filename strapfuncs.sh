@@ -153,7 +153,6 @@ function install_bin() {
 function install_file() {
     sudo install -m 644 -o root -g root "$1" "$R$2"
 }
-
 function autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then

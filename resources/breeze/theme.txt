@@ -7,7 +7,7 @@
 
 desktop-image: "background.png"
 
-title-text: "Meeow"
+title-text: "ArchX"
 #title-font: "DejaVu Regular 16"
 #title-color: "#fcfcfc"
 message-font: "DejaVu Sans Regular 14"

@@ -1,1 +1,1 @@
-sudo cp resources/save_state.sh "$R/bin/"
+install_bin resources/save_state.sh "/bin/"
