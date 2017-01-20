@@ -185,25 +185,17 @@ run_latehook() {
 	fi
 
     if [ ! -d "$F_RWPART/ROOT" ]; then # populate if empty
-        echo "populating default"
+        echo "populating storage with default config"
         run_newroot tar xf "$R/boot/rootfs.default" -C "$F_RWPART"
         sync
     fi
     # ensure overlay folders are created
-    for d in home etc opt srv usr var_db; do
+    for d in home etc opt srv usr var_db var_lib; do
         if [ ! -d "$F_RWPART/ROOT/$d" ]; then
             mkdir -p "$F_RWPART/ROOT/$d"
             mkdir -p "$F_RWPART/WORK/$d"
         fi
     done
-
-    for d in mnt var_lib; do
-        if [ ! -d "$R/$W_ROOTDIR/$d" ]; then
-            mkdir -p "$R/$W_ROOTDIR/$d"
-            mkdir -p "$R/$W_WORKDIR/$d"
-        fi
-    done
-
 
 	# mount /usr to make systemd happy
 	dprint mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
@@ -217,14 +209,14 @@ $FULL_DISK_ID         /boot     vfat     rw,x-systemd.device-timeout=1m,relatime
 $S_RW_DRIVE           /storage  auto     rw,x-systemd.device-timeout=1m,relatime,discard,data=ordered     0 2
 /storage/ROOT/home    /home     none     rw,x-systemd.device-timeout=60,relatime,discard,data=ordered,bind      0 2
 
-none     /mnt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/mnt,upperdir=/run/overlay/ROOT/mnt,workdir=/run/overlay/WORK/mnt     0 2
-none     /var/lib         overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib,upperdir=/run/overlay/ROOT/var_lib,workdir=/run/overlay/WORK/var_lib 0 2
+none     /var/lib         overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/lib,upperdir=/storage/ROOT/var_lib,workdir=/storage/WORK/var_lib    0 2
 none     /var/db          overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/var/db,upperdir=/storage/ROOT/var_db,workdir=/storage/WORK/var_db    0 2
 none     /etc             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/etc,upperdir=/storage/ROOT/etc,workdir=/storage/WORK/etc     0 2
 none     /opt             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/opt,upperdir=/storage/ROOT/opt,workdir=/storage/WORK/opt     0 2
 none     /srv             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/srv,upperdir=/storage/ROOT/srv,workdir=/storage/WORK/srv     0 2
 none     /usr             overlay  rw,x-systemd.device-timeout=10,relatime,lowerdir=/usr,upperdir=/storage/ROOT/usr,workdir=/storage/WORK/usr     0 2
 
+tmpfs    /mnt            tmpfs   rw   0 2
 tmpfs    /var/log        tmpfs    rw     0 2
 tmpfs    /var/tmp        tmpfs    rw     0 2
 tmpfs    /var/cache      tmpfs    rw     0 2
