@@ -17,8 +17,4 @@ install_pkg xcursor-oxygen
 
     install_pkg sardi-icons
     install_pkg flatplat-theme
-
-    install_pkg breeze-icons
-    install_pkg breeze-gtk
-    install_pkg breeze-kde4
 fi
