@@ -57,7 +57,7 @@ dd if=$SQ of=${loop}p2 bs=100M || clean_exit 1
 echo "############################################################## create data partition"
 
 if [ "x$ROOT_TYPE" = "xbtrfs" ]; then
-    sudo mkfs.btrfs -f -M -n 4096 -s 4096 "${loop}p3" || clean_exit 1
+    sudo mkfs.btrfs -f -M --mixed -n 4096 -s 4096 "${loop}p3" || clean_exit 1
 else
     mkfs.ext4 -F -m 1 ${loop}p3 || clean_exit 1
 fi
