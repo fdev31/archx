@@ -26,6 +26,14 @@ _net_mgr="$HOOK_BUILD_DIR/install/50_network_manager.sh"
 
 source ./distrib/${DISTRIB}.sh
 
+# i18n @ install time
+_gettext_dir=$(realpath ./resources/locales/gettext)
+
+function text() {
+    TEXTDOMAIN=messages TEXTDOMAINDIR="$_gettext_dir" gettext "$*"
+}
+
+
 # AUTO ADD FLASHDISK IF LIVESYSTEM
 
 if [ -n "$USE_LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then

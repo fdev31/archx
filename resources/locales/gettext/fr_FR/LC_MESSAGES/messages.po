@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-17 00:40+0100\n"
-"PO-Revision-Date: 2017-01-17 00:41+0100\n"
+"POT-Creation-Date: 2017-01-22 13:08+0100\n"
+"PO-Revision-Date: 2017-01-22 13:08+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -17,19 +17,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.11\n"
 
-#: ../../installer.py:22
+#: ../../installer.py:26
 msgid "Install"
 msgstr "Installer"
 
-#: ../../installer.py:106
+#: ../../installer.py:28
+msgid "Login as \"USER\", default password is \"PASS\""
+msgstr ""
+"Connectez-vous avec l'utilisateur \"USER\", le mot de passe est \"PASS\""
+
+#: ../../installer.py:112
 msgid "Select the installation modes"
 msgstr "Choisissez le mode d'installation"
 
-#: ../../installer.py:107
+#: ../../installer.py:113
 msgid "All modes are installing the same application set"
 msgstr "Tous les modes installent les mêmes applications"
 
-#: ../../installer.py:111
+#: ../../installer.py:117
 msgid ""
 "When finished, type \"sudo halt -p\" in the shell and remove the "
 "installation drive !"
@@ -37,63 +42,68 @@ msgstr ""
 "Si vous avez terminé, tapez \"sudo halt -p\" et enlevez la clé USB "
 "d'installation !"
 
-#: ../../installer.py:116
+#: ../../installer.py:122
 msgid "Exit"
 msgstr "Sortir"
 
-#: ../../installer.py:120
+#: ../../installer.py:126
 msgid "Safe install or upgrade (can be uninstalled, SAFE for data)"
 msgstr "Installation sans danger sur un disque existant"
 
-#: ../../installer.py:127
+#: ../../installer.py:133
 msgid "No partition found !"
 msgstr "Aucune partition trouvée !"
 
-#: ../../installer.py:132
+#: ../../installer.py:138
 msgid "Mounting partition"
 msgstr "Montage de la partition"
 
-#: ../../installer.py:136
+#: ../../installer.py:142
 msgid "Space not formatted!"
 msgstr "Espace non formaté !"
 
-#: ../../installer.py:136
+#: ../../installer.py:142
 msgid "Proceed rebuilding a filesystem ?"
 msgstr "Continuer en reconstruisant le système de fichiers ?"
 
-#: ../../installer.py:137
+#: ../../installer.py:143
 #, python-format
 msgid "What label you want to use (ie. %s)?"
 msgstr "Quel nom voulez-vous utiliser (ex: %s) ?"
 
-#: ../../installer.py:143 ../../installer.py:152 ../../installer.py:161
+#: ../../installer.py:149 ../../installer.py:158 ../../installer.py:167
 msgid "Installing..."
 msgstr "Installation..."
 
-#: ../../installer.py:148
+#: ../../installer.py:154
 msgid "Dedicate a disk (RECOMMENDED, requires an unused disk)"
 msgstr "Dédier un disque (RECOMMANDÉ, efface tout un disque)"
 
-#: ../../installer.py:157
+#: ../../installer.py:163
 msgid "Install ArchLinux instead"
 msgstr "Installer simplement ArchLinux (sur tout un disque)"
 
-#: ../../installer.py:170
+#: ../../installer.py:176
 msgid "Select the storage device"
 msgstr "Choisissez le disque"
 
-#: ../../installer.py:174
+#: ../../installer.py:180
 msgid "No acceptable drive found"
 msgstr "Aucun disque acceptable trouvé"
 
-#: ../../installer.py:178
+#: ../../installer.py:184
 msgid "Drive selected"
 msgstr "Disque choisi"
 
-#: ../../installer.py:188
+#: ../../installer.py:194
 msgid "Select the partition"
 msgstr "Choisissez une partition"
 
-#: ../../installer.py:192
+#: ../../installer.py:198
 msgid "Selected partition"
 msgstr "Partition choisie"
+
+#~ msgid "Login as \"$USERNAME\", default password is \"$PASSWORD\""
+#~ msgstr ""
+#~ "Connectez-vous avec l'utilisateur \"$USERNAME\", le mot de passe est "
+#~ "\"$PASSWORD\""
