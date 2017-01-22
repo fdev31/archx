@@ -9,6 +9,5 @@ EOF
 fi
 
 install_pkg breeze
-install_pkg breeze-icons
 install_pkg breeze-gtk
 install_pkg breeze-kde4
