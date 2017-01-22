@@ -1,11 +1,14 @@
 source ./configuration.sh
 
 # DETECT LANGUAGE
-
-IPADDR=$(curl -s icanhazip.com)
-COUNTRY=$(geoiplookup $IPADDR)
-COUNTRY=${COUNTRY#*: }
-COUNTRY=${COUNTRY%,*}
+if [ $DETECT_LOCALE ] ; then
+    IPADDR=$(curl -s icanhazip.com)
+    COUNTRY=$(geoiplookup $IPADDR)
+    COUNTRY=${COUNTRY#*: }
+    COUNTRY=${COUNTRY%,*}
+else
+    COUNTRY="EN"
+fi
 
 [ -e my_conf.sh ] && source ./my_conf.sh
 

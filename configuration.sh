@@ -13,6 +13,10 @@ PASSWORD="sexy"
 #LOW_MEM=1
 #DISK_TOTAL_SIZE=4 # size in GB
 
+DETECT_LOCALE=
+# uppercase country code to set locale
+#COUNTRY=
+
 # Advanced users only:
 
 PACMAN_BIN=yaourt # alternative pacman frontend, else set "sudo pacman"
