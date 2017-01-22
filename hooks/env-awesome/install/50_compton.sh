@@ -1,1 +1,1 @@
-../../shared/install/50_compton.sh
+../../../hooks/shared/install/compositor/50_compton.sh
