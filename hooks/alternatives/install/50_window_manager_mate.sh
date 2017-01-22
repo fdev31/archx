@@ -8,7 +8,6 @@ install_pkg caja-actions-gtk3
 
 install_pkg mate-tweak
 install_pkg plank
-install_pkg plank-config
 install_pkg tilda
 
 install_pkg variety
