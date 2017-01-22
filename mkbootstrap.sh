@@ -30,15 +30,20 @@ function run_hooks() {
         # BUILD CURRENT HOOKS COLLECTION
     rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
     mkdir "$HOOK_BUILD_DIR"
+    for hooktype in pre-mkinitcpio pre-install install post-install ; do
+        mkdir "$HOOK_BUILD_DIR/$hooktype"
+    done
     for PROFILE in $PROFILES; do
         step2 " ===> profile $PROFILE"
-        cp -ra "./hooks/$PROFILE/"* "$HOOK_BUILD_DIR"
-    done
-    for HK in $(find "$HOOK_BUILD_DIR" -type l); do
-        LNK=$(readlink "$HK")
-        if [ ! -f "$LNK" ]; then
-            ln -sf "${LNK/..\/.\//../hooks/}" "$HK"
-        fi
+        for stage in "hooks/$PROFILE/"* 
+        do
+            sstage=${stage#*/}
+            sstage=${sstage#*/}
+            for hook in $stage/*;
+            do
+                ln -sf "../../$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage"
+            done
+        done
     done
     HOOK_BUILD_FLAG=1
 fi
