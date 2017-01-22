@@ -1,9 +1,0 @@
-load-module module-remap-sink sink_name=reverse-stereo master=0 master_channel_map=front-right,front-left channel_map=front-left,front-right
-update-sink-proplist reverse-stereo device.description="Reverse Stereo"
-
-# know more with listplugins / analyseplugin
-load-module module-ladspa-sink sink_name=ladspa master=0 plugin=dyson_compress_1403 label=dysonCompress control=0,1,0.5,0.98 input_ladspaport_map=Input, output_ladspaport_map="Output"
-update-sink-proplist ladspa device.description="Compressed"
-
-load-module module-remap-sink sink_name=ladspa-reverse master=ladspa master_channel_map=front-right,front-left channel_map=front-left,front-right
-update-sink-proplist ladspa-reverse device.description="Compressed reverse Stereo"
