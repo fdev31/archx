@@ -23,8 +23,15 @@ gettext.install('installer')
 MIN_SIZE = int(open('/.diskusage').read()) + 10000 # add 1MB for safety
 
 def fake_trans():
+    # install shortcut
     _('Install')
+    # issue
     _('Login as "USER", default password is "PASS"')
+    # grub
+    _('Standard boot')
+    _('Safe boot')
+    _("Revert changes")
+
 
 class DiskInfo:
     def __init__(self):
