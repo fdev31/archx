@@ -1,4 +1,4 @@
-PROFILES="$PKG_BASE $PKG_XORG env-awesome env-enlightenment noobs" 
+PROFILES="$PKG_BASE $PKG_XORG env-enlightenment env-enlightenment-apps noobs"
 DISK_TOTAL_SIZE=2
 
 PREFERRED_TOOLKIT='gtk'

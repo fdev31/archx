@@ -1,4 +1,4 @@
-PROFILES="$PKG_BASE $PKG_XORG env-cinnamon $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMU $PKG_UI $PKG_EMU $PKG_DOC $PKG_SND proprietary "
+PROFILES="$PKG_ALL env-cinnamon env-cinnamon-apps env-$ENV"
 DISK_TOTAL_SIZE=4
 
 PREFERRED_TOOLKIT='gtk'

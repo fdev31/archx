@@ -1,5 +1,5 @@
 ENV=mate # mate or gnome
-PROFILES="$PKG_ALL env-awesome env-$ENV"
+PROFILES="$PKG_ALL env-awesome env-awesome-apps env-$ENV"
 PREFERRED_TOOLKIT=gtk
 DISTRO_PACKAGE_LIST='firefox-ublock-origin firefox-download-youtube-videos-as-mp4 dropbox deluge handbrake vlc firefox-flashgot'
 DISK_TOTAL_SIZE=4
