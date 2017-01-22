@@ -3,7 +3,7 @@ DISK_TOTAL_SIZE=4
 
 PREFERRED_TOOLKIT='gtk'
 
-DISTRO_PACKAGE_LIST='chromium pidgin telepathy gnome-extra shotwell clementine dropbox deluge handbrake'
+DISTRO_PACKAGE_LIST=
 
 function distro_install_hook() {
     return
