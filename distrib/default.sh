@@ -1,7 +1,7 @@
 ENV=mate # mate or gnome
 PROFILES="$PKG_ALL env-awesome env-awesome-apps env-$ENV"
 PREFERRED_TOOLKIT=gtk
-DISTRO_PACKAGE_LIST='firefox-ublock-origin firefox-download-youtube-videos-as-mp4 dropbox deluge handbrake vlc firefox-flashgot'
+DISTRO_PACKAGE_LIST=
 DISK_TOTAL_SIZE=4
 
 function distro_install_hook() {
