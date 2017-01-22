@@ -93,6 +93,15 @@ Install https://rufus.akeo.ie/ and run it
 
 TODO: steps
 
+#### Secure Boot
+
+If you have SecureBoot enabled, a popup will show on first boot.
+Just select
+
+**Enroll Hash** then **loader.efi**, **yes**, **exit**
+
+It's only needed once.
+
 ## Quickstart for developers
 
 Get some basic help:
