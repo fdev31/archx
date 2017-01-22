@@ -1,2 +1,1 @@
-install_pkg xarchiver
-install_pkg lxde
+install_pkg lxde-gtk3
