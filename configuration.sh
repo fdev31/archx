@@ -40,7 +40,7 @@ R="$WORKDIR/ROOT"
 D="$WORKDIR/$DISKLABEL.img"
 SQ="$WORKDIR/$ROOTNAME"
 
-PKG_BASE="base flashdisk installer locales net-chat net-utils system"
+PKG_BASE="base flashdisk locales net-chat net-utils system"
 PKG_XORG="xorg www"
 PKG_EDIT="editors dev-base"
 PKG_GFX="gfx-base gfx-more photo-base"
