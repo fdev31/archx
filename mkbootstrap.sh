@@ -28,31 +28,31 @@ HOOK_BUILD_FLAG=0
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
-    rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
-    mkdir "$HOOK_BUILD_DIR"
-    for hooktype in pre-mkinitcpio pre-install install post-install ; do
-        mkdir "$HOOK_BUILD_DIR/$hooktype"
-    done
-    for PROFILE in $PROFILES; do
-        step2 " ===> profile $PROFILE"
-        for stage in "hooks/$PROFILE/"* 
-        do
-            sstage=${stage#*/}
-            sstage=${sstage#*/}
-            for hook in $stage/*;
+        rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
+        mkdir "$HOOK_BUILD_DIR"
+        for hooktype in pre-mkinitcpio pre-install install post-install ; do
+            mkdir "$HOOK_BUILD_DIR/$hooktype"
+        done
+        for PROFILE in $PROFILES; do
+            step2 " ===> profile $PROFILE"
+            for stage in "hooks/$PROFILE/"* 
             do
-                ln -sf "../../$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage"
+                sstage=${stage#*/}
+                sstage=${sstage#*/}
+                for hook in $stage/*;
+                do
+                    ln -sf "../../$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage"
+                done
             done
         done
-    done
-    HOOK_BUILD_FLAG=1
-fi
+        HOOK_BUILD_FLAG=1
+    fi
 
-step "Executing $DISTRIB hooks..."
-for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
-    step2 "HOOK $hook"
-    source $hook
-done
+    step "Executing $DISTRIB hooks..."
+    for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
+        step2 "HOOK $hook"
+        source $hook
+    done
 }
 
 function reset_rootfs() {
