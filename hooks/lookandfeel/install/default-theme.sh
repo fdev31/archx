@@ -1,5 +1,5 @@
 if have_xorg ; then
-    tar xvf -C $R resources/theme.tar.xz
+    sudo tar xvf resources/theme.tar.xz -C $R
     if [ "$PREFERRED_TOOLKIT" = "qt" ]; then
         install_pkg qtcurve
         install_pkg archlinux-themes-kdm
