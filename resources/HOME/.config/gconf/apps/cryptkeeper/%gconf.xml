@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<gconf>
+	<entry name="filemanager" mtime="1485117004" type="string">
+		<stringvalue>caja</stringvalue>
+	</entry>
+	<entry name="idletimeout" mtime="1485117004" type="int" value="0"/>
+	<entry name="keep_mountpoints" mtime="1485117004" type="bool" value="false"/>
+	<entry name="allow_other" mtime="1485117004" type="bool" value="false"/>
+</gconf>
