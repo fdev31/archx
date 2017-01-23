@@ -53,7 +53,7 @@ function run_hooks() {
     _hook_c=0
     for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
         _hook_c=$(( $_hook_c + 1 ))
-        step "hook $_hook_c/$_hook_t $(( 100 * $_hook_c / $_hook_t ))% -- $hook"
+        step "$1 hook [ $(( 100 * $_hook_c / $_hook_t ))% ] $_hook_c/$_hook_t :: $(basename $hook)"
         source $hook
     done
 }
@@ -96,7 +96,8 @@ function run_install_hooks() {
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
     raw_install_pkg -Rns $(raw_install_pkg -Qtdq) # add one "t" to get rid of optional dependencies
-    raw_install_pkg -Sc --noconfirm
+    # clear cache & unused repositories
+#    raw_install_pkg -Sc --noconfirm
 }
 
 function install_extra_packages() {
