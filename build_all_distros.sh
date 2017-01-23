@@ -2,7 +2,7 @@
 
 source ./configuration.sh
 
-for n in distrib/*.sh; do
+for n in distrib/{default,noobs,multichoice}.sh; do
     n=${n##*/}
     n=${n%.sh}
     echo "DISTRIB=$n" > my_conf.sh
