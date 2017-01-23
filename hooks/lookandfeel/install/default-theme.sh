@@ -1,10 +1,10 @@
 if have_xorg ; then
+    tar xvf -C $R resources/theme.tar.xz
     if [ "$PREFERRED_TOOLKIT" = "qt" ]; then
         install_pkg qtcurve
         install_pkg archlinux-themes-kdm
     else
         install_pkg arc-gtk-theme
-        install_pkg vertex-themes
     fi
     install_pkg xcursor-pinux
     install_pkg xcursor-oxygen
