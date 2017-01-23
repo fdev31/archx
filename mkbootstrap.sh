@@ -49,8 +49,11 @@ function run_hooks() {
     fi
 
     step "Executing $DISTRIB hooks..."
+    _hook_t=$(ls -1d "$HOOK_BUILD_DIR/$1/"*.sh | wc -l)
+    _hook_c=0
     for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
-        step2 "HOOK $hook"
+        _hook_c=$(( $_hook_c + 1 ))
+        step "hook $_hook_c/$_hook_t $(( 100 * $_hook_c / $_hook_t ))% -- $hook"
         source $hook
     done
 }
