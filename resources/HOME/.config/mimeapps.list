@@ -29,11 +29,11 @@ video/x-flv=org.gnome.Totem.desktop
 video/x-matroska=org.gnome.Totem.desktop
 video/x-mpeg=org.gnome.Totem.desktop
 video/x-ogm+ogg=org.gnome.Totem.desktop
+application/msword=wps-office-wps.desktop
+application/vnd.openxmlformats-officedocument.wordprocessingml.document=wps-office-wps.desktop
+application/vnd.ms-excel=wps-office-et.desktop
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=wps-office-wps.desktop
 application/vnd.oasis.opendocument.text=libreoffice-writer.desktop
-application/msword=libreoffice-writer.desktop
-application/vnd.openxmlformats-officedocument.wordprocessingml.document=libreoffice-writer.desktop
 application/vnd.oasis.opendocument.spreadsheet=libreoffice-calc.desktop
-application/vnd.ms-excel=libreoffice-calc.desktop
-application/vnd.openxmlformats-officedocument.spreadsheetml.sheet=libreoffice-calc.desktop
 
 [Added Associations]
