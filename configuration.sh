@@ -10,7 +10,7 @@ USERGID="100"
 PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
 PASSWORD="sexy"
-#LOW_MEM=1
+LOW_MEM=1
 #DISK_TOTAL_SIZE=4 # size in GB
 
 DETECT_LOCALE=
