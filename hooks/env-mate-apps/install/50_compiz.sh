@@ -1,0 +1,1 @@
+../../shared/install/compositor/50_compiz.sh
