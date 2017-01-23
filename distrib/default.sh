@@ -15,5 +15,11 @@ function distro_install_hook() {
     sudo groupadd -R "$R" -r autologin
     sudo gpasswd  -Q "$R" -a user autologin
 
+    cat > $R/home/$USERNAME/.dmrc <<EOF 
+[Desktop]
+Language=$LANG
+Session=$ENV
+EOF
+
     return
 }
