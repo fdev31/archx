@@ -1,5 +1,5 @@
 ENV=mate # mate or gnome
-PROFILES="$PKG_ALL env-awesome env-awesome-apps env-$ENV"
+PROFILES="$PKG_ALL env-$ENV env-$ENV-apps"
 PREFERRED_TOOLKIT=gtk
 DISTRO_PACKAGE_LIST=
 DISK_TOTAL_SIZE=4
