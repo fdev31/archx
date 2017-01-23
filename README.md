@@ -21,7 +21,7 @@ Arch made easy
 
 - intel i3 CPU / probably any 64 bits CPU
 - 1GB RAM
-- 2GB disk space (for *basic* distribution, 4GB for bigger distributions, take more if you plan to store documents)
+- 2GB disk space (for *noobs* distribution, 4GB for bigger distributions, take more if you plan to store documents)
 
 Note there is a huge performance boost on USB3 when running from pen drive
 
