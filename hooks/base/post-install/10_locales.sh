@@ -1,4 +1,10 @@
-echo "${LANG} UTF-8" | sudo dd of="$R/etc/locale.gen"
+sudo dd of="$R/etc/locale.gen" <<EOF
+${LANG} UTF-8
+en_US UTF-8
+es_ES UTF-8
+de_DE UTF-8
+pt_PT UTF-8
+EOF
 sudo arch-chroot "$R" locale-gen
 
 install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
@@ -6,17 +12,6 @@ install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
 (cd "$R/etc" && sudo ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
 echo "
 LANG=\"${LANG}\"
-LC_CTYPE=\"${LANG}\"
-LC_TIME=\"${LANG}\"
-lC_COLLATE=\"${LANG}\"
-LC_MONETARY=\"${LANG}\"
-LC_MESSAGES=\"${LANG}\"
-LC_PAPER=\"${LANG}\"
-LC_NAME=\"${LANG}\"
-LC_ADDRESS=\"${LANG}\"
-LC_TELEPHONE=\"${LANG}\"
-LC_MEASUREMENT=\"${LANG}\"
-LC_IDENTIFICATION=\"${LANG}\"
 LC_NUMERIC=\"C\"" | sudo dd of="$R/etc/locale.conf"
 
 echo "
