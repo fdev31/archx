@@ -52,7 +52,7 @@ function install_grub() {
     fi
 
     echo "############################################################## install Boot loader"
-    sudo grub-install --target x86_64-efi  --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" --efi-directory "$BOOTDIR" --bootloader-id "$DISKLABEL" $EFI_OPTS $DEVICE
+    sudo grub-install --target x86_64-efi  --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" --efi-directory "$BOOTDIR" --bootloader-id "$DISKLABEL" $EFI_OPTS 
     sudo grub-install --target i386-pc     --removable --compress=xz --modules "$MOD" --boot-directory "$BOOTDIR" $DEVICE
 
     for reflabel in ARCHX ARCHINST ; do
