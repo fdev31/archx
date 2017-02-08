@@ -1,4 +1,4 @@
-PROFILES="base locales installer" flashdisks
+PROFILES="base locales installer flashdisk"
 
 DISK_MARGIN=50 # extra space for persistence, also HOME size, used for loopback or disk images
 BOOT_TARGET="multi-user"
