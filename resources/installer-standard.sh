@@ -44,6 +44,8 @@ echo "############################################################## wipe disk "
 wipefs --force -a $DISK
 echo "############################################################## make disk structure "
 
+sudo partprobe
+
 call_fdisk $DISK n p 1 - +${SZ1}M t ef n p 2 - +${sq_size}M n - - - - a 1 w || clean_exit 1
 
 sudo partprobe
