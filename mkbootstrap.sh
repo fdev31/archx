@@ -80,6 +80,7 @@ function reconfigure() {
 
 function run_install_hooks() {
     step "Installing pacman hooks"
+    sudo mkdir -p "$R/etc/pacman.d/hooks"
     sudo cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
     step "Triggering install hooks"
     run_hooks pre-install
