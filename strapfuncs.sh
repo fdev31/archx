@@ -5,7 +5,7 @@ if [ -z "$DETECT_LOCALE" ] ; then
     IPADDR=$(curl -s icanhazip.com)
     COUNTRY=$(geoiplookup $IPADDR)
     COUNTRY=${COUNTRY#*: }
-    COUNTRY=${COUNTRY%,*}
+    COUNTRY=${COUNTRY%%,*}
 else
     COUNTRY="EN"
 fi
@@ -15,7 +15,7 @@ fi
 if [ -z "$COUNTRY" ]; then
     COUNTRY=FR
 fi
-if [ -e resources/locales/country_codes/$COUNTRY ] ; then
+if [ -e "resources/locales/country_codes/$COUNTRY" ] ; then
     echo "** Adding i18n-$COUNTRY support"
     source resources/locales/country_codes/$COUNTRY
 else
