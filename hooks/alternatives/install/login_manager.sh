@@ -1,1 +1,1 @@
-login_manager/40_login_manager_lightdm.sh
+login_manager/40_login_manager_lxdm.sh
