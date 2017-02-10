@@ -15,3 +15,6 @@ install_pkg ifplugd
 
 sudo sed -i 's/^#Color/Color/' "$R/etc/pacman.conf"
 sudo sed -i 's/^CheckSpace/#CheckSpace/' "$R/etc/pacman.conf"
+
+sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j2"/' "$R/etc/makepkg.conf"
+
