@@ -71,6 +71,14 @@ function __contains() {
     grep "$1" "$2" > /dev/null
 }
 
+function write_text() {
+    sudo dd "of=$R/$1"
+}
+function write_bin() {
+    write_text $1
+    sudo chmod 755 "$R/$1"
+}
+
 function append_text() {
     pat="# GENERATED AT INSTALL:"
 
