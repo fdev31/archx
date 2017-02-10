@@ -1,1 +1,2 @@
 install_pkg compiz
+no_autostart_app compiz
