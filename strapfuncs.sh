@@ -172,6 +172,14 @@ function autostart_app() {
     fi
     sudo install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
 }
+function no_autostart_app() {
+    ASDIR="resources/HOME/.config/autostart"
+    if [ ! -d "$ASDIR" ]; then
+        mkdir "$ASDIR"
+    fi
+    sudo install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+    echo 'X-MATE-Autostart-enabled=false' >> "$ASDIR/$1.desktop"
+}
 function install_menu () {
     ASDIR="resources/HOME/.config/menus"
     if [ ! -d "$ASDIR" ]; then
