@@ -1,1 +1,1 @@
-network_manager netctl
+#network_manager netctl
