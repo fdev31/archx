@@ -126,7 +126,11 @@ function make_symlink() {
 
 function raw_install_pkg() {
     _set_pkgmgr
-    $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* 2>&1 | tee /tmp/pkginst.log
+    if [ -z "$AUR" ]; then
+        $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* 2>&1 | tee /tmp/pkginst.log | uniq
+    else
+        sudo arch-chroot -u user "$R" $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | tee /tmp/pkginst.log | uniq
+    fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
        cat >> /tmp/failedpkgs.log <<EOF
 >>>>>>>>>>>>>>>> FAILED to execute $*
@@ -135,6 +139,11 @@ $(cat /tmp/pkginst.log)
 - end -
 EOF
    fi
+}
+
+function install_aur_pkg() {
+    step2 "installing $*"
+    AUR=1 raw_install_pkg --needed -S $*
 }
 
 function install_pkg() {
