@@ -67,7 +67,7 @@ function step2() {
     printf "\\033[44m    %-${W}s>\\033[0m" "$1"
 }
 
-function contains() {
+function __contains() {
     grep "$1" "$2" > /dev/null
 }
 
@@ -76,8 +76,8 @@ function append_text() {
 
     I="$R/$1"
 
-    if contains "$pat" "$I"; then
-        strip_end "$pat" "$I"
+    if __contains "$pat" "$I"; then
+        __strip_end "$pat" "$I"
     fi
 
     _FILE=$(cat "$I")
@@ -90,17 +90,10 @@ $_DATA
 " | sudo dd "of=$I"
 }
 
-function strip_end() {
+function __strip_end() {
     PATTERN="$1"
     FILE="$2"
     sudo sed -i "/^${PATTERN}/,$ d" "${FILE}"
-}
-
-function append() {
-	orig=$(cat $1)
-	echo "$orig
-$2
-" | sudo dd "of=$1"
 }
 
 function replace_with() {
