@@ -1,4 +1,3 @@
-
 install_pkg xorg
 install_pkg xorg-xinit
 install_pkg accountsservice
