@@ -1,4 +1,5 @@
-PROFILES="$PKG_ALL env-cinnamon env-cinnamon-apps env-$ENV"
+ENV=cinnamon
+PROFILES="$PKG_ALL env-$ENV env-$ENV-apps"
 DISK_TOTAL_SIZE=4
 
 PREFERRED_TOOLKIT='gtk'

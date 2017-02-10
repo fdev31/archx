@@ -1,3 +1,4 @@
+ENV=enlightenment
 PROFILES="$PKG_BASE $PKG_XORG env-enlightenment env-enlightenment-apps noobs"
 DISK_TOTAL_SIZE=2
 
