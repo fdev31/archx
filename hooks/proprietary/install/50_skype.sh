@@ -1,1 +1,1 @@
-have_xorg && install_pkg ghetto-skype-git
+have_xorg && install_aur_pkg ghetto-skype-git

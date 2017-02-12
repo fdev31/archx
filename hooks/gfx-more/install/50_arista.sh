@@ -1,1 +1,1 @@
-have_xorg && install_pkg arista
+have_xorg && install_aur_pkg arista

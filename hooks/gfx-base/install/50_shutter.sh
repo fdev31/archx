@@ -1,1 +1,1 @@
-install_pkg shutter
+install_aur_pkg shutter
