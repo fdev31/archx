@@ -194,7 +194,7 @@ function make_disk_image() {
         rsize=$(( $sqsize + $DISK_MARGIN + $BOOT_MARGIN ))
     fi
     echo "Creating disk image of ${rsize}MB"
-    dd if=/dev/zero of="$D" bs=1M count=$rsize
+    dd if=/dev/zero of="$D" bs=1MB count=$rsize
 
     step2 "Building persistent filesystem"
     MPT="$WORKDIR/.storage_mnt_pt"
