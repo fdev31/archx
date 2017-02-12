@@ -5,7 +5,7 @@ install_pkg accountsservice
 enable_service accounts-daemon
 if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
     install_pkg gtk-engines
-    install_pkg gnome-vfs
+    install_pkg gvfs
 fi
 
 install_pkg libx264
