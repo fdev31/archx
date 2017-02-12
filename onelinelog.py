@@ -3,6 +3,8 @@ import shutil
 import fileinput
 import time
 
+PROMPT='> '
+
 def univ_file_read(name, mode):
     # WARNING: ignores mode argument passed to this function
     return open(name, 'rU')
@@ -23,9 +25,9 @@ for line in fileinput.input(openhook=univ_file_read):
         print('DATA BASE LOCKED, rm '+(line.rsplit(' ', 1)[-1][:-1]))
         time.sleep(5)
     if len(line)+1  > twidth :
-        line = '>' + line[:twidth-10] + '...\r'
+        line = PROMPT + line[:twidth-10] + '...\r'
     else:
-        line = '>' + line + '\r'
+        line = PROMPT + line + '\r'
     sys.stdout.write(line)
     sys.stdout.flush()
     linelen = len(line) + 1
