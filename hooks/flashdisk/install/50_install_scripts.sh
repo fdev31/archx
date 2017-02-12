@@ -17,5 +17,5 @@ echo "#!/bin/sh
 mount /boot -o remount,rw
 cp $* /boot/
 mount /boot -o remount,ro
-" | sudo dd of="$R/bin/copy2boot.sh"
+" | sudo dd of="$R/bin/copy2boot.sh" 2>/dev/null
 sudo chmod +x "$R/bin/copy2boot.sh"

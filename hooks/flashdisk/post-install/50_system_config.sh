@@ -15,5 +15,5 @@ step2 "no clear console"
 sudo mkdir -p "$R/etc/systemd/system/getty@tty1.service.d"
 echo "[Service]
 TTYVTDisallocate=no
-" | sudo dd "of=$R/etc/systemd/system/getty@tty1.service.d/noclear.conf"
+" | sudo dd "of=$R/etc/systemd/system/getty@tty1.service.d/noclear.conf" 2>/dev/null && echo "Should not clear console"
 

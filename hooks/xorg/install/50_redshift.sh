@@ -23,7 +23,7 @@ else
 fi
 
 exit 0
-' | sudo dd "of=$R/bin/shift-swich"
+' | sudo dd "of=$R/bin/shift-swich" 2>/dev/null
 sudo chmod 755 "$R/bin/shift-swich"
 
 autostart_app redshift-gtk

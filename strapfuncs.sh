@@ -72,7 +72,7 @@ function __contains() {
 }
 
 function write_text() {
-    sudo dd "of=$R/$1"
+    sudo dd "of=$R/$1" 2>/dev/null
 }
 function write_bin() {
     write_text $1
@@ -95,7 +95,7 @@ function append_text() {
 $pat
 
 $_DATA
-" | sudo dd "of=$I"
+" | sudo dd "of=$I" 2>/dev/null
 }
 
 function __strip_end() {
@@ -112,7 +112,7 @@ function replace_with() {
     FOOTER=$(sed "0,/^$PATTERN END/ d" "$I")
     echo "$HEADER
 $SUB
-$FOOTER" | sudo dd of="$I"
+$FOOTER" | sudo dd of="$I" 2>/dev/null
 }
 
 function have_package() {
@@ -127,14 +127,14 @@ function make_symlink() {
 function raw_install_pkg() {
     _set_pkgmgr
     if [ -z "$AUR" ]; then
-        $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* 2>&1 | tee /tmp/pkginst.log | uniq
+        $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* 2>&1 |  python onelinelog.py
     else
-        sudo arch-chroot -u user "$R" $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | tee /tmp/pkginst.log | uniq
+        sudo arch-chroot -u user "$R" $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
     fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
        cat >> /tmp/failedpkgs.log <<EOF
 >>>>>>>>>>>>>>>> FAILED to execute $*
-$(cat /tmp/pkginst.log)
+$(cat stdout.log)
 
 - end -
 EOF

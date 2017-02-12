@@ -15,5 +15,5 @@ help() {
 Detects the filesystem(s) and mount proper devices or files
 HELPEOF
 }
-' | sudo dd "of=$R/lib/initcpio/install/rolinux"
+' | sudo dd "of=$R/lib/initcpio/install/rolinux" 2>/dev/null && echo "installed rolinux hook"
 
