@@ -41,7 +41,7 @@ function run_hooks() {
                 sstage=${sstage#*/}
                 for hook in $stage/*;
                 do
-                    ln -sf "../../$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage"
+                    ln -s "../../$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage"
                 done
             done
         done

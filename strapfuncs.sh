@@ -23,11 +23,12 @@ else
 fi
 
 HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
-_net_mgr="$HOOK_BUILD_DIR/install/50_network_manager.sh"
+
 
 # LOAD OVERRIDES
 
 source ./distrib/${DISTRIB}.sh
+_net_mgr=./hooks/alternatives/install/network_manager/50_network_$NETMGR.sh
 
 # i18n @ install time
 _gettext_dir=$(realpath ./resources/locales/gettext)

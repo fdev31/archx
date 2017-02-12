@@ -1,4 +1,5 @@
 PROFILES="base locales flashdisk"
+NETMGR=netctl
 
 DISK_MARGIN=50 # extra space for persistence, also HOME size, used for loopback or disk images
 BOOT_TARGET="multi-user"
