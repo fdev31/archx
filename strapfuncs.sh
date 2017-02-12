@@ -188,7 +188,11 @@ function no_autostart_app() {
         mkdir "$ASDIR"
     fi
     sudo install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
-    echo 'X-MATE-Autostart-enabled=false' >> "$ASDIR/$1.desktop"
+
+    sudo dd "of=$ASDIR/$1.desktop" 2>/dev/null <<EOF
+$(cat $ASDIR/$1.desktop)
+X-MATE-Autostart-enabled=false
+EOF
 }
 function install_menu () {
     ASDIR="resources/HOME/.config/menus"
