@@ -114,7 +114,7 @@ function install_extra_packages() {
 }
 
 function make_squash_root() {
-    step "Cleaning FS & building SQUASHFS"
+    step "Cleaning FS & building SQUASHFS ($COMPRESSION_TYPE)"
     IF=../ignored.files
     pushd "$R" >/dev/null || exit -2
         sudo find boot/ | sed 1d > $IF
