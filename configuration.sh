@@ -12,6 +12,7 @@ PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 PASSWORD="sexy"
 LOW_MEM=1
 #DISK_TOTAL_SIZE=4 # size in GB
+ENABLE_UPX=1
 
 DETECT_LOCALE=
 # uppercase country code to set locale

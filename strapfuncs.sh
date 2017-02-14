@@ -223,3 +223,10 @@ function _set_pkgmgr() {
 function set_user_ownership() {
     sudo chown -R $USERID.$USERGID $*
 }
+
+function upx_comp() {
+    if [ -n "$ENABLE_UPX" ]; then
+        sudo chmod +x "$R/$1/"*.so
+        sudo upx --best "$R/$1/"*.so
+    fi
+}
