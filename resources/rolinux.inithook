@@ -197,9 +197,13 @@ run_latehook() {
         fi
     done
 
-	# mount /usr to make systemd happy
-	dprint mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
-	mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
+    # mount /etc to allow systemd to get updated config
+    dprint mount -t overlay none "$R/etc" -o "relatime,lowerdir=$R/etc,upperdir=$R/storage/ROOT/etc,workdir=$R/storage/WORK/etc"
+    mount -t overlay none "$R/etc" -o "relatime,lowerdir=$R/etc,upperdir=$R/storage/ROOT/etc,workdir=$R/storage/WORK/etc"
+
+    # mount /usr to make systemd happy
+    dprint mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
+    mount -t overlay none "$R/usr" -o "relatime,lowerdir=$R/usr,upperdir=$R/storage/ROOT/usr,workdir=$R/storage/WORK/usr"
 
 	# generate fstab
 	T_F="$R/run/fstab"
