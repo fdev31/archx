@@ -1,6 +1,7 @@
 install_pkg xorg
 install_pkg xorg-xinit
 install_pkg accountsservice
+raw_install_pkg -R xf86-input-synaptics # force libinput usage
 
 enable_service accounts-daemon
 if [ "$PREFERRED_TOOLKIT" = "gtk" ]; then
