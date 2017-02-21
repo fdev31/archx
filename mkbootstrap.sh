@@ -261,6 +261,7 @@ case "$PARAM" in
         ;;
     conf*)
         reconfigure
+        make_disk_image
         ;;
     sq*):
         make_squash_root
