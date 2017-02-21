@@ -1,0 +1,3 @@
+#%wheel ALL=(ALL) ALL
+# change as following to avoid entering password
+%wheel ALL=(ALL) NOPASSWD:ALL
