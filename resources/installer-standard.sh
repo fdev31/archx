@@ -1,5 +1,5 @@
 #!/bin/bash
-# mkpart <device> <sizeMB> <squashfs> <extra_part_fs>
+# mkpart <device> <sizeMB> <squashfs>
 # ex: mkparts.sh ARCHX.img 100 rootfs.s
 # TODO/ make fixed squash size possible
 export LC_ALL=C
@@ -39,6 +39,9 @@ if [[ "$SQ" == "/dev/"* ]]; then # partition
 else # file
     sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
 fi
+
+echo "FORCING 3500M for apps"
+sq_size=3500
 
 echo "############################################################## wipe disk "
 wipefs --force -a $DISK
