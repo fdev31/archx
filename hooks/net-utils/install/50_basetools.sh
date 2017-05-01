@@ -4,6 +4,8 @@ install_pkg netcat
 install_pkg lftp 
 install_pkg avahi 
 install_pkg nss-mdns
+install_pkg sshuttle
+install_pkg dnsmasq
 
 have_xorg && install_pkg wireshark-$PREFERRED_TOOLKIT
 
