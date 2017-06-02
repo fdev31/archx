@@ -24,7 +24,7 @@ function clean_exit() {
 
 DISK=$1
 FS1=fat32
-SZ1=$2
+BOOT_SZ=$2
 SQ=$3
 
 if [ -z $SQ ]; then
@@ -49,7 +49,7 @@ echo "############################################################## make disk s
 
 sudo partprobe
 
-call_fdisk $DISK n p 1 - +${SZ1}M t ef n p 2 - +${sq_size}M n - - - - a 1 w || clean_exit 1
+call_fdisk $DISK n p 1 - +${BOOT_SZ}M t ef n p 2 - +${sq_size}M n - - - - a 1 w || clean_exit 1
 
 sudo partprobe
 loop=$(sudo losetup -P -f --show $DISK)
