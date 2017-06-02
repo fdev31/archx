@@ -1,3 +1,7 @@
+# Main configuratile file,
+# values may be overriden by distributions
+# look at distrib/*
+
 # Name for this Linux distribution
 DISKLABEL="ARCHX"
 # Package set to install
