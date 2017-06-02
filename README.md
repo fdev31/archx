@@ -1,6 +1,15 @@
-# Arch-EZ
+# ArchX
 
-Arch made easy
+- **Archlinux** (almost unmodified) + some user contributed packages
+- only **4GB** storage required (including persistent data)
+- **EFI** and **BIOS** support
+- **12GB of software**
+    - photo touching
+    - sound processing
+    - desktop applications
+    - 3D/2D design tools
+    - standard network & developpment tools
+    - MATE by default (awesome also included)
 
 ## Features
 
@@ -17,13 +26,19 @@ Arch made easy
 - Fast - maybe the **fastest Linux** installer on earth
 - Small - the live system usually takes less than **30% of the original size**
 
+Here is a list of [Open issues](bugs.rst)
+
+
 ### Minimal configuration
 
 - intel i3 CPU / probably any 64 bits CPU
 - 1GB RAM
 - 2GB disk space (for *noobs* distribution, 4GB for bigger distributions, take more if you plan to store documents)
 
-Note there is a huge performance boost on USB3 when running from pen drive
+#### Notes
+
+- there is a huge performance boost on USB3 when running from pen drive
+- size may vary from one build to another, the space reserved for software is 3.5GB
 
 ## Why ?
 
@@ -50,11 +65,17 @@ Target installation modes include:
 
 Takes over an entire disk with a modified Linux system.
 
+Mainly useful to duplicate ArchX on a removable device.
+
+
 *Advantages:* The system can be restored almost instantly without sacrificing your disk space
+
 
 ### Embed into existing partition
 
 Copies files to your disk and allow you to run Linux without an emulator
+
+Mainly useful to people not able to apply changes to the disk configuration, with no root/admin access on a machine
 
 *Advantages:* Have the advantages of *Full disk* installation + don't erase any data from your (possibly Windows) disk
 
@@ -62,7 +83,9 @@ Copies files to your disk and allow you to run Linux without an emulator
 
 Takes over an entire disk with an unmodified but pre-installed ArchLinux system.
 
-**Advantages**: Just installs an ArchLinux on your drive
+For people having a spare disk to install Archlinux on and want to take all advantages of a pre-configured Linux system and without complex installation process.
+
+*Advantages*: Just installs an ArchLinux on your drive, so go to http://archlinux.org and enter a wonderful world !
 
 
 ## Available Desktop environments
