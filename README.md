@@ -1,13 +1,26 @@
 # ArchX
 
+## Intro
+
+THIS PROJECT IS NOT SUPPORTED BY ARCHLINUX OR ANY OTHER COMMUNITY THAN THE ONE USING THIS SOFTWARE.
+
+Continue reading if:
+
+- you want a **robust, full-featured, portable** desktop
+- you want to **test** "out of the box" setup of most popular **Desktop environments**
+- you are a **beginner** who wants to test an ArchLinux based system without complications
+- you like to **play** with LFS, Gentoo, Arch, Slackware, and need a nice, **customizable, Live system**
+
+Here is a brief description:
+
 - **Archlinux** (almost unmodified) + some user contributed packages
 - only **4GB** storage required (including persistent data)
 - **EFI** and **BIOS** support
 - **12GB of software**
     - photo touching
     - sound processing
-    - desktop applications
     - 3D/2D design tools
+    - desktop applications
     - standard network & developpment tools
     - MATE by default (awesome also included)
 
