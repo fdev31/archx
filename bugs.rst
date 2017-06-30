@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 11
+:total-count: 12
 
 --------------------------------------------------------------------------------
 
@@ -112,12 +112,24 @@ A zip file with all tools + img file would be fine
 
 --------------------------------------------------------------------------------
 
+Run installation of packages from the chroot
+============================================
+
+:bugid: 11
+:created: 2017-06-30T22:22:50
+:priority: 10
+
+Use a chroot & call package manager/builder from it
+- some chrooted daemon could stay alive for better performances
+
+--------------------------------------------------------------------------------
+
 Check mirror.conf (pacman)
 ==========================
 
 :bugid: 9
 :created: 2017-06-30T21:51:42
-:priority: 0
+:priority: 10
 
 Looks the same as my computer
 should be the result of something like:
@@ -131,7 +143,7 @@ Packages should be installable from PKGBUILD
 
 :bugid: 10
 :created: 2017-06-30T22:00:26
-:priority: 0
+:priority: 10
 
 extra_packages can contain source/ folder with package's PKGBUILDs
 This is not handled yet...
