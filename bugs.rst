@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 9
+:total-count: 11
 
 --------------------------------------------------------------------------------
 
@@ -87,8 +87,8 @@ check ~/.cache  is in tmpfs
 
 --------------------------------------------------------------------------------
 
-read usr/share/applications/*.desktop & generate menus for awesome
-==================================================================
+read usr/share/applications/\*.desktop & generate menus for awesome
+===================================================================
 
 :bugid: 7
 :created: 2017-06-03T01:34:46
@@ -109,3 +109,29 @@ One could add
 - rufus ( https://rufus.akeo.ie/ )
 
 A zip file with all tools + img file would be fine
+
+--------------------------------------------------------------------------------
+
+Check mirror.conf (pacman)
+==========================
+
+:bugid: 9
+:created: 2017-06-30T21:51:42
+:priority: 0
+
+Looks the same as my computer
+should be the result of something like:
+
+   reflector --age 12 --latest 5 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+--------------------------------------------------------------------------------
+
+Packages should be installable from PKGBUILD
+============================================
+
+:bugid: 10
+:created: 2017-06-30T22:00:26
+:priority: 0
+
+extra_packages can contain source/ folder with package's PKGBUILDs
+This is not handled yet...
