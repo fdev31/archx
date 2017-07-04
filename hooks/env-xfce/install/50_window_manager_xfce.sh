@@ -1,1 +1,2 @@
-../.././alternatives/install/50_window_manager_xfce.sh
+install_pkg  xfce4
+install_pkg  xfce4-goodies

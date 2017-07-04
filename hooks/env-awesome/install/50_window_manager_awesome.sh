@@ -1,1 +1,4 @@
-../.././alternatives/install/50_window_manager_awesome.sh
+install_pkg awesome
+install_pkg vicious
+install_pkg dex
+install_pkg awesome-gnome

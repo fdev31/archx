@@ -1,18 +1,18 @@
-sudo dd of="$R/etc/locale.gen" 2>/dev/null <<EOF
+$SUDO dd of="$R/etc/locale.gen" 2>/dev/null <<EOF
 ${LANG} UTF-8
 en_US UTF-8
 es_ES UTF-8
 de_DE UTF-8
 pt_PT UTF-8
 EOF
-sudo arch-chroot "$R" locale-gen
+$SU_$ARCHCHROOT "$R" locale-gen
 
 install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
 
-(cd "$R/etc" && sudo ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
+(cd "$R/etc" && $SUDO ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
 echo "
 LANG=\"${LANG}\"
-LC_NUMERIC=\"C\"" | sudo dd of="$R/etc/locale.conf" 2>/dev/null
+LC_NUMERIC=\"C\"" | $SUDO dd of="$R/etc/locale.conf" 2>/dev/null
 
 echo "
 Section \"InputClass\"
@@ -21,4 +21,4 @@ Section \"InputClass\"
     Option \"XkbLayout\" \"${LANG_ISO2},us\"
     Option \"XkbOptions\" \"terminate:ctrl_alt_bksp\"
 EndSection
-" | sudo dd of="$R/etc/X11/xorg.conf.d/10-keyboard-layout.conf" 2>/dev/null
+" | $SUDO dd of="$R/etc/X11/xorg.conf.d/10-keyboard-layout.conf" 2>/dev/null

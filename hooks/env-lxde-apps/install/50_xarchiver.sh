@@ -1,1 +1,1 @@
-../../alternatives/install/archives/50_xarchiver.sh
+install_pkg xarchiver

@@ -1,14 +1,14 @@
 install_pkg os-prober
 install_pkg grub
-sudo mkdir -p "$R/boot/grub/fonts/" 2> /dev/null
-sudo mkdir -p "$R/boot/grub/themes/" 2> /dev/null
-sudo cp resources/grub/*.pf2 "$R/boot/grub/fonts/"
-sudo cp -r resources/grub/breeze "$R/boot/grub/themes/"
+$SUDO mkdir -p "$R/boot/grub/fonts/" 2> /dev/null
+$SUDO mkdir -p "$R/boot/grub/themes/" 2> /dev/null
+$SUDO cp resources/grub/*.pf2 "$R/boot/grub/fonts/"
+$SUDO cp -r resources/grub/breeze "$R/boot/grub/themes/"
 install_file resources/grub/grub.cfg "/boot/grub/grub.cfg"
-sudo sed -i "s/DISKLABEL/$DISKLABEL/g" "$R/boot/grub/grub.cfg"
-sudo sed -i "s/STD_BOOT/$(text Standard boot)/" "$R/boot/grub/grub.cfg"
-sudo sed -i "s/SAFE_BOOT/$(text Safe boot)/" "$R/boot/grub/grub.cfg"
-sudo sed -i "s/RESET_BOOT/$(text Revert changes)/" "$R/boot/grub/grub.cfg"
+$SUDO sed -i "s/DISKLABEL/$DISKLABEL/g" "$R/boot/grub/grub.cfg"
+$SUDO sed -i "s/STD_BOOT/$(text Standard boot)/" "$R/boot/grub/grub.cfg"
+$SUDO sed -i "s/SAFE_BOOT/$(text Safe boot)/" "$R/boot/grub/grub.cfg"
+$SUDO sed -i "s/RESET_BOOT/$(text Revert changes)/" "$R/boot/grub/grub.cfg"
 
 echo 'GRUB_THEME="/boot/grub/themes/breeze/theme.txt"' | append_text "/etc/default/grub"
 

@@ -1,7 +1,7 @@
 if have_xorg ; then
 #    install_pkg osx-arc-white
 #    install_pkg capitaine-cursors
-    sudo tar xf resources/theme.tar.xz -C "$R"
+    $SUDO tar xf resources/theme.tar.xz -C "$R"
     if [ "$PREFERRED_TOOLKIT" = "qt" ]; then
         install_pkg qtcurve
         install_pkg archlinux-themes-kdm

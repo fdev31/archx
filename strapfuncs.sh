@@ -2,7 +2,7 @@ source ./configuration.sh
 
 # DETECT LANGUAGE
 if [ -z "$DETECT_LOCALE" ] ; then
-    IPADDR=$(curl -s icanhazip.com)
+    IPADDR=$(curl -4 -s icanhazip.com)
     COUNTRY=$(geoiplookup $IPADDR)
     COUNTRY=${COUNTRY#*: }
     COUNTRY=${COUNTRY%%,*}
@@ -22,7 +22,7 @@ else
     echo "** No i18n support found for $COUNTRY"
 fi
 
-HOOK_BUILD_DIR="$WORKDIR/.installed_hooks"
+HOOK_BUILD_FOLDER=".installed_hooks"
 
 
 # LOAD OVERRIDES
@@ -55,7 +55,9 @@ function have_xorg() {
 }
 
 if [ -n "$SHARED_CACHE" ]; then
-    PKGMGR_OPTS="--cachedir /var/cache/pacman/pkg"
+    if [ -z "$CHROOT" ]; then
+		PKGMGR_OPTS="--cachedir /var/cache/pacman/pkg"
+	fi
 fi
 
 function step() {
@@ -73,11 +75,11 @@ function __contains() {
 }
 
 function write_text() {
-    sudo dd "of=$R/$1" 2>/dev/null
+    $SUDO dd "of=$R/$1" 2>/dev/null
 }
 function write_bin() {
     write_text $1
-    sudo chmod 755 "$R/$1"
+    $SUDO chmod 755 "$R/$1"
 }
 
 function append_text() {
@@ -96,13 +98,13 @@ function append_text() {
 $pat
 
 $_DATA
-" | sudo dd "of=$I" 2>/dev/null
+" | $SUDO dd "of=$I" 2>/dev/null
 }
 
 function __strip_end() {
     PATTERN="$1"
     FILE="$2"
-    sudo sed -i "/^${PATTERN}/,$ d" "${FILE}"
+    $SUDO sed -i "/^${PATTERN}/,$ d" "${FILE}"
 }
 
 function replace_with() {
@@ -113,7 +115,7 @@ function replace_with() {
     FOOTER=$(sed "0,/^$PATTERN END/ d" "$I")
     echo "$HEADER
 $SUB
-$FOOTER" | sudo dd of="$I" 2>/dev/null
+$FOOTER" | $SUDO dd of="$I" 2>/dev/null
 }
 
 function have_package() {
@@ -122,19 +124,21 @@ function have_package() {
 }
 
 function make_symlink() {
-    sudo ln -fs $1 "$R/$2"
+    $SUDO ln -fs $1 "$R/$2"
 }
 
 function raw_install_pkg() {
     _set_pkgmgr
-    if [ -z "$AUR" ]; then
-        $PKGMGR $PKGMGR_OPTS --noconfirm  -r "$R" $* 2>&1 |  python onelinelog.py
+    # if chroot:
+    echo "CHROOT=$CHROOT"
+    if [ -z "$CHROOT" ]; then
+        $SUDO arch-chroot -u user "$R" su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
     else
-        sudo arch-chroot -u user "$R" $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
+        su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
     fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
        cat >> /tmp/failedpkgs.log <<EOF
->>>>>>>>>>>>>>>> FAILED to execute $*
+>>>>>>>>>>>>>>>> FAILED to execute $SUDO arch-chroot -u user "$R" su user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
 $(cat stdout.log)
 
 - end -
@@ -144,7 +148,8 @@ EOF
 
 function install_aur_pkg() {
     step2 "installing $*"
-    AUR=1 raw_install_pkg --needed -S $*
+#    AUR=1 raw_install_pkg --needed -S $*
+    $ARCHCHROOT $PKGMGR $PKGMGR_OPTS --noconfirm -S $* 2>&1 | python onelinelog.py
 }
 
 function install_pkg() {
@@ -162,34 +167,34 @@ function network_manager() {
 }
 
 function enable_service() {
-    sudo systemctl --root "$R" --force enable $1
+    $SUDO systemctl --root "$R" --force enable $1
 }
 
 function disable_service() {
-    sudo systemctl --root "$R" disable $1
+    $SUDO systemctl --root "$R" disable $1
 }
 
 function install_bin() {
-    sudo install -m 755 -o root -g root "$1" "$R$2"
+    $SUDO install -m 755 -o root -g root "$1" "$R$2"
 }
 function install_file() {
-    sudo install -m 644 -o root -g root "$1" "$R$2"
+    $SUDO install -m 644 -o root -g root "$1" "$R$2"
 }
 function autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    sudo install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+    $SUDO install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
 }
 function no_autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    sudo install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+    $SUDO install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
 
-    sudo dd "of=$ASDIR/$1.desktop" 2>/dev/null <<EOF
+    $SUDO dd "of=$ASDIR/$1.desktop" 2>/dev/null <<EOF
 $(cat $ASDIR/$1.desktop)
 X-MATE-Autostart-enabled=false
 EOF
@@ -199,34 +204,36 @@ function install_menu () {
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    sudo install -m 644 "resources/menus/$1.menu" "$ASDIR"
+    $SUDO install -m 644 "resources/menus/$1.menu" "$ASDIR"
 }
 function install_application() {
     ASDIR="resources/HOME/.local/share/applications"
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    sudo install -m 644 resources/applications/$1.desktop "$ASDIR"
+    $SUDO install -m 644 resources/applications/$1.desktop "$ASDIR"
 }
 function install_resource() {
-    sudo install -m 644 resources/$1 "$R$2"
+    $SUDO install -m 644 resources/$1 "$R$2"
 }
 
 function _set_pkgmgr() {
     if [ -e "$R/bin/$PACMAN_BIN" ]; then
         PKGMGR=$PACMAN_BIN
     else
-        PKGMGR="sudo pacman"
+        PKGMGR="$SUDO pacman"
     fi
 }
 
 function set_user_ownership() {
-    sudo chown -R $USERID.$USERGID $*
+    $SUDO chown -R $USERID.$USERGID $*
 }
 
 function upx_comp() {
     if [ -n "$ENABLE_UPX" ]; then
-        sudo chmod +x "$R/$1/"*.so
-        sudo upx --best "$R/$1/"*.so
+        $SUDO chmod +x "$R/$1/"*.so
+        $SUDO upx --best "$R/$1/"*.so
     fi
 }
+echo "chroot=$CHROOT"
+echo "arch=$ARCHCHROOT"

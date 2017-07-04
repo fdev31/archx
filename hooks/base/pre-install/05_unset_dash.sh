@@ -1,1 +1,1 @@
-sudo ln -sf "bash" "$R/bin/sh"
+$SUDO ln -sf "bash" "$R/bin/sh"

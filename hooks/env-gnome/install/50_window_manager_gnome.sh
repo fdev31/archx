@@ -1,1 +1,2 @@
-../.././alternatives/install/50_window_manager_gnome.sh
+install_pkg gnome-control-center
+install_pkg gnome-shell

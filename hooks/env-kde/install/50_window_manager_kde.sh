@@ -1,1 +1,3 @@
-../.././alternatives/install/50_window_manager_kde.sh
+install_pkg plasma
+install_pkg kde-applications
+install_pkg kde-l10n-${LANG_ISO2}

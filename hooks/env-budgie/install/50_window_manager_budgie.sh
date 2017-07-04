@@ -1,1 +1,1 @@
-../.././alternatives/install/50_window_manager_budgie.sh
+install_pkg budgie-desktop

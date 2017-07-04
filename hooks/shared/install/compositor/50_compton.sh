@@ -42,7 +42,7 @@ else
 fi
 
 exit 0
-' | sudo dd "of=$R/bin/comp-swich" 2>/dev/null
-sudo chmod 755 "$R/bin/comp-swich"
+' | $SUDO dd "of=$R/bin/comp-swich" 2>/dev/null
+$SUDO chmod 755 "$R/bin/comp-swich"
 
 

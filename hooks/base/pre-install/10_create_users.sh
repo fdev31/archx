@@ -1,5 +1,5 @@
-sudo useradd -R "$R" -G $DEFAULT_GROUPS -m $USERNAME -g $USERGID -u $USERID
+$SUDO useradd -R "$R" -G $DEFAULT_GROUPS -m $USERNAME -g $USERGID -u $USERID
 
 echo "root:$PASSWORD
-$USERNAME:$PASSWORD" | sudo chpasswd -R "$R"
+$USERNAME:$PASSWORD" | $SUDO chpasswd -R "$R"
 

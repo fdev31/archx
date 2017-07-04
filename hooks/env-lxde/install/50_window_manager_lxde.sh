@@ -1,1 +1,1 @@
-../.././alternatives/install/50_window_manager_lxde.sh
+install_pkg lxde-gtk3

@@ -26,10 +26,12 @@ ROOT_DEV=''
 HOOK_BUILD_FLAG=0
 
 function run_hooks() {
+    HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
         rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
-        mkdir "$HOOK_BUILD_DIR"
+        sudo mkdir "$HOOK_BUILD_DIR"
+        sudo chmod 1777 "$HOOK_BUILD_DIR"
         for hooktype in pre-mkinitcpio pre-install install post-install ; do
             mkdir "$HOOK_BUILD_DIR/$hooktype"
         done
@@ -41,12 +43,15 @@ function run_hooks() {
                 sstage=${sstage#*/}
                 for hook in $stage/*;
                 do
-                    ln -s "../../$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage"
+                    cp "./$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage/"
                 done
             done
         done
         HOOK_BUILD_FLAG=1
     fi
+
+    sudo arch-chroot "$R" /resources/chroot_installer "$1"
+    return
 
     step "Executing $DISTRIB hooks..."
     _hook_t=$(ls -1d "$HOOK_BUILD_DIR/$1/"*.sh | wc -l)
@@ -62,14 +67,17 @@ function reset_rootfs() {
     step "Clear old rootfs"
     sudo rm -fr "$R" 2> /dev/null
     sudo mkdir "$R" 2> /dev/null
+    sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources "$R"
 }
 
 function base_install() {
     # TODO configuration step
     step "Installing base packages & patch root files"
+    sudo cp onelinelog.py "$R/onelinelog.py"
     # install packages
-    sudo pacstrap -cd "$R" base
+    sudo pacstrap -cd "$R" base python
     sudo chown root.root "$R"
+    rm "$R/onelinelog.py"
 }
 
 function reconfigure() {
@@ -84,12 +92,14 @@ function run_install_hooks() {
     sudo cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
     step "Triggering install hooks"
     run_hooks pre-install
-    source "$_net_mgr"
+    # TODO: run source in chrooted installer
+#    source "$_net_mgr"
     run_hooks install
     if [ -n "$DISTRO_PACKAGE_LIST" ]; then
         step2 "Distribution packages"
         install_pkg $DISTRO_PACKAGE_LIST
     fi
+
 
     install_extra_packages
 
@@ -103,6 +113,8 @@ function run_install_hooks() {
 
 function install_extra_packages() {
     step2 "Extra packages"
+    sudo cp -r extra_packages "$R"
+    return
     if [ -e "extra_packages/dependencies.txt" ]; then
         sudo pacman -r "$R" -S --needed --noconfirm $(cat extra_packages/dependencies.txt)
     else

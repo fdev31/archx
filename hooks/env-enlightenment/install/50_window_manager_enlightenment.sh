@@ -1,1 +1,4 @@
-../.././alternatives/install/50_window_manager_enlightenment.sh
+install_pkg enlightenment
+install_pkg epplet-base
+install_pkg elementary-icon-theme
+network_manager connman
