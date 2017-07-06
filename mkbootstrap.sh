@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xe
 
 echo "" > /tmp/failedpkgs.log
 
@@ -26,10 +27,8 @@ ROOT_DEV=''
 HOOK_BUILD_FLAG=0
 
 function run_hooks() {
-    HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
-        rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
         sudo mkdir "$HOOK_BUILD_DIR"
         sudo chmod 1777 "$HOOK_BUILD_DIR"
         for hooktype in pre-mkinitcpio pre-install install post-install ; do
@@ -67,7 +66,6 @@ function reset_rootfs() {
     step "Clear old rootfs"
     sudo rm -fr "$R" 2> /dev/null
     sudo mkdir "$R" 2> /dev/null
-    sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources "$R"
 }
 
 function base_install() {
@@ -75,31 +73,32 @@ function base_install() {
     step "Installing base packages & patch root files"
     sudo cp onelinelog.py "$R/onelinelog.py"
     # install packages
-    sudo pacstrap -cd "$R" base python
+    sudo pacstrap -cd "$R" base python sudo geoip gcc-libs-multilib gcc-multilib base-devel yajl git expac perl # base-devel & next are needed to build cower, needed by pacaur
     sudo chown root.root "$R"
-    rm "$R/onelinelog.py"
+    sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources  distrib/$DISTRIB.sh "$R"
 }
 
 function reconfigure() {
     step "Re-generating RAMFS and low-level config" 
-    run_hooks pre-mkinitcpio
+    CHROOT='' run_hooks pre-mkinitcpio
     sudo arch-chroot "$R" mkinitcpio -p linux
 }
 
 function run_install_hooks() {
+    HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
+    sudo rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
     step "Installing pacman hooks"
     sudo mkdir -p "$R/etc/pacman.d/hooks"
     sudo cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
     step "Triggering install hooks"
     run_hooks pre-install
-    # TODO: run source in chrooted installer
-#    source "$_net_mgr"
+    echo "################################################################################"
+    echo "$_net_mgr"
     run_hooks install
     if [ -n "$DISTRO_PACKAGE_LIST" ]; then
         step2 "Distribution packages"
         install_pkg $DISTRO_PACKAGE_LIST
     fi
-
 
     install_extra_packages
 
@@ -107,6 +106,7 @@ function run_install_hooks() {
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
     raw_install_pkg -Rns $(raw_install_pkg -Qtdq) # add one "t" to get rid of optional dependencies
+    (cd "$R" && sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources $DISTRIB.sh)
     # clear cache & unused repositories
 #    raw_install_pkg -Sc --noconfirm
 }
@@ -256,6 +256,7 @@ case "$PARAM" in
         ;;
 	shell*)
         shift
+		echo sudo arch-chroot "$R" $*
 		sudo arch-chroot "$R" $*
 		;;
 	ins*)

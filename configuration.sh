@@ -24,7 +24,7 @@ DETECT_LOCALE=
 
 # Advanced users only:
 
-PACMAN_BIN=pacaur # alternative pacman frontend, else set "sudo pacman"
+PACMAN_BIN="pacaur" # alternative pacman frontend, else set "sudo pacman"
 WORKDIR="$PWD" # default workdir = script dir
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
 DISK_MARGIN=300 # extra space for persistence, also HOME size, used for loopback or disk images
@@ -49,10 +49,13 @@ if [ -z "$CHROOT" ]; then
     R="$WORKDIR/ROOT"
     ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
     SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
+    SUDO="sudo"
 else
+    SUDO=""
     ARCHCHROOT=""
     R="/"
 fi
+
 D="$WORKDIR/$DISKLABEL.img"
 SQ="$WORKDIR/$ROOTNAME"
 
@@ -71,4 +74,3 @@ PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_DOC $PKG_
 # Not installed: medical 
 
 # envs: awesome, budgie, cinnamon, deepin, enlightenment, gnome, kde, lxde, mate, pantheon, xfce, zorin
-SUDO="sudo"

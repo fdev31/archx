@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 12
+:total-count: 13
 
 --------------------------------------------------------------------------------
 
@@ -112,18 +112,6 @@ A zip file with all tools + img file would be fine
 
 --------------------------------------------------------------------------------
 
-Run installation of packages from the chroot
-============================================
-
-:bugid: 11
-:created: 2017-06-30T22:22:50
-:priority: 10
-
-Use a chroot & call package manager/builder from it
-- some chrooted daemon could stay alive for better performances
-
---------------------------------------------------------------------------------
-
 Check mirror.conf (pacman)
 ==========================
 
@@ -147,3 +135,24 @@ Packages should be installable from PKGBUILD
 
 extra_packages can contain source/ folder with package's PKGBUILDs
 This is not handled yet...
+
+--------------------------------------------------------------------------------
+
+Run installation of packages from the chroot
+============================================
+
+:bugid: 11
+:created: 2017-06-30T22:22:50
+:priority: 10
+
+Use a chroot & call package manager/builder from it
+- some chrooted daemon could stay alive for better performances
+
+--------------------------------------------------------------------------------
+
+auto fetch GPG keys !
+=====================
+
+:bugid: 12
+:created: 2017-07-04T22:23:34
+:priority: 0

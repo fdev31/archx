@@ -27,7 +27,11 @@ HOOK_BUILD_FOLDER=".installed_hooks"
 
 # LOAD OVERRIDES
 
-source ./distrib/${DISTRIB}.sh
+if [ -e /${DISTRIB}.sh ]; then
+    source /${DISTRIB}.sh
+else
+    source ./distrib/${DISTRIB}.sh
+fi
 _net_mgr=./hooks/alternatives/install/network_manager/50_network_$NETMGR.sh
 
 # i18n @ install time
@@ -53,12 +57,6 @@ function have_xorg() {
         return 1
     fi
 }
-
-if [ -n "$SHARED_CACHE" ]; then
-    if [ -z "$CHROOT" ]; then
-		PKGMGR_OPTS="--cachedir /var/cache/pacman/pkg"
-	fi
-fi
 
 function step() {
     W=$(( $(tput cols) - 5 ))
@@ -130,15 +128,22 @@ function make_symlink() {
 function raw_install_pkg() {
     _set_pkgmgr
     # if chroot:
-    echo "CHROOT=$CHROOT"
     if [ -z "$CHROOT" ]; then
+        pkg_cmd="$SUDO arch-chroot -u user "$R" su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py"
         $SUDO arch-chroot -u user "$R" su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
     else
-        su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
+        if [ "$PKGMGR" = "pacman" ]; then
+            pkg_cmd="$PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py"
+            $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
+        else
+            pkg_cmd="su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py"
+            su -- user $PKGMGR $PKGMGR_OPTS --noedit --noconfirm $* 2>&1 | python onelinelog.py
+        fi
     fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
        cat >> /tmp/failedpkgs.log <<EOF
->>>>>>>>>>>>>>>> FAILED to execute $SUDO arch-chroot -u user "$R" su user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | python onelinelog.py
+   >>>>>>>>>>>>>>>> FAILED to execute (chroot=$CHROOT)
+$pkg_cmd ::
 $(cat stdout.log)
 
 - end -
@@ -146,14 +151,13 @@ EOF
    fi
 }
 
-function install_aur_pkg() {
-    step2 "installing $*"
-#    AUR=1 raw_install_pkg --needed -S $*
-    $ARCHCHROOT $PKGMGR $PKGMGR_OPTS --noconfirm -S $* 2>&1 | python onelinelog.py
-}
 
 function install_pkg() {
     step2 "Installing $*"
+    raw_install_pkg --needed -S $*
+}
+function install_aur_pkg() {
+    step2 "Installing (AUR) $*"
     raw_install_pkg --needed -S $*
 }
 
@@ -218,11 +222,13 @@ function install_resource() {
 }
 
 function _set_pkgmgr() {
+    echo "$PACMAN_BIN"
     if [ -e "$R/bin/$PACMAN_BIN" ]; then
-        PKGMGR=$PACMAN_BIN
+        PKGMGR="$PACMAN_BIN"
     else
         PKGMGR="$SUDO pacman"
     fi
+    PKGMGR="${PKGMGR# *}"
 }
 
 function set_user_ownership() {
@@ -235,5 +241,3 @@ function upx_comp() {
         $SUDO upx --best "$R/$1/"*.so
     fi
 }
-echo "chroot=$CHROOT"
-echo "arch=$ARCHCHROOT"
