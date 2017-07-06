@@ -204,6 +204,8 @@ function make_disk_image() {
         sqsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
         rsize=$(( $sqsize + $DISK_MARGIN + $BOOT_MARGIN ))
     fi
+    # FORCE SQUASH SIZE as in installer:
+    sqsize=3500
     echo "Creating disk image of ${rsize}MB"
     dd if=/dev/zero of="$D" bs=1MB count=$rsize
 
