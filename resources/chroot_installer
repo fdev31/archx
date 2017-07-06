@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe
+set -e
 HOOK_TYPE_P="$1"
 cd /
 export CHROOT=1

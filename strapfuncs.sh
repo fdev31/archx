@@ -1,3 +1,5 @@
+export LC_ALL=C
+
 source ./configuration.sh
 
 # DETECT LANGUAGE
@@ -222,7 +224,6 @@ function install_resource() {
 }
 
 function _set_pkgmgr() {
-    echo "$PACMAN_BIN"
     if [ -e "$R/bin/$PACMAN_BIN" ]; then
         PKGMGR="$PACMAN_BIN"
     else
@@ -238,6 +239,6 @@ function set_user_ownership() {
 function upx_comp() {
     if [ -n "$ENABLE_UPX" ]; then
         $SUDO chmod +x "$R/$1/"*.so
-        $SUDO upx --best "$R/$1/"*.so
+        $SUDO upx --best "$R/$1/"*.so || true
     fi
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe
+set -e
 
 echo "" > /tmp/failedpkgs.log
 
@@ -29,6 +29,9 @@ HOOK_BUILD_FLAG=0
 function run_hooks() {
     if [ $HOOK_BUILD_FLAG -eq 0 ]; then
         # BUILD CURRENT HOOKS COLLECTION
+        if [ -e "$HOOK_BUILD_DIR" ]; then
+            sudo rm -fr "$HOOK_BUILD_DIR"
+        fi
         sudo mkdir "$HOOK_BUILD_DIR"
         sudo chmod 1777 "$HOOK_BUILD_DIR"
         for hooktype in pre-mkinitcpio pre-install install post-install ; do
@@ -50,16 +53,6 @@ function run_hooks() {
     fi
 
     sudo arch-chroot "$R" /resources/chroot_installer "$1"
-    return
-
-    step "Executing $DISTRIB hooks..."
-    _hook_t=$(ls -1d "$HOOK_BUILD_DIR/$1/"*.sh | wc -l)
-    _hook_c=0
-    for hook in "$HOOK_BUILD_DIR/$1/"*.sh ; do
-        _hook_c=$(( $_hook_c + 1 ))
-        step "$1 hook [ $(( 100 * $_hook_c / $_hook_t ))% ] $_hook_c/$_hook_t :: $(basename $hook)"
-        source $hook
-    done
 }
 
 function reset_rootfs() {
@@ -86,6 +79,10 @@ function reconfigure() {
 
 function run_install_hooks() {
     HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
+    (sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources distrib/$DISTRIB.sh "$R")
+    if [ -e my_conf.sh ] ; then
+        sudo cp my_conf.sh "$R"
+    fi
     sudo rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
     step "Installing pacman hooks"
     sudo mkdir -p "$R/etc/pacman.d/hooks"
@@ -105,10 +102,11 @@ function run_install_hooks() {
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
-    raw_install_pkg -Rns $(raw_install_pkg -Qtdq) # add one "t" to get rid of optional dependencies
-    (cd "$R" && sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources $DISTRIB.sh)
-    # clear cache & unused repositories
-#    raw_install_pkg -Sc --noconfirm
+    (cd "$R" && sudo rm -fr strapfuncs.sh configuration.sh onelinelog.py resources $DISTRIB.sh)
+    if [ -e my_conf.sh ] ; then
+        sudo rm "$R/my_conf.sh"
+    fi
+    sudo mv "$R/stdout.log" .
 }
 
 function install_extra_packages() {
@@ -123,6 +121,7 @@ function install_extra_packages() {
     if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
         sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
     fi
+    sudo rm -fr "$R/extra_packages"
 }
 
 function make_squash_root() {

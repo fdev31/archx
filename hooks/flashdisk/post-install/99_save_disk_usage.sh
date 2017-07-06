@@ -1,2 +1,4 @@
 $SUDO du -s "$R" | cut -d '	' -f 1 > .diskusage
-$SUDO mv .diskusage "$R/.diskusage"
+if [ -z "$CHROOT" ]; then
+    $SUDO mv .diskusage "$R/.diskusage"
+fi

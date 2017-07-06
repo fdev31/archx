@@ -7,3 +7,4 @@ for n in cower pacaur ; do
         (cd sources/$n && chown -R user . && sudo -u user makepkg -f && pacman -U --noconfirm *.pkg* )
     fi
 done
+$SUDO rm -fr sources
