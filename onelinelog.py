@@ -1,4 +1,5 @@
 import sys
+import codecs
 import shutil
 import fileinput
 import time
@@ -11,7 +12,7 @@ def univ_file_read(name, mode):
 
 linelen=0
 twidth = shutil.get_terminal_size()[0]
-logfile=open('stdout.log', 'w+')
+logfile=codecs.open('stdout.log', 'w+', encoding='utf-8')
 for line in fileinput.input(openhook=univ_file_read):
     if linelen:
         sys.stdout.write(' '*linelen+'\r')
