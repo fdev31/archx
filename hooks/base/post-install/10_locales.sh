@@ -5,7 +5,12 @@ es_ES UTF-8
 de_DE UTF-8
 pt_PT UTF-8
 EOF
-$SU_$ARCHCHROOT "$R" locale-gen
+
+if [ -z "$CHROOT" ]; then
+    $SU_$ARCHCHROOT "$R" locale-gen
+else
+    locale-gen
+fi
 
 install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
 

@@ -1,4 +1,4 @@
-append_text "etc/vconsole.conf" <<EOF
+write_text "etc/vconsole.conf" <<EOF
 KEYMAP=${LANG_ISO2}
 FONT=${LANG_TERMFONT}
 EOF
