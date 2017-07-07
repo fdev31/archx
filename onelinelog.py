@@ -15,8 +15,14 @@ twidth = shutil.get_terminal_size()[0]
 logfile=codecs.open('stdout.log', 'w+', encoding='utf-8')
 for line in fileinput.input(openhook=univ_file_read):
     if linelen:
-        sys.stdout.write(' '*linelen+'\r')
-    logfile.write(line)
+        try:
+            sys.stdout.write(' '*linelen+'\r')
+        except Exception as e:
+            print(e)
+    try:
+        logfile.write(line)
+    except Exception as e:
+        print(e)
     line = line.strip().replace('\n', '_')
     if not line:
         continue
