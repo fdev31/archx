@@ -68,10 +68,11 @@ function base_install() {
     # install packages
     sudo pacstrap -cd "$R" base python sudo geoip gcc-libs-multilib gcc-multilib base-devel yajl git expac perl # base-devel & next are needed to build cower, needed by pacaur
     sudo chown root.root "$R"
-    sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources  distrib/$DISTRIB.sh "$R"
+    sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R"
 }
 
 function reconfigure() {
+    HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
     step "Re-generating RAMFS and low-level config" 
     CHROOT='' run_hooks pre-mkinitcpio
     sudo arch-chroot "$R" mkinitcpio -p linux
@@ -79,7 +80,7 @@ function reconfigure() {
 
 function run_install_hooks() {
     HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
-    (sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources distrib/$DISTRIB.sh "$R")
+    (sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R")
     if [ -e my_conf.sh ] ; then
         sudo cp my_conf.sh "$R"
     fi
@@ -89,8 +90,8 @@ function run_install_hooks() {
     sudo cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
     step "Triggering install hooks"
     run_hooks pre-install
-    echo "################################################################################"
-    echo "$_net_mgr"
+    step " Network setup "
+    source "$_net_mgr"
     run_hooks install
     if [ -n "$DISTRO_PACKAGE_LIST" ]; then
         step2 "Distribution packages"
