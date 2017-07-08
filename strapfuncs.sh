@@ -205,7 +205,11 @@ function autostart_app() {
     if [ ! -d "$ASDIR" ]; then
         mkdir "$ASDIR"
     fi
-    $SUDO install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+    if [ -e "$R/usr/share/applications/$1.desktop" ] ; then
+        $SUDO install -m 644 "$R/usr/share/applications/$1.desktop" "$ASDIR"
+    else
+        echo "Can't find autostart file for $1 !"
+    fi
 }
 function no_autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
