@@ -1,3 +1,2 @@
 enable_service netctl
 disable_service NetworkManager
-
