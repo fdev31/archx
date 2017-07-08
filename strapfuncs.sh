@@ -260,3 +260,34 @@ function upx_comp() {
         $SUDO upx --best "$R/$1/"*.so || true
     fi
 }
+
+HOOK_BUILD_FLAG=0
+function run_hooks() {
+    if [ $HOOK_BUILD_FLAG -eq 0 ]; then
+        # BUILD CURRENT HOOKS COLLECTION
+        if [ -e "$HOOK_BUILD_DIR" ]; then
+            sudo rm -fr "$HOOK_BUILD_DIR"
+        fi
+        sudo mkdir "$HOOK_BUILD_DIR"
+        sudo chmod 1777 "$HOOK_BUILD_DIR"
+        for hooktype in pre-mkinitcpio pre-install install post-install ; do
+            mkdir "$HOOK_BUILD_DIR/$hooktype"
+        done
+        for PROFILE in $PROFILES; do
+            step2 " ===> profile $PROFILE"
+            for stage in "hooks/$PROFILE/"* 
+            do
+                sstage=${stage#*/}
+                sstage=${sstage#*/}
+                for hook in $stage/*;
+                do
+                    cp "./$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage/"
+                done
+            done
+        done
+        cp "$_net_mgr" "$HOOK_BUILD_DIR/install/"
+        HOOK_BUILD_FLAG=1
+    fi
+
+    sudo arch-chroot "$R" /resources/chroot_installer "$1"
+}
