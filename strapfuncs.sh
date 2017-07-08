@@ -177,7 +177,7 @@ function enable_service() {
 }
 
 function disable_service() {
-    $SUDO systemctl --root "$R" disable $1
+    $SUDO systemctl --root "$R" disable $1 || echo "Service $1 is already disabled"
 }
 
 function install_bin() {
