@@ -12,18 +12,20 @@ else
     locale-gen
 fi
 
-install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
-
 (cd "$R/etc" && $SUDO ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
 echo "
 LANG=\"${LANG}\"
 LC_NUMERIC=\"C\"" | $SUDO dd of="$R/etc/locale.conf" 2>/dev/null
 
-echo "
-Section \"InputClass\"
-    Identifier \"system-keyboard\"
-    MatchIsKeyboard \"on\"
-    Option \"XkbLayout\" \"${LANG_ISO2},us\"
-    Option \"XkbOptions\" \"terminate:ctrl_alt_bksp\"
-EndSection
-" | $SUDO dd of="$R/etc/X11/xorg.conf.d/10-keyboard-layout.conf" 2>/dev/null
+if have_xorg ; then
+    install_file resources/xorg.conf.d/* "/etc/X11/xorg.conf.d/"
+
+    echo "
+    Section \"InputClass\"
+        Identifier \"system-keyboard\"
+        MatchIsKeyboard \"on\"
+        Option \"XkbLayout\" \"${LANG_ISO2},us\"
+        Option \"XkbOptions\" \"terminate:ctrl_alt_bksp\"
+    EndSection
+    " | $SUDO dd of="$R/etc/X11/xorg.conf.d/10-keyboard-layout.conf" 2>/dev/null
+fi
