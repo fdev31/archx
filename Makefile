@@ -20,12 +20,12 @@ help:
 	@echo "ROOT        clear root filesystem and install minimal software"
 
 ARCHX.img: rootfs.s
-	./cos-makedisk.shck
+	./cos-makedisk.sh
 
-rootfs.s: hooks
+rootfs.s: hooks.flag
 	./cos-makesquash.sh
 
-hooks: ROOT
+hooks.flag: ROOT
 	./cos-installpackages.sh
 	touch $@
 
