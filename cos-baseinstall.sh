@@ -13,8 +13,8 @@ source ./strapfuncs.sh
 
 #function reset_rootfs() {
     step "Clear old rootfs"
-    sudo rm -fr "$R" 2> /dev/null
-    sudo mkdir "$R" 2> /dev/null
+    sudo rm -fr "$R"
+    sudo mkdir "$R"
 #}
 
 #function base_install() {
