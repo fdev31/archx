@@ -1,3 +1,3 @@
-if [ ! have_package systemd-manager ] ; then
-    have_xorg && install_pkg systemd-manager || install_pkg systemd-ui
+if have_xorg && ! have_package systemd-manager ; then
+    install_pkg systemd-manager || install_pkg systemd-ui
 fi
