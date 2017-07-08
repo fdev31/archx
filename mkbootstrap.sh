@@ -108,7 +108,6 @@ function run_install_hooks() {
         sudo rm "$R/my_conf.sh"
     fi
     sudo mv "$R/stdout.log" .
-    sudo chmod 644 stdout.log
 }
 
 function install_extra_packages() {
@@ -206,8 +205,6 @@ function make_disk_image() {
         sqsize=$(( $(filesize $ROOTNAME) / 1000 / 1000 ))
         rsize=$(( $sqsize + $DISK_MARGIN + $BOOT_MARGIN ))
     fi
-    # FORCE SQUASH SIZE as in installer:
-    sqsize=3500
     echo "Creating disk image of ${rsize}MB"
     dd if=/dev/zero of="$D" bs=1MB count=$rsize
 
@@ -239,6 +236,9 @@ if [ -z "$PARAM" ]; then
         PARAM="up"
     fi
 fi
+
+sudo touch "$R/stdout.log"
+sudo chmod 666 "$R/stdout.log"
 
 case "$PARAM" in
     run*)
@@ -333,3 +333,4 @@ case "$PARAM" in
 esac
 echo "Done"
 
+sudo chmod 666 stdout.log
