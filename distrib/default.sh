@@ -6,8 +6,10 @@ DISTRO_PACKAGE_LIST=
 DISK_TOTAL_SIZE=4
 
 function distro_install_hook() {
-    sudo groupadd -R "$R" -r autologin
-    sudo gpasswd  -Q "$R" -a user autologin
+    if [ ! grep autologin "$R/etc/group" ]; then
+        sudo groupadd -R "$R" -r autologin
+        sudo gpasswd  -Q "$R" -a user autologin
+    fi
 
     return
 }
