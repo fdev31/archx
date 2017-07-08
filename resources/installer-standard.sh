@@ -40,8 +40,10 @@ else # file
     sq_size=$(( $(ls -l $SQ|cut -d' ' -f5) / 1048576 + 1 ))
 fi
 
-echo "FORCING 3500M for apps"
-sq_size=3500
+#echo "FORCING 3500M for apps"
+if [ -n "$DISK_SQ_PART" ]; then
+    sq_size=$DISK_SQ_PART
+fi
 
 echo "############################################################## wipe disk "
 wipefs --force -a $DISK
