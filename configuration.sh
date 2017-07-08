@@ -46,19 +46,7 @@ ROOT_TYPE="ext4" # btrfs or ext4
 
 # Customize names
 ROOTNAME="rootfs.s"
-if [ -z "$CHROOT" ]; then
-    R="$WORKDIR/ROOT"
-    ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
-    SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
-    SUDO="sudo"
-else
-    SUDO=""
-    ARCHCHROOT=""
-    R="/"
-fi
 
-D="$WORKDIR/$DISKLABEL.img"
-SQ="$WORKDIR/$ROOTNAME"
 
 PKG_BASE="base flashdisk locales net-chat net-utils system"
 PKG_XORG="xorg www"

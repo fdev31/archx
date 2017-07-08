@@ -2,6 +2,20 @@ export LC_ALL=C
 
 source ./configuration.sh
 
+if [ -z "$CHROOT" ]; then
+    R="$WORKDIR/ROOT"
+    ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
+    SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
+    SUDO="sudo"
+else
+    SUDO=""
+    ARCHCHROOT=""
+    R="/"
+fi
+
+D="$WORKDIR/$DISKLABEL.img"
+SQ="$WORKDIR/$ROOTNAME"
+
 # DETECT LANGUAGE
 if [ -z "$DETECT_LOCALE" ] ; then
     IPADDR=$(curl -4 -s icanhazip.com)
