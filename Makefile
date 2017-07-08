@@ -31,5 +31,4 @@ hooks: ROOT
 
 ROOT: my_conf.sh
 	./cos-baseinstall.sh
-	touch $@
 
