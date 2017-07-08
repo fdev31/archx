@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 14
+:total-count: 18
 
 --------------------------------------------------------------------------------
 
@@ -35,37 +35,6 @@ some pacman keys update tricks
 :bugid: 1
 :created: 2017-06-03T01:32:20
 :priority: 0
-
---------------------------------------------------------------------------------
-
-automatic sudo pacman -Rns $(pacman -Qtdq) sometimes
-====================================================
-
-:bugid: 2
-:created: 2017-06-03T01:32:37
-:priority: 0
-
---------------------------------------------------------------------------------
-
-automatic cleaning of caches etc...
-===================================
-
-:bugid: 3
-:created: 2017-06-03T01:33:25
-:priority: 0
-
-folders that are filling should be flushed from time to time
-
---------------------------------------------------------------------------------
-
-Safer installer
-===============
-
-:bugid: 4
-:created: 2017-06-03T01:33:59
-:priority: 0
-
-look at /.diskusage in installer to check available space after mounting
 
 --------------------------------------------------------------------------------
 
@@ -112,26 +81,28 @@ A zip file with all tools + img file would be fine
 
 --------------------------------------------------------------------------------
 
-auto fetch GPG keys !
-=====================
-
-:bugid: 12
-:created: 2017-07-04T22:23:34
-:priority: 0
-
---------------------------------------------------------------------------------
-
 Check mirror.conf (pacman)
 ==========================
 
 :bugid: 9
 :created: 2017-06-30T21:51:42
-:priority: 10
+:priority: 0
 
 Looks the same as my computer
 should be the result of something like:
 
    reflector --age 12 --latest 5 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+--------------------------------------------------------------------------------
+
+FIXME
+=====
+
+:bugid: 13
+:created: 2017-07-07T00:26:13
+:priority: 0
+
+Check multilib (broken ?)
 
 --------------------------------------------------------------------------------
 
@@ -147,23 +118,26 @@ This is not handled yet...
 
 --------------------------------------------------------------------------------
 
-Run installation of packages from the chroot
-============================================
+rm: cannot remove '11-*lcdfilter*': No such file or directory
+=============================================================
 
-:bugid: 11
-:created: 2017-06-30T22:22:50
+:bugid: 15
+:created: 2017-07-08T02:49:06
 :priority: 10
 
-Use a chroot & call package manager/builder from it
-- some chrooted daemon could stay alive for better performances
+
+This has to be fixed :)
 
 --------------------------------------------------------------------------------
 
-FIXME
-=====
+Rewrite mkbootstrap.sh
+======================
 
-:bugid: 13
-:created: 2017-07-07T00:26:13
+:bugid: 17
+:created: 2017-07-08T03:09:41
 :priority: 0
 
-Check multilib (broken ?)
+Minimalist approach
+
+- Makefile
+- build.sh
