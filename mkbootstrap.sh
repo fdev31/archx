@@ -49,6 +49,7 @@ function run_hooks() {
                 done
             done
         done
+        cp "$_net_mgr" "$HOOK_BUILD_DIR/install/"
         HOOK_BUILD_FLAG=1
     fi
 
@@ -91,7 +92,6 @@ function run_install_hooks() {
     step "Triggering install hooks"
     run_hooks pre-install
     step " Network setup "
-    source "$_net_mgr"
     run_hooks install
     if [ -n "$DISTRO_PACKAGE_LIST" ]; then
         step2 "Distribution packages"
@@ -108,6 +108,7 @@ function run_install_hooks() {
         sudo rm "$R/my_conf.sh"
     fi
     sudo mv "$R/stdout.log" .
+    sudo chmod 644 stdout.log
 }
 
 function install_extra_packages() {
