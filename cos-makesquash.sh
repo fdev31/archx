@@ -28,15 +28,13 @@ source ./strapfuncs.sh
         fi
 
         SQ_OPTS="-no-exports -noappend -no-recovery"
-        if [ -n "$NOCOMPRESS" ]; then
+        if [ -z "$COMPRESSION_TYPE" ]; then
             sudo mksquashfs . "$SQ" -ef $IF  -noI -noD -noF -noX $SQ_OPTS
-        else
-            if [ "$COMPRESSION_TYPE" = "xz" ]; then
-                sudo mksquashfs . "$SQ" -ef $IF -comp xz   $SQ_OPTS -b 1M  -Xdict-size '100%'
-            else # gz == gzip
-                sudo mksquashfs . "$SQ" -ef $IF -comp gzip $SQ_OPTS -b 1M
-            fi
-        fi  
+        elif [ "$COMPRESSION_TYPE" = "xz" ]; then
+            sudo mksquashfs . "$SQ" -ef $IF -comp xz   $SQ_OPTS -b 1M  -Xdict-size '100%'
+        else # gz == gzip
+            sudo mksquashfs . "$SQ" -ef $IF -comp gzip $SQ_OPTS -b 1M
+        fi
     popd > /dev/null
     sudo rm ignored.files
 #}
