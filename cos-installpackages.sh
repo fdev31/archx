@@ -30,20 +30,12 @@ source ./strapfuncs.sh
         install_pkg $DISTRO_PACKAGE_LIST
     fi
 
-    # TODO: rewrite this:
+
 #function install_extra_packages() {
-#    step2 "Extra packages"
-#    sudo cp -r extra_packages "$R"
-#    return
-#    if [ -e "extra_packages/dependencies.txt" ]; then
-#        sudo pacman -r "$R" -S --needed --noconfirm $(cat extra_packages/dependencies.txt)
-#    else
-#        echo "No extra packages dependencies declared"
-#    fi
-#    if [ -z "$NO_EXTRA_PACKAGES" ] && ls extra_packages/*pkg.tar* >/dev/null 2>&1 ; then
-#        sudo pacman -r "$R" -U --needed --noconfirm extra_packages/*pkg.tar*
-#    fi
-#    sudo rm -fr "$R/extra_packages"
+    step2 "Extra packages"
+    sudo cp -r extra_packages "$R"
+    sudo arch-chroot "$R" /extra_packages/install.sh
+    sudo rm -fr "$R/extra_packages"
 #}
 
     distro_install_hook
