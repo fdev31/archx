@@ -1,6 +1,8 @@
 export LC_ALL=C
+set -e
 
 source ./configuration.sh
+[ -e my_conf.sh ] && source ./my_conf.sh # my_conf can configure distrib options (ex: DETECT_LOCALE)
 
 if [ -z "$CHROOT" ]; then
     R="$WORKDIR/ROOT"
@@ -26,8 +28,6 @@ else
     COUNTRY="EN"
 fi
 
-[ -e my_conf.sh ] && source ./my_conf.sh
-
 if [ -z "$COUNTRY" ]; then
     COUNTRY=FR
 fi
@@ -40,7 +40,6 @@ fi
 
 HOOK_BUILD_FOLDER=".installed_hooks"
 
-
 # LOAD OVERRIDES
 
 if [ -e /${DISTRIB}.sh ]; then
@@ -48,6 +47,9 @@ if [ -e /${DISTRIB}.sh ]; then
 else
     source ./distrib/${DISTRIB}.sh
 fi
+
+[ -e my_conf.sh ] && source ./my_conf.sh # my_conf have absolute priority (dup)
+
 _net_mgr=./hooks/alternatives/install/network_manager/50_network_$NETMGR.sh
 
 # i18n @ install time
@@ -56,7 +58,6 @@ _gettext_dir=$(realpath ./resources/locales/gettext)
 function text() {
     TEXTDOMAIN=messages TEXTDOMAINDIR="$_gettext_dir" gettext "$*"
 }
-
 
 # AUTO ADD FLASHDISK IF LIVESYSTEM
 
@@ -166,7 +167,6 @@ $(cat stdout.log)
 EOF
    fi
 }
-
 
 function install_pkg() {
     step2 "Installing $*"
