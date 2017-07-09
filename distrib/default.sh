@@ -14,3 +14,9 @@ function distro_install_hook() {
 
     return
 }
+
+
+# should fit into
+#BOOT/EFI: 100M
+#OS: 3500M
+#RW: 400M

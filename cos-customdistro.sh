@@ -55,7 +55,12 @@ if [ "$RESULT" = "custom" ]; then
             CNT=$(($CNT + 1))
         done
         get_choice "Which Desktop " "${CHOICES[@]}"
-        PROFILES="$PROFILES env-$RESULT"
+        DESKTOP="env-$RESULT"
+        PROFILES="$PROFILES $DESKTOP"
+        ask "Add desktop's applications ? (Y/n)"
+        if [ "$RESULT" != "n" ]; then
+            PROFILES="$PROFILES $DESKTOP-apps"
+        fi
         ask "Do you want Emulators support (Y/n)"
         if [ "$RESULT" != "n" ]; then
             PROFILES="$PROFILES emulation"
@@ -123,10 +128,6 @@ append_conf "USERNAME='$RESULT'"
 ask "Password"
 append_conf "PASSWORD='$RESULT'"
 
-CFG=configuration.sh
-if grep "RECONFIG SCRIPT" $CFG >/dev/null 2>&1 ; then
-    sed -i '/^# RECONFIG/,$ d' "$CFG"
-fi
-echo "# RECONFIG SCRIPT" >> "$CFG"
-echo -e $CONFIG >> "$CFG"
+CFG=my_conf.sh
+echo -e $CONFIG > "$CFG"
 

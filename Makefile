@@ -1,4 +1,4 @@
-.PHONY: all distrib intro
+.PHONY: all distrib intro setup
 
 all: ARCHX.img
 
@@ -13,11 +13,13 @@ info:
 list: help
 help:
 	@echo "Targets:"
+	@echo "<default>   build the disk image (default)"
 	@echo "info        show some configuration information"
-	@echo "ARCHX.img   build the disk image"
-	@echo "rootfs.s    build the compressed apps image"
-	@echo "hooks       build the apps"
-	@echo "ROOT        clear root filesystem and install minimal software"
+	@echo "setup       create a customm distribution by answering questions"
+#     @echo ""
+#     @echo "rootfs.s    build the compressed apps image"
+#     @echo "hooks       build the apps"
+#     @echo "ROOT        clear root filesystem and install minimal software"
 
 ARCHX.img: rootfs.s
 	./cos-makedisk.sh
@@ -32,3 +34,5 @@ hooks.flag: ROOT
 ROOT: my_conf.sh
 	./cos-baseinstall.sh
 
+setup:
+	./cos-customdistro.sh

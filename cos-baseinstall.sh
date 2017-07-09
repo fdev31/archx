@@ -20,11 +20,10 @@ source ./strapfuncs.sh
 #function base_install() {
     # TODO configuration step
     step "Installing base packages & patch root files"
-    sudo cp onelinelog.py "$R/onelinelog.py"
     # install packages
     sudo pacstrap -cd "$R" base python sudo geoip gcc-libs-multilib gcc-multilib base-devel yajl git expac perl # base-devel & next are needed to build cower, needed by pacaur
     sudo chown root.root "$R"
-    sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R"
+    sudo cp -r strapfuncs.sh configuration.sh resources/onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R"
 #}
 
 #function reconfigure() {

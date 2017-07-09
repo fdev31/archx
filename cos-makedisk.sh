@@ -14,7 +14,7 @@ source ./strapfuncs.sh
     # computed disk size, in MB
     # copy extra files to /boot
     if [ -n "$LIVE_SYSTEM" ]; then
-        sudo cp -r extra_files/* "$R/boot/" 2>/dev/null || echo "No extra files to install"
+        sudo cp -ar extra_files/* "$R/boot/" 2>/dev/null || echo "No extra files to install"
     fi
 
     if [ $DISK_TOTAL_SIZE ] ; then

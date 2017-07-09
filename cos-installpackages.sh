@@ -13,7 +13,7 @@ source ./strapfuncs.sh
 
 
     HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
-    (sudo cp -r strapfuncs.sh configuration.sh onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R")
+    (sudo cp -r strapfuncs.sh configuration.sh resources/onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R")
     if [ -e my_conf.sh ] ; then
         sudo cp my_conf.sh "$R"
     fi
@@ -49,7 +49,7 @@ source ./strapfuncs.sh
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
     run_hooks post-install
-    (cd "$R" && sudo rm -fr strapfuncs.sh configuration.sh onelinelog.py resources $DISTRIB.sh)
+    (cd "$R" && sudo rm -fr strapfuncs.sh configuration.sh resources/onelinelog.py resources $DISTRIB.sh)
     if [ -e my_conf.sh ] ; then
         sudo rm "$R/my_conf.sh"
     fi
