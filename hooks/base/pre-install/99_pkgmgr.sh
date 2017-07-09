@@ -1,4 +1,4 @@
-sudo -u user gpg --batch --recv-key 1EB2638FF56C0C53
+sudo -u user gpg --batch --recv-key 1EB2638FF56C0C53 || echo "Unable to retrieve key from server ! Expect failure soon..."
 
 for n in cower pacaur ; do
     if ! have_package $n ; then
