@@ -24,8 +24,6 @@ if [ -z "$COUNTRY" ]; then
     COUNTRY=$(geoiplookup $IPADDR)
     COUNTRY=${COUNTRY#*: }
     COUNTRY=${COUNTRY%%,*}
-else
-    COUNTRY="EN"
 fi
 
 if [ -e "resources/locales/country_codes/$COUNTRY" ] ; then
