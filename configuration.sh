@@ -19,9 +19,8 @@ LOW_MEM=
 #DISK_SQ_PART=3500 # squashfs part size in MB
 ENABLE_UPX=1
 
-DETECT_LOCALE=
-# uppercase country code to set locale
-#COUNTRY=
+# set uppercase country code to set locale (& disable automatic detection)
+COUNTRY=
 
 # Advanced users only:
 

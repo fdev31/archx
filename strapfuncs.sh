@@ -20,14 +20,12 @@ SQ="$WORKDIR/$ROOTNAME"
 
 # DETECT LANGUAGE
 if [ -z "$COUNTRY" ]; then
-    if [ -n "$DETECT_LOCALE" ] ; then
-        IPADDR=$(curl -4 -s icanhazip.com)
-        COUNTRY=$(geoiplookup $IPADDR)
-        COUNTRY=${COUNTRY#*: }
-        COUNTRY=${COUNTRY%%,*}
-    else
-        COUNTRY="EN"
-    fi
+    IPADDR=$(curl -4 -s icanhazip.com)
+    COUNTRY=$(geoiplookup $IPADDR)
+    COUNTRY=${COUNTRY#*: }
+    COUNTRY=${COUNTRY%%,*}
+else
+    COUNTRY="EN"
 fi
 
 if [ -e "resources/locales/country_codes/$COUNTRY" ] ; then
