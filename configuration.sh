@@ -47,7 +47,6 @@ ROOT_TYPE="ext4" # btrfs or ext4
 # Customize names
 ROOTNAME="rootfs.s"
 
-
 PKG_BASE="base flashdisk locales net-chat net-utils system"
 PKG_XORG="xorg www"
 PKG_EDIT="editors dev-base"
