@@ -12,7 +12,8 @@ else
     locale-gen
 fi
 
-(cd "$R/etc" && $SUDO ln -sf "/usr/share/zoneinfo/${LANG_TZ}" localtime)
+make_symlink "/usr/share/zoneinfo/${LANG_TZ}" "/etc/localtime"
+
 echo "
 LANG=\"${LANG}\"
 LC_NUMERIC=\"C\"" | $SUDO dd of="$R/etc/locale.conf" 2>/dev/null
