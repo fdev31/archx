@@ -1,1 +1,1 @@
-install_pkg findimagedupes
+install_aur_pkg findimagedupes
