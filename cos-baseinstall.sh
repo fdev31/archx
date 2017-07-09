@@ -13,7 +13,10 @@ source ./strapfuncs.sh
 
 #function reset_rootfs() {
     step "Clear old rootfs"
-    sudo rm -fr "$R"
+    if [ -e "$R" ]; then
+        sudo mv "$R" "$R-moved"
+        sudo rm -fr "$R-moved" &
+    fi
     sudo mkdir "$R"
 #}
 
