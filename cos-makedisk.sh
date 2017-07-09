@@ -28,13 +28,16 @@ source ./strapfuncs.sh
 
     step2 "Building persistent filesystem"
     MPT="$WORKDIR/.storage_mnt_pt"
+    if [ -e "$MPT" ]; then
+        $SUDO rm -fr "$MPT"
+    fi
     mkdir "$MPT"
     mkdir "$MPT/ROOT"
     mkdir "$MPT/WORK"
     sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-    
+
     pushd "$MPT"
-        sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
+        sudo tar cf - . | xz -9 > ../rootfs.default
         sudo mv ../rootfs.default $R/boot/
     popd > /dev/null
     sudo rm -fr "$MPT"
