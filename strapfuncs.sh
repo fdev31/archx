@@ -19,18 +19,17 @@ D="$WORKDIR/$DISKLABEL.img"
 SQ="$WORKDIR/$ROOTNAME"
 
 # DETECT LANGUAGE
-if [ -z "$DETECT_LOCALE" ] ; then
-    IPADDR=$(curl -4 -s icanhazip.com)
-    COUNTRY=$(geoiplookup $IPADDR)
-    COUNTRY=${COUNTRY#*: }
-    COUNTRY=${COUNTRY%%,*}
-else
-    COUNTRY="EN"
+if [ -z "$COUNTRY" ]; then
+    if [ -n "$DETECT_LOCALE" ] ; then
+        IPADDR=$(curl -4 -s icanhazip.com)
+        COUNTRY=$(geoiplookup $IPADDR)
+        COUNTRY=${COUNTRY#*: }
+        COUNTRY=${COUNTRY%%,*}
+    else
+        COUNTRY="EN"
+    fi
 fi
 
-if [ -z "$COUNTRY" ]; then
-    COUNTRY=FR
-fi
 if [ -e "resources/locales/country_codes/$COUNTRY" ] ; then
     echo "** Adding i18n-$COUNTRY support"
     source resources/locales/country_codes/$COUNTRY
