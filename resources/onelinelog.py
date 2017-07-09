@@ -6,6 +6,7 @@ import fileinput
 import time
 
 PROMPT='> '
+DEBUG=0
 
 def univ_file_read(name, mode):
     # WARNING: ignores mode argument passed to this function
@@ -15,6 +16,9 @@ linelen=0
 twidth = shutil.get_terminal_size()[0]
 logfile=codecs.open('stdout.log', 'w+', encoding='utf-8')
 for line in fileinput.input(openhook=univ_file_read):
+    if DEBUG:
+        sys.stdout.write(line)
+        continue
     if linelen:
         try:
             sys.stdout.write(' '*linelen+'\r')
