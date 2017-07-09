@@ -12,4 +12,5 @@ $SUDO pacman --noconfirm -r "$R" -Sc
 $SUDO pacman-optimize "$R/var/lib/pacman"
 $SUDO ldconfig -r "$R"
 
-$SUDO rm -fr "$R/var/cache/pacman/pkg/*"
+$SUDO rm -fr "$R/var/cache/pacman/pkg/"*
+rm -fr "$R/home/user/.cache/"*
