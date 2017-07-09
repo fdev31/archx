@@ -1,8 +1,10 @@
 $SUDO dd of="$R/etc/locale.gen" 2>/dev/null <<EOF
 ${LANG} UTF-8
+fr_FR UTF-8
 en_US UTF-8
 es_ES UTF-8
 de_DE UTF-8
+it_IT UTF-8
 pt_PT UTF-8
 EOF
 

@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 18
+:total-count: 22
 
 --------------------------------------------------------------------------------
 
@@ -106,6 +106,57 @@ Check multilib (broken ?)
 
 --------------------------------------------------------------------------------
 
+Rewrite mkbootstrap.sh
+======================
+
+:bugid: 17
+:created: 2017-07-08T03:09:41
+:priority: 0
+
+Minimalist approach
+
+- Makefile
+- build.sh
+
+--------------------------------------------------------------------------------
+
+Package manager GUI should be installed only with squash-free installations
+===========================================================================
+
+:bugid: 18
+:created: 2017-07-09T04:04:49
+:priority: 0
+
+Relationale
+    It's good to not make user make updates himself
+    . updates will be provided as atomic squash image.
+    Those updates should cancel apps installed by user.
+
+--------------------------------------------------------------------------------
+
+No big update
+=============
+
+:bugid: 19
+:created: 2017-07-09T04:06:15
+:priority: 0
+
+Now one could update the system by just downloading a fresh squash image into the data partition.
+
+ls
+ls -lh
+
+--------------------------------------------------------------------------------
+
+Shortcut should be provided to extend data partition
+====================================================
+
+:bugid: 20
+:created: 2017-07-09T04:06:36
+:priority: 0
+
+--------------------------------------------------------------------------------
+
 Packages should be installable from PKGBUILD
 ============================================
 
@@ -130,14 +181,9 @@ This has to be fixed :)
 
 --------------------------------------------------------------------------------
 
-Rewrite mkbootstrap.sh
-======================
+Option should be provided to allow external ntfs (or fat ?) partition for home's folders
+========================================================================================
 
-:bugid: 17
-:created: 2017-07-08T03:09:41
+:bugid: 21
+:created: 2017-07-09T04:07:20
 :priority: 0
-
-Minimalist approach
-
-- Makefile
-- build.sh
