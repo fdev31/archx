@@ -1,1 +1,1 @@
-have_xorg && install_pkg furiusisomount
+if have_xorg; then  install_pkg furiusisomount ; fi

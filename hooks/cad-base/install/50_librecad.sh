@@ -1,1 +1,1 @@
-have_xorg && install_pkg librecad
+if have_xorg; then  install_pkg librecad ; fi

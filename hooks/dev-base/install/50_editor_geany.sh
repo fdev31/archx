@@ -1,1 +1,1 @@
-have_xorg && install_pkg  geany
+if have_xorg; then  install_pkg  geany ; fi

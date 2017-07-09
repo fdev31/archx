@@ -7,7 +7,7 @@ install_pkg nss-mdns
 install_pkg sshuttle
 install_pkg dnsmasq
 
-have_xorg && install_pkg wireshark-$PREFERRED_TOOLKIT
+if have_xorg; then  install_pkg wireshark-$PREFERRED_TOOLKIT ; fi
 
 enable_service avahi-daemon
 enable_service avahi-dnsconfd

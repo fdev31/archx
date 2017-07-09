@@ -1,1 +1,1 @@
-have_xorg && install_pkg gimp
+if have_xorg; then  install_pkg gimp ; fi

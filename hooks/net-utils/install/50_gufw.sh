@@ -1,1 +1,1 @@
-have_xorg && install_pkg gufw
+if have_xorg; then  install_pkg gufw ; fi

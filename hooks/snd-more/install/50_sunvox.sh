@@ -1,1 +1,1 @@
-have_xorg && install_pkg sunvox
+if have_xorg; then  install_pkg sunvox ; fi

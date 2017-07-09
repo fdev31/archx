@@ -1,1 +1,1 @@
-have_xorg && install_pkg xdiskusage
+if have_xorg; then  install_pkg xdiskusage ; fi

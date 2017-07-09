@@ -1,1 +1,1 @@
-have_xorg && install_pkg visual-studio-code
+if have_xorg; then  install_pkg visual-studio-code ; fi

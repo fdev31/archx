@@ -1,1 +1,1 @@
-have_xorg && install_pkg jdownloader2
+if have_xorg; then  install_pkg jdownloader2 ; fi

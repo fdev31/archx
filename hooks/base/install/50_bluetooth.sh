@@ -1,3 +1,3 @@
 install_pkg bluez
-have_xorg && install_pkg blueman
+if have_xorg; then  install_pkg blueman ; fi
 enable_service bluetooth

@@ -1,1 +1,1 @@
-have_xorg && install_pkg scribus
+if have_xorg; then  install_pkg scribus ; fi

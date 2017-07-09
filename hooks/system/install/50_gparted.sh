@@ -1,2 +1,2 @@
 install_pkg gpart
-have_xorg && install_pkg gparted
+if have_xorg; then  install_pkg gparted ; fi

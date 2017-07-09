@@ -1,1 +1,1 @@
-have_xorg && install_pkg gogglesmm
+if have_xorg; then  install_pkg gogglesmm ; fi

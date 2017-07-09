@@ -1,1 +1,1 @@
-have_xorg && install_pkg mixxx
+if have_xorg; then  install_pkg mixxx ; fi

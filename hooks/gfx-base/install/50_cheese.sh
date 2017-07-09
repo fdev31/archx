@@ -1,1 +1,1 @@
-have_xorg && install_pkg cheese
+if have_xorg; then  install_pkg cheese ; fi

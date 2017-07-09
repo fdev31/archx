@@ -1,1 +1,1 @@
-have_xorg && install_pkg blender
+if have_xorg; then  install_pkg blender ; fi

@@ -1,1 +1,1 @@
-have_xorg && install_pkg deluge
+if have_xorg; then  install_pkg deluge ; fi

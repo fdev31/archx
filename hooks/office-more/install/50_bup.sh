@@ -1,1 +1,1 @@
-have_xorg && install_pkg bups
+if have_xorg; then  install_pkg bups ; fi

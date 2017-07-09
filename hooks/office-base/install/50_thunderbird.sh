@@ -1,2 +1,2 @@
-have_xorg && install_pkg thunderbird
-have_xorg && install_pkg thunderbird-i18n-${LANG_ISO2}
+if have_xorg; then  install_pkg thunderbird ; fi
+if have_xorg; then  install_pkg thunderbird-i18n-${LANG_ISO2} ; fi

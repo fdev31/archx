@@ -1,2 +1,2 @@
 install_pkg --asdeps wordnet
-have_xorg && install_aur_pkg artha
+if have_xorg; then  install_aur_pkg artha ; fi

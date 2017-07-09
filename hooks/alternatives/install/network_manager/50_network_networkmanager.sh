@@ -1,3 +1,3 @@
 install_pkg  networkmanager
-have_xorg && install_pkg  network-manager-applet
+if have_xorg; then  install_pkg  network-manager-applet ; fi
 enable_service NetworkManager

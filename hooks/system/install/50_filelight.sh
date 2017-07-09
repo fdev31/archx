@@ -1,1 +1,1 @@
-have_xorg && install_pkg filelight
+if have_xorg; then  install_pkg filelight ; fi

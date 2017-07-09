@@ -1,1 +1,1 @@
-have_xorg && install_pkg handbrake
+if have_xorg; then  install_pkg handbrake ; fi

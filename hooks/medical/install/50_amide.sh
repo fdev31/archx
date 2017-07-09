@@ -1,1 +1,1 @@
-have_xorg && install_pkg amide
+if have_xorg; then  install_pkg amide ; fi

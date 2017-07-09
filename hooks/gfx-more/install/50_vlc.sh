@@ -1,1 +1,1 @@
-have_xorg && install_pkg vlc
+if have_xorg; then  install_pkg vlc ; fi

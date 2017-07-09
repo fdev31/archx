@@ -1,1 +1,1 @@
-have_xorg && install_pkg audacity
+if have_xorg; then  install_pkg audacity ; fi

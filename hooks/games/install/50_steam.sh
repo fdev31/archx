@@ -1,3 +1,3 @@
-have_xorg && install_pkg steam-native-runtime
-have_xorg && install_pkg steam-fonts
-have_xorg && install_pkg steam
+if have_xorg; then  install_pkg steam-native-runtime ; fi
+if have_xorg; then  install_pkg steam-fonts ; fi
+if have_xorg; then  install_pkg steam ; fi

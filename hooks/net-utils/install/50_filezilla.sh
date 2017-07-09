@@ -1,1 +1,1 @@
-have_xorg && install_pkg filezilla
+if have_xorg; then  install_pkg filezilla ; fi

@@ -1,3 +1,3 @@
-have_xorg && install_aur_pkg streamstudio-bin
+if have_xorg; then  install_aur_pkg streamstudio-bin ; fi
 upx_comp "/opt/streamstudio-bin/lib/"
-have_xorg && install_aur_pkg popcorntime-ce-bin
+if have_xorg; then  install_aur_pkg popcorntime-ce-bin ; fi

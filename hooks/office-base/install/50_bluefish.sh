@@ -1,1 +1,1 @@
-have_xorg && install_pkg bluefish
+if have_xorg; then  install_pkg bluefish ; fi

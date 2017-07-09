@@ -1,2 +1,2 @@
 install_pkg wacom-utility
-have_xorg && install_pkg xf86-input-wacom
+if have_xorg; then  install_pkg xf86-input-wacom ; fi

@@ -1,1 +1,1 @@
-have_xorg && install_pkg soundconverter
+if have_xorg; then  install_pkg soundconverter ; fi

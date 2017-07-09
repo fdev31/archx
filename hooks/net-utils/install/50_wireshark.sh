@@ -1,1 +1,1 @@
-have_xorg && install_pkg wireshark-$PREFERRED_TOOLKIT
+if have_xorg; then  install_pkg wireshark-$PREFERRED_TOOLKIT ; fi

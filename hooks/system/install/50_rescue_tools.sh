@@ -6,4 +6,4 @@ install_pkg rsync
 install_pkg file
 install_pkg nmap
 install_pkg sleuthkit
-have_xorg && install_pkg gparted
+if have_xorg; then  install_pkg gparted ; fi

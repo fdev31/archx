@@ -1,1 +1,1 @@
-have_xorg && install_pkg flashplugin
+if have_xorg; then  install_pkg flashplugin ; fi

@@ -1,1 +1,1 @@
-have_xorg && install_pkg homebank
+if have_xorg; then  install_pkg homebank ; fi
