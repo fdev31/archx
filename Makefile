@@ -27,12 +27,14 @@ ARCHX.img: rootfs.s
 rootfs.s: hooks.flag
 	./cos-makesquash.sh
 
-hooks.flag: ROOT
+hooks.flag: ROOT.flag
 	./cos-installpackages.sh
 	touch $@
 
-ROOT: my_conf.sh
+ROOT.flag: my_conf.sh
 	./cos-baseinstall.sh
+	touch $@
 
 setup:
 	./cos-customdistro.sh
+
