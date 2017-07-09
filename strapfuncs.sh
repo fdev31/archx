@@ -12,7 +12,7 @@ if [ -z "$CHROOT" ]; then
 else
     SUDO=""
     ARCHCHROOT=""
-    R="/"
+    R="."
 fi
 
 D="$WORKDIR/$DISKLABEL.img"
