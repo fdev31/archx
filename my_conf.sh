@@ -4,5 +4,5 @@
 #COMPRESSION_TYPE=gzip
 #PACMAN_BIN=pacman
 # uppercase country code to set locale
-#COUNTRY=FR
+COUNTRY=FR
 #DISTRIB=console
