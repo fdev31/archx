@@ -142,24 +142,24 @@ It's only needed once.
 
 Get some basic help:
 
-    ./mkbootstrap.sh help 
+    make help
 
 Generate a bootable disk image:
 
-    ./mkbootstrap.sh
+    make
 
+To install packages or make 
 Add some software (eg. vim) and regenerate disk image:
 
-    ./mkbootstrap.sh install vim
-    ./mkbootstrap.sh
+    sudo arch-chroot ROOT 
+    <do some modifications, install packages, etc...>
+    ^D
+    touch hooks.flag
+    make
 
-Run it using qemu:
+Install it to USB stick/drive:
 
-    ./mkbootstrap.sh run
-
-Install it to USB stick/drive with FAT partition (eg. sde1):
-
-    ./mkbootstrap.sh flash /dev/sde1
+    dd if=ARCHX.img of=/dev/sd??
 
 ### Instructions
 
@@ -192,7 +192,7 @@ Write a `my_conf.sh` file with this content:
 Then, build from scratch:
 
     % rm -fr ROOT
-    % ./mkbootstrap.sh
+    % make
 
 ### Custom ArchLinux partitionning
 
@@ -203,8 +203,8 @@ Then, build from scratch:
 
 ## TODO
 
-- share disk images for each distrib
-- better EFI / boot partition handling
+- Share disk images for each distrib (stacked rootfs)
+- More flexible partition schemes
 
 ### Maybe
 
@@ -212,7 +212,7 @@ Then, build from scratch:
 
 ## How it works ?
 
-The main script *mkbootstrap.sh* just runs scripts in sequence.
+Look at the targets in the *Makefile*, the scripts are called ``cos-*.sh`` in the root of the repository.
 
 Sequences are defined by profiles in the *hooks* directory, make your own profile to experiment, by executing *makeprofile.sh*
 
