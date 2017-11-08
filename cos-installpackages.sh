@@ -27,7 +27,9 @@ source ./strapfuncs.sh
     run_hooks install
     if [ -n "$DISTRO_PACKAGE_LIST" ]; then
         step2 "Distribution packages"
-        install_pkg $DISTRO_PACKAGE_LIST
+        for pkg in $DISTRO_PACKAGE_LIST; do
+            install_pkg "$pkg"
+        done
     fi
 
 
