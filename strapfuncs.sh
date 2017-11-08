@@ -177,10 +177,6 @@ function remove_pkg() {
     $PKGMGR --root "$R" --noconfirm -R $*
 }
 
-function network_manager() {
-    ln -fs "../../hooks/alternatives/install/network_manager/50_network_$1.sh" "$_net_mgr"
-}
-
 function enable_service() {
     $SUDO systemctl --root "$R" --force enable $1
 }
