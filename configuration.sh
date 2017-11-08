@@ -6,6 +6,7 @@
 DISKLABEL="ARCHX"
 # Package set to install
 DISTRIB="default"
+SKIP_AUR= # keep empty to install AUR packages
 # Your login id
 USERNAME="user"
 USERID="1000"

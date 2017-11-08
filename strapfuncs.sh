@@ -168,8 +168,12 @@ function install_pkg() {
     raw_install_pkg --needed -S $*
 }
 function install_aur_pkg() {
-    step2 "Installing (AUR) $*"
-    raw_install_pkg --needed -S $*
+    if [ -z "$SKIP_AUR" ]; then
+        step2 "Installing (AUR) $*"
+        raw_install_pkg --needed -S $*
+    else
+        step2 "Skipping AUR package $*"
+    fi
 }
 
 function remove_pkg() {
