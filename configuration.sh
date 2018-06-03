@@ -10,7 +10,7 @@ SKIP_AUR= # keep empty to install AUR packages
 # Your login id
 USERNAME="user"
 USERID="1000"
-USERGID="100"
+USERGID="users"
 # do you prefer qt or gtk ?
 PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
