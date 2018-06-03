@@ -1,3 +1,8 @@
+$SUDO sed -i 's/^#Color/Color/' "$R/etc/pacman.conf"
+$SUDO sed -i 's/^CheckSpace/#CheckSpace/' "$R/etc/pacman.conf"
+
+$SUDO sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j2"/' "$R/etc/makepkg.conf"
+
 sudo -u user gpg --batch --recv-key 1EB2638FF56C0C53 || echo "Unable to retrieve key from server ! Expect failure soon..."
 
 for n in cower pacaur ; do
