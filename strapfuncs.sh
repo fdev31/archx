@@ -130,7 +130,7 @@ $FOOTER" | $SUDO dd of="$I" 2>/dev/null
 
 function have_package() {
     _set_pkgmgr
-    $PKGMGR $PKGMGR_OPTS --root "$R" -Qqq $* >/dev/null 2>&1
+    $PKGMGR $PKGMGR_OPTS --sysroot "$R" -Qqq $* >/dev/null 2>&1
 }
 
 function make_symlink() {
@@ -178,7 +178,7 @@ function install_aur_pkg() {
 
 function remove_pkg() {
     _set_pkgmgr
-    $PKGMGR --root "$R" --noconfirm -R $*
+    $PKGMGR --sysroot "$R" --noconfirm -R $*
 }
 
 function enable_service() {
