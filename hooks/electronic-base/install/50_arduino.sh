@@ -1,0 +1,2 @@
+install_pkg arduino
+install_aur_pkg platformio
