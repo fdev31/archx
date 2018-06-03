@@ -1,1 +1,1 @@
-install_pkg ffdiaporama
+install_aur_pkg ffdiaporama
