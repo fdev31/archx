@@ -9,7 +9,7 @@ if pacman -r "$R" -Qtdq >/dev/null; then
 fi
 $SUDO pacman --noconfirm -r "$R" -Sc
 
-$SUDO pacman-optimize "$R/var/lib/pacman"
+#$SUDO pacman-optimize "$R/var/lib/pacman"
 $SUDO ldconfig -r "$R"
 
 $SUDO rm -fr "$R/var/cache/pacman/pkg/"*
