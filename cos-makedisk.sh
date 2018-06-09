@@ -8,7 +8,7 @@ fi
 
 source ./strapfuncs.sh
 # vars:
-# ROOT SQ LIVE_SYSTEM ROOTNAME (squashfs ?) WORKDIR TOTAL_DISK_SIZE BOOT_MARGIN DISK_MARGIN COMPRESSION_TYPE
+# ROOT SQ LIVE_SYSTEM ROOTNAME (squashfs ?) WORKDIR DISK_TOTAL_SIZE BOOT_MARGIN DISK_MARGIN COMPRESSION_TYPE
 
 #function make_disk_image() {
     # computed disk size, in MB
