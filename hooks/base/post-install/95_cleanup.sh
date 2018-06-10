@@ -5,9 +5,9 @@ if [ -e "$R/etc/udev/hwdb.bin" ]; then
 fi
 
 if pacman -r "$R" -Qtdq >/dev/null; then
-    $SUDO pacman --noconfirm -r "$R" -Rns $(pacman  -r "$R" -Qtdq)
+    $SUDO pacman --noconfirm --sysroot "$R" -Rns $(pacman  -r "$R" -Qtdq)
 fi
-$SUDO pacman --noconfirm -r "$R" -Sc
+$SUDO pacman --noconfirm --sysroot "$R" -Sc
 
 #$SUDO pacman-optimize "$R/var/lib/pacman"
 $SUDO ldconfig -r "$R"
