@@ -3,13 +3,15 @@ set nocompatible               " Be iMproved
 filetype plugin indent on
 syntax enable
 
-call plug#begin('~/.config/nvim/addons')
+call plug#begin('~/.config/nvim/addons/')
+
 Plug 'junegunn/vim-easy-align'
 Plug 'neomake/neomake'
 Plug 'hrp/EnhancedCommentify'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-scripts/Align'
+"Plug 'rliang/nvim-pygtk3', {'do': 'make install'}
 " completers
 Plug 'davidhalter/jedi-vim'
 Plug 'scrooloose/nerdtree'
