@@ -1,9 +1,20 @@
-syntax: glob
 ROOT
+.installed_hooks
+stdout.log
+my_conf.py
+fixed_bugs.rst
+
+syntax: glob
+exchange/*
 *.xz
 *.swp
 *.s
 *.raw
 *.rej
 *.orig
-.installed_hooks
+extra_packages/sources/*
+*.img
+3rdparty/*.exe
+*-pkglist.txt
+root_size-*
+*.flag
