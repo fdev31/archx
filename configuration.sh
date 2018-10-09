@@ -25,7 +25,7 @@ COUNTRY=
 
 # Advanced users only:
 
-PACMAN_BIN="pacaur" # alternative pacman frontend, else set "sudo pacman"
+PACMAN_BIN="pikaur" # alternative pacman frontend, else set "sudo pacman"
 WORKDIR="$PWD" # default workdir = script dir
 COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
 DISK_MARGIN=300 # extra space for persistence, also HOME size, used for loopback or disk images
