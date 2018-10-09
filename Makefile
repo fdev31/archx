@@ -14,6 +14,7 @@ list: help
 help:
 	@echo "Targets:"
 	@echo "<default>   build the disk image (default)"
+	@echo "fresh       rebuild everything"
 	@echo "info        show some configuration information"
 	@echo "setup       create a customm distribution by answering questions"
 #     @echo ""
@@ -34,6 +35,10 @@ hooks.flag: ROOT.flag
 ROOT.flag: my_conf.sh
 	./cos-baseinstall.sh
 	touch $@
+
+fresh:
+	rm -fr *.flag
+	make
 
 setup:
 	./cos-customdistro.sh
