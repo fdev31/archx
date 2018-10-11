@@ -140,6 +140,8 @@ It's only needed once.
 
 ## Quickstart for developers
 
+- install arch-install-scripts
+
 Get some basic help:
 
     make help
