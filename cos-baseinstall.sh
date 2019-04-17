@@ -10,15 +10,14 @@ source ./strapfuncs.sh
 # vars:
 # R DISTRIB HOOK_BUILD_FOLDER
 
-
-#function reset_rootfs() {
+function reset_rootfs() {
     step "Clear old rootfs"
     if [ -e "$R" ]; then
         sudo mv "$R" "$R-moved"
         sudo rm -fr "$R-moved" &
     fi
     sudo mkdir "$R"
-#}
+}
 
 #function base_install() {
     # TODO configuration step
