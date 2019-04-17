@@ -13,10 +13,14 @@ else
     SUDO=""
     ARCHCHROOT=""
     R="."
+    if [ -d /home/fab ] ; then
+        echo "Alert !!"
+        exit -1;
+    fi
 fi
 
-if ! mountpoint "$R" ; then
-    mount --bind "$R" "$R"
+if [ ! -d "$R" ]; then
+    mkdir "$R"
 fi
 
 D="$WORKDIR/$DISKLABEL.img"
@@ -152,8 +156,8 @@ function raw_install_pkg() {
             pkg_cmd="$PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py"
             $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py
         else
-            pkg_cmd="su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py"
-            su -- user $PKGMGR $PKGMGR_OPTS --noedit --noconfirm $* 2>&1 | ./onelinelog.py
+            pkg_cmd="su -l user -c \"$PKGMGR $PKGMGR_OPTS --noconfirm $*\"  2>&1 | ./onelinelog.py"
+            su -l user -c "$PKGMGR $PKGMGR_OPTS --noedit --noconfirm $*" 2>&1 | ./onelinelog.py
         fi
     fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
