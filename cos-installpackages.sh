@@ -33,12 +33,13 @@ source ./strapfuncs.sh
     fi
 
 
-#function install_extra_packages() {
+# FIXME: doesn't like to be in a chroot
+function install_extra_packages() {
     step2 "Extra packages"
     sudo cp -r extra_packages "$R"
     sudo arch-chroot "$R" /extra_packages/install.sh
     sudo rm -fr "$R/extra_packages"
-#}
+}
 
     distro_install_hook
     sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target

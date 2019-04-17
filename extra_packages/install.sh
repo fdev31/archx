@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PACKAGES="cower pacaur" # add your packages here !
+PACKAGES="" # add your packages here !
 
 cd $(dirname $0)
 

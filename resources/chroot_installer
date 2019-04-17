@@ -10,11 +10,12 @@ step $HOOK_TYPE_P
 
 if [ "$HOOK_TYPE_P" = "extra" ]; then
 	gpg --homedir "$R/home/user" --receive-keys 1EB2638FF56C0C53
-	pushd extra_packages/sources
-	    for pkg in cower pacaur ; do
-            (cd $pkg && makepkg -sf && $SUDO pacman --noconfirm -r $R -U *.pkg.*)
-	    done
-	popd
+    # Done in 99_pkgmkg now:
+	#pushd extra_packages/sources
+	#    for pkg in cower; do
+    #        (cd $pkg && makepkg -sf && $SUDO pacman --noconfirm -r $R -U *.pkg.*)
+	#    done
+	#popd
 else
     _hook_t=$(ls -1d ".installed_hooks/$HOOK_TYPE_P/"*.sh | wc -l)
     _hook_c=0
