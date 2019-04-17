@@ -1,4 +1,5 @@
 PROFILES="$PKG_BASE $PKG_XORG env-kde"
+NETMGR=networkmanager
 DISK_TOTAL_SIZE=3
 
 PREFERRED_TOOLKIT='qt'
