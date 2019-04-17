@@ -15,6 +15,10 @@ else
     R="."
 fi
 
+if ! mountpoint "$R" ; then
+    mount --bind "$R" "$R"
+fi
+
 D="$WORKDIR/$DISKLABEL.img"
 SQ="$WORKDIR/$ROOTNAME"
 
