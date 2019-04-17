@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 22
+:total-count: 23
 
 --------------------------------------------------------------------------------
 
@@ -157,6 +157,26 @@ Shortcut should be provided to extend data partition
 
 --------------------------------------------------------------------------------
 
+Option should be provided to allow external ntfs (or fat ?) partition for home's folders
+========================================================================================
+
+:bugid: 21
+:created: 2017-07-09T04:07:20
+:priority: 0
+
+--------------------------------------------------------------------------------
+
+provide high-level chroot command
+=================================
+
+:bugid: 23
+:created: 2019-04-17T23:11:10
+:priority: 10
+
+allowing to not chroot when it's already in the chroot (R=".")
+
+--------------------------------------------------------------------------------
+
 Packages should be installable from PKGBUILD
 ============================================
 
@@ -178,12 +198,3 @@ rm: cannot remove '11-*lcdfilter*': No such file or directory
 
 
 This has to be fixed :)
-
---------------------------------------------------------------------------------
-
-Option should be provided to allow external ntfs (or fat ?) partition for home's folders
-========================================================================================
-
-:bugid: 21
-:created: 2017-07-09T04:07:20
-:priority: 0

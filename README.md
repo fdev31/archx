@@ -39,7 +39,7 @@ Here is a brief description:
 - Fast - maybe the **fastest Linux** installer on earth
 - Small - the live system usually takes less than **30% of the original size**
 
-Here is a list of [Open issues](bugs.rst)
+Here is a list of [Open issues](tickets.rst)
 
 
 ### Minimal configuration
