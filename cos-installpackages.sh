@@ -37,7 +37,7 @@ source ./strapfuncs.sh
 function install_extra_packages() {
     step2 "Extra packages"
     sudo cp -r extra_packages "$R"
-    sudo arch-chroot "$R" /extra_packages/install.sh
+    $SU_ARCHCHROOT /extra_packages/install.sh
     sudo rm -fr "$R/extra_packages"
 }
 
