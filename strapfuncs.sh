@@ -4,20 +4,26 @@ set -e
 source ./configuration.sh
 [ -e my_conf.sh ] && source ./my_conf.sh # my_conf can configure distrib options (ex: DETECT_LOCALE)
 
-if [ -z "$CHROOT" ]; then
-    R="$WORKDIR/ROOT"
-    ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
-    SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
-    SUDO="sudo"
-else
+#if [ "$LOGNAME" = "ROOT" ] ; then
+#fi
+
+if [ "$UID" = "0" ]; then
+    # Inside the chroot
+    R="."
     SUDO=""
     ARCHCHROOT=""
-    R="."
     if [ -d /home/fab ] ; then
         echo "Alert !!"
         exit -1;
     fi
+else
+    # We are NOT in the chroot, so operations must be chrooted
+    R="$WORKDIR/ROOT"
+    SUDO="sudo"
+    ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
+    SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
 fi
+
 
 if [ ! -d "$R" ]; then
     mkdir "$R"
@@ -147,11 +153,13 @@ function make_symlink() {
 
 function raw_install_pkg() {
     _set_pkgmgr
-    # if chroot:
-    if [ -z "$CHROOT" ]; then
-        pkg_cmd="$SUDO arch-chroot -u user "$R" su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py"
-        $SUDO arch-chroot -u user "$R" su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py
+
+    # if no chroot set:
+    if [ "$UID" != "0" ]; then
+        pkg_cmd='$SU_ARCHCHROOT su -l user -c "$PKGMGR $PKGMGR_OPTS --noconfirm $*" 2>&1 | $R/onelinelog.py'
+        $ARCH_CHROOT su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog
     else
+        # Inside the chroot
         if [ "$PKGMGR" = "pacman" ]; then
             pkg_cmd="$PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py"
             $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py
@@ -290,7 +298,10 @@ function run_hooks() {
         done
         cp "$_net_mgr" "$HOOK_BUILD_DIR/install/"
         HOOK_BUILD_FLAG=1
+    else
+        echo "Already built"
     fi
 
+    echo sudo arch-chroot "$R" /resources/chroot_installer "$1"
     sudo arch-chroot "$R" /resources/chroot_installer "$1"
 }
