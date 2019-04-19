@@ -157,7 +157,7 @@ function raw_install_pkg() {
     # if no chroot set:
     if [ "$UID" != "0" ]; then
         pkg_cmd='$SU_ARCHCHROOT su -l user -c "$PKGMGR $PKGMGR_OPTS --noconfirm $*" 2>&1 | $R/onelinelog.py'
-        $ARCH_CHROOT su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog
+        $ARCH_CHROOT su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | sudo $R/onelinelog.py
     else
         # Inside the chroot
         if [ "$PKGMGR" = "pacman" ]; then
