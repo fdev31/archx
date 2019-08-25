@@ -10,8 +10,6 @@ source ./strapfuncs.sh
 # vars:
 # R HOOK_BUILD_FOLDER DISTRIB DISTRO_PACKAGE_LIST  BOOT_TARGET
 
-
-
     HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
     (sudo cp -r strapfuncs.sh configuration.sh resources/onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R")
     if [ -e my_conf.sh ] ; then
