@@ -23,7 +23,7 @@ function reset_rootfs() {
     # TODO configuration step
     step "Installing base packages & patch root files"
     # install packages
-    sudo pacstrap -cd "$R" base python sudo geoip gcc-libs-multilib gcc-multilib base-devel yajl git expac perl # base-devel & next are needed to build cower, needed by pacaur
+    sudo pacstrap -cd "$R" base linux initramfs linux-firmware python sudo geoip gcc-libs-multilib gcc-multilib base-devel yajl git expac perl # base-devel & next are needed to build cower, needed by pacaur
     sudo chown root.root "$R"
     sudo cp -r strapfuncs.sh configuration.sh resources/onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R"
 #}
@@ -34,3 +34,4 @@ function reset_rootfs() {
     CHROOT='' run_hooks pre-mkinitcpio
     sudo arch-chroot "$R" mkinitcpio -p linux
 #}
+
