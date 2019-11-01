@@ -7,6 +7,10 @@ source ./configuration.sh
 #if [ "$LOGNAME" = "ROOT" ] ; then
 #fi
 
+if [[ "$TERM" =~ xterm-* ]] ; then
+    export TERM=xterm
+fi
+
 if [ "$UID" = "0" ]; then
     # Inside the chroot
     R="."
