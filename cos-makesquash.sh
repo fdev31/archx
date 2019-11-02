@@ -32,6 +32,8 @@ source ./strapfuncs.sh
             sudo mksquashfs . "$SQ" -ef $IF  -noI -noD -noF -noX $SQ_OPTS
         elif [ "$COMPRESSION_TYPE" = "xz" ]; then
             sudo mksquashfs . "$SQ" -ef $IF -comp xz   $SQ_OPTS -b 1M  -Xdict-size '100%'
+        elif [ "$COMPRESSION_TYPE" = "zstd" ]; then
+            sudo mksquashfs . "$SQ" -ef $IF -comp zstd $SQ_OPTS -b 1M  -Xcompression-level 19
         else # gz == gzip
             sudo mksquashfs . "$SQ" -ef $IF -comp gzip $SQ_OPTS -b 1M
         fi
