@@ -1,5 +1,5 @@
 #!/bin/bash
-# mkpart <device> <sizeMB> <squashfs>
+# program <device> <bootPartSize> <squashfs>
 # ex: mkparts.sh ARCHX.img 100 rootfs.s
 # TODO/ make fixed squash size possible
 export LC_ALL=C

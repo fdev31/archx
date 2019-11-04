@@ -1,6 +1,6 @@
 source ./strapfuncs.sh
 
-REAL="real_ROOT"
+REAL="$_ORIG_ROOT_FOLDER"
 
 work=tmp_workdir
 overlay=tmp_overlay
@@ -15,7 +15,7 @@ function squash() {
 
 $SUDO cp -r resources/ configuration.sh ./distrib/${DISTRIB}.sh my_conf.sh "$REAL/"
 $SUDO chmod 666 "$REAL/my_conf.sh"
-$SUDO mkdir -f "$REAL/var/cache/pikaur"
+[ ! -d "$REAL/var/cache/pikaur" ] && $SUDO mkdir "$REAL/var/cache/pikaur"
 
 
 for envname in envs/* ; do
@@ -35,7 +35,7 @@ for envname in envs/* ; do
 
     install_file  resources/sudo_conf_nopass "/etc/sudoers.d/50_nopassword"
     echo "Install the required packages, then exit:"
-    ($SUDO arch-chroot "$R" || true)
+    ($SUDO arch-chroot "$R" /inst.sh || true)
     echo "Packaging..."
     $SUDO umount "$R"
     $SUDO rm -fr "$overlay/var/cache/pacman/pkg/"*

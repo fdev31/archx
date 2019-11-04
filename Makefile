@@ -11,6 +11,15 @@ info:
 	@echo "${PACMAN_BIN} will be used to install packages."
 
 list: help
+
+init:
+	mkdir  ${_ORIG_ROOT_FOLDER} || true
+	mkdir  ${_MOUNTED_ROOT_FOLDER} || true
+	sudo mount --bind ${_ORIG_ROOT_FOLDER} ${_MOUNTED_ROOT_FOLDER}
+
+umount:
+	sudo umount ${_MOUNTED_ROOT_FOLDER}
+
 help:
 	@echo "Targets:"
 	@echo "<default>   build the disk image (default)"
@@ -38,7 +47,11 @@ ROOT.flag: my_conf.sh
 
 clean:
 	./cos-cleanup.sh
+	rm -f *.flag
 
 setup:
 	./cos-customdistro.sh
 
+shell:
+	sudo arch-chroot ${_MOUNTED_ROOT_FOLDER}
+	sudo rm -fr ${_MOUNTED_ROOT_FOLDER}/var/cache/pacman/pkg/*

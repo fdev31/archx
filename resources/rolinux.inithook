@@ -5,8 +5,8 @@ W_WORKDIR="/run/overlay/WORK" # workdirs prefix for tmpfs overlay
 
 ## funcs:
 oops() {
-    echo "Error occured, continuing in 1s..."
-    sleep 1
+    echo "Error occured, continuing in 2s..."
+    sleep 2
 }
 
 fatal() {
@@ -120,6 +120,10 @@ run_latehook() {
         S_RW_DRIVE=$RW_DRIVE
     fi
 
+    if [ -e "$F_BR/autorun" ]; then
+       source "$F_BR/autorun"
+    fi
+
     # Allow initial RW folder: run
 	mount -t tmpfs tmpfs "$R/run"
 
@@ -129,10 +133,10 @@ run_latehook() {
 
     dprint "RW DRIVE/ " $RW_DRIVE
 
-    if [ -z "$BOOTBOOTHACK" ]; then # boot is root, just move it
+    if [ -z "$BOOTBOOTHACK" ]; then # /boot is current root, just move it
         BOOTPART="$R/boot"
         mount --move "$F_BOOT_ROOT" "$BOOTPART" || oops # make original root accessible as /boot (ro)
-    else # boot is under /boot, mount in some folder then bind
+    else # /boot is under /boot, mount in some folder then bind
         BOOTPART="$R/run/bootpart"
         mkdir "$BOOTPART"
         mount --move "$F_BOOT_ROOT" "$BOOTPART" || oops # make original root accessible as /boot (ro)
@@ -174,15 +178,16 @@ run_latehook() {
             mount "$RW_DRIVE" "$F_RWPART" -o $FS_OPTS || oops
             STORED=1
             echo "[STORED]"
-            mv /tmp/*.log "$F_RWPART"
         fi
     fi
 
-	if [ $STORED -eq 0 ]; then # no storage = tmpfs roott
+	if [ $STORED -eq 0 ]; then # no storage = tmpfs root
 	    echo "[VOLATILE]"
 	    dprint mount -t tmpfs tmpfs "$F_RWPART"
 	    mount -t tmpfs tmpfs "$F_RWPART"
 	fi
+
+    mv /tmp/*.log "$F_RWPART"
 
     if [ ! -d "$F_RWPART/ROOT" ]; then # populate if empty
         echo "populating storage with default config"

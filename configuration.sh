@@ -16,8 +16,8 @@ PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 # root & user password:
 PASSWORD="sexy"
 LOW_MEM=
-#DISK_TOTAL_SIZE=4 # size in GB
-#DISK_SQ_PART=3500 # squashfs part size in MB
+DISK_TOTAL_SIZE=4 # size in GB
+DISK_SQ_PART=3500 # squashfs part size in MB
 ENABLE_UPX=1
 
 # set uppercase country code to set locale (& disable automatic detection)
@@ -27,7 +27,7 @@ COUNTRY=
 
 PACMAN_BIN="pikaur" # alternative pacman frontend, else set "sudo pacman"
 WORKDIR="$PWD" # default workdir = script dir
-COMPRESSION_TYPE="xz" # xz or gzip (faster, uses less memory, but bigger files)
+COMPRESSION_TYPE="xz" # xz or gzip or zstd (faster, uses less memory, but bigger files)
 DISK_MARGIN=300 # extra space for persistence, also HOME size, used for loopback or disk images
 BOOT_MARGIN=50 # extra space for /boot (first partition)
 DEFAULT_GROUPS="lp,disk,network,audio,storage,input,power,users,wheel,adm,tty,log,sys,daemon,root"
@@ -62,3 +62,5 @@ PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_DOC $PKG_
 # Not installed: medical 
 
 # envs: awesome, budgie, cinnamon, deepin, enlightenment, gnome, kde, lxde, mate, pantheon, xfce, zorin
+_ORIG_ROOT_FOLDER="ROOT_real"
+_MOUNTED_ROOT_FOLDER="ROOT"

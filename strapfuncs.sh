@@ -1,8 +1,10 @@
+#!/bin/bash
 export LC_ALL=C
 set -e
 
 source ./configuration.sh
 [ -e my_conf.sh ] && source ./my_conf.sh # my_conf can configure distrib options (ex: DETECT_LOCALE)
+[ -e distrib/${DISTRIB}.sh ] && source ./distrib/${DISTRIB}.sh # my_conf can configure distrib options (ex: DETECT_LOCALE)
 
 #if [ "$LOGNAME" = "ROOT" ] ; then
 #fi
@@ -22,15 +24,10 @@ if [ "$UID" = "0" ]; then
     fi
 else
     # We are NOT in the chroot, so operations must be chrooted
-    R="$WORKDIR/ROOT"
+    R="$WORKDIR/$_MOUNTED_ROOT_FOLDER"
     SUDO="sudo"
     ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
     SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
-fi
-
-
-if [ ! -d "$R" ]; then
-    mkdir "$R"
 fi
 
 D="$WORKDIR/$DISKLABEL.img"
@@ -41,7 +38,7 @@ if [ -z "$COUNTRY" ]; then
     IPADDR=$(curl -4 -s icanhazip.com)
     COUNTRY=$(geoiplookup $IPADDR)
     COUNTRY=${COUNTRY#*: }
-    COUNTRY=${COUNTRY%%,*}
+    export COUNTRY=${COUNTRY%%,*}
 fi
 
 if [ -e "resources/locales/country_codes/$COUNTRY" ] ; then
@@ -53,17 +50,7 @@ fi
 
 HOOK_BUILD_FOLDER=".installed_hooks"
 
-# LOAD OVERRIDES
-
-if [ -e /${DISTRIB}.sh ]; then
-    source /${DISTRIB}.sh
-else
-    source ./distrib/${DISTRIB}.sh
-fi
-
-[ -e my_conf.sh ] && source ./my_conf.sh # my_conf have absolute priority (dup)
-
-_net_mgr=./hooks/alternatives/install/network_manager/50_network_$NETMGR.sh
+[ -e my_conf.sh ] && source ./my_conf.sh # my_conf have absolute priority
 
 # i18n @ install time
 _gettext_dir=$(realpath ./resources/locales/gettext)
@@ -160,16 +147,16 @@ function raw_install_pkg() {
 
     # if no chroot set:
     if [ "$UID" != "0" ]; then
-        pkg_cmd='$SU_ARCHCHROOT su -l user -c "$PKGMGR $PKGMGR_OPTS --noconfirm $*" 2>&1 | $R/onelinelog.py'
-        $ARCH_CHROOT su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | sudo $R/onelinelog.py
+        pkg_cmd='$SU_ARCHCHROOT su -l user -c "$PKGMGR $PKGMGR_OPTS --noconfirm $*" 2>&1 | $R/resources/onelinelog.py'
+        $ARCH_CHROOT su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | $SUDO $R/resources/onelinelog.py
     else
         # Inside the chroot
         if [ "$PKGMGR" = "pacman" ]; then
-            pkg_cmd="$PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py"
-            $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./onelinelog.py
+            pkg_cmd="$PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./resources/onelinelog.py"
+            $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./resources/onelinelog.py
         else
-            pkg_cmd="su -l user -c \"$PKGMGR $PKGMGR_OPTS --noconfirm $*\"  2>&1 | ./onelinelog.py"
-            su -l user -c "$PKGMGR $PKGMGR_OPTS --noedit --noconfirm $*" 2>&1 | ./onelinelog.py
+            pkg_cmd="su -l user -c \"$PKGMGR $PKGMGR_OPTS --noconfirm $*\"  2>&1 | ./resources/onelinelog.py"
+            su -l user -c "$PKGMGR $PKGMGR_OPTS --noedit --noconfirm $*" 2>&1 | ./resources/onelinelog.py
         fi
     fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
@@ -300,7 +287,6 @@ function run_hooks() {
                 done
             done
         done
-        cp "$_net_mgr" "$HOOK_BUILD_DIR/install/"
         HOOK_BUILD_FLAG=1
     else
         echo "Already built"

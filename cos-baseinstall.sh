@@ -7,31 +7,27 @@ if [ ! -e configuration.sh ]; then
 fi
 
 source ./strapfuncs.sh
-# vars:
-# R DISTRIB HOOK_BUILD_FOLDER
 
-function reset_rootfs() {
-    step "Clear old rootfs"
-    if [ -e "$R" ]; then
-        sudo mv "$R" "$R-moved"
-        sudo rm -fr "$R-moved" &
-    fi
-    sudo mkdir "$R"
-}
+step "Installing base packages & patch root files"
 
-#function base_install() {
-    # TODO configuration step
-    step "Installing base packages & patch root files"
-    # install packages
-    sudo pacstrap -cd "$R" base linux initramfs linux-firmware python sudo geoip gcc-libs-multilib gcc-multilib base-devel yajl git expac perl # base-devel & next are needed to build cower, needed by pacaur
-    sudo chown root.root "$R"
-    sudo cp -r strapfuncs.sh configuration.sh resources/onelinelog.py resources my_conf.sh distrib/$DISTRIB.sh "$R"
-#}
+# install packages
 
-#function reconfigure() {
-    HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
-    step "Re-generating RAMFS and low-level config" 
-    CHROOT='' run_hooks pre-mkinitcpio
-    sudo arch-chroot "$R" mkinitcpio -p linux
-#}
+sudo pacstrap -cd "$R" --needed base base-devel fakeroot linux initramfs linux-firmware python sudo geoip gcc-libs-multilib gcc-multilib
+sudo chown root.root "$R"
+sudo cp my_conf.sh "$R"
+sudo chmod 777 "$R/my_conf.sh"
+cat distrib/$DISTRIB.sh >> "$R/my_conf.sh"
+sudo cp -r strapfuncs.sh configuration.sh resources "$R"
 
+step "Re-generating RAMFS and low-level config" 
+HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER" CHROOT='' run_hooks pre-mkinitcpio
+sync
+sleep 2
+sync
+sync
+sudo umount "$R/proc" || true
+sudo umount "$R/dev" || true
+sudo umount "$R/sys" || true
+mount
+step2 "make init cpio" 
+sudo arch-chroot "$R" mkinitcpio -p linux
