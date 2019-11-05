@@ -1,0 +1,17 @@
+# extra apps
+install_pkg arandr
+install_pkg feh
+install_pkg lxappearance
+install_pkg evince
+install_pkg ffmpegthumbnailer
+install_pkg engrampa
+install_pkg libgsf
+install_pkg pcmanfm
+install_pkg ristretto
+install_pkg thunar
+install_pkg thunar-archive-plugin
+install_pkg thunar-media-tags-plugin
+install_pkg thunar-volman
+install_pkg tumbler
+install_pkg ffmpegthumbnailer
+install_pkg raw-thumbnailer
