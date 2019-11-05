@@ -9,7 +9,7 @@ for n in pikaur; do
     if ! have_package $n ; then
         mkdir -p sources/$n
         curl -o sources/$n/PKGBUILD 'https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h='$n
-        (cd sources/$n && chown -R user . && sudo -u user makepkg -fs && pacman -U --noconfirm *.pkg* )
+        (cd sources/$n && chown -R user . && sudo -u user makepkg --noconfirm -fsi )
     fi
 done
 $SUDO rm -fr sources
