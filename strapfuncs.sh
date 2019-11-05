@@ -26,7 +26,7 @@ else
     # We are NOT in the chroot, so operations must be chrooted
     R="$WORKDIR/$_MOUNTED_ROOT_FOLDER"
     SUDO="sudo"
-    ARCHCHROOT="$SUDO arch-chroot -u user '$R'"
+    ARCHCHROOT="$SUDO arch-chroot -u $USERNAME '$R'"
     SU_ARCHCHROOT="$SUDO arch-chroot '$R'"
 fi
 
@@ -147,16 +147,16 @@ function raw_install_pkg() {
 
     # if no chroot set:
     if [ "$UID" != "0" ]; then
-        pkg_cmd='$SU_ARCHCHROOT su -l user -c "$PKGMGR $PKGMGR_OPTS --noconfirm $*" 2>&1 | $R/resources/onelinelog.py'
-        $ARCH_CHROOT su -- user $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | $SUDO $R/resources/onelinelog.py
+        pkg_cmd='$SU_ARCHCHROOT su -l $USERNAME -c "$PKGMGR $PKGMGR_OPTS --noconfirm $*" 2>&1 | $R/resources/onelinelog.py'
+        $ARCH_CHROOT su -- $USERNAME $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | $SUDO $R/resources/onelinelog.py
     else
         # Inside the chroot
         if [ "$PKGMGR" = "pacman" ]; then
             pkg_cmd="$PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./resources/onelinelog.py"
             $PKGMGR $PKGMGR_OPTS --noconfirm $* 2>&1 | ./resources/onelinelog.py
         else
-            pkg_cmd="su -l user -c \"$PKGMGR $PKGMGR_OPTS --noconfirm $*\"  2>&1 | ./resources/onelinelog.py"
-            su -l user -c "$PKGMGR $PKGMGR_OPTS --noedit --noconfirm $*" 2>&1 | ./resources/onelinelog.py
+            pkg_cmd="su -l $USERNAME -c \"$PKGMGR $PKGMGR_OPTS --noconfirm $*\"  2>&1 | ./resources/onelinelog.py"
+            su -l $USERNAME -c "$PKGMGR $PKGMGR_OPTS --noedit --noconfirm $*" 2>&1 | ./resources/onelinelog.py
         fi
     fi
    if [ ${PIPESTATUS[0]} -ne 0 ] ; then
