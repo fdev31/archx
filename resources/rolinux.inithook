@@ -120,6 +120,28 @@ run_latehook() {
         S_RW_DRIVE=$RW_DRIVE
     fi
 
+    ################" AUTOMOUNT OVERLAYS
+    mount -o remount,rw "$F_BOOT_ROOT"
+    for env in "$F_BOOT_ROOT"/env-*.sq
+    do
+        name=${env##*/}
+        n="$F_BOOT_ROOT/$name"
+
+        mkdir $n-mnt
+        mkdir ${n}-work
+        mount -t squashfs "$env" "${n}-mnt" -o loop
+    done
+    # FIXME: make a single mount command to optimize multiple overlays
+    for env in "$F_BOOT_ROOT"/env-*.sq
+    do
+        name=${env##*/}
+        n="$F_BOOT_ROOT/$name"
+
+        run_newroot mount -t overlay overlay "$R" -o "relatime,ro,lowerdir=$n-mnt:$R"
+    done
+
+    ################ END " AUTOMOUNT OVERLAYS
+
     if [ -e "$F_BR/autorun" ]; then
        source "$F_BR/autorun"
     fi
