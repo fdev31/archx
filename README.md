@@ -146,6 +146,10 @@ Get some basic help:
 
     make help
 
+Root folder setup:
+
+    make init
+
 Generate a bootable disk image:
 
     make
@@ -162,24 +166,6 @@ Add some software (eg. vim) and regenerate disk image:
 Install it to USB stick/drive:
 
     dd if=ARCHX.img of=/dev/sd??
-
-### Instructions
-
-You can run the **reconfigure.sh** scripts, it will ask a few questions (or much more if you chose *custom*):
-
-    % ./reconfigure.sh
-     1 - custom
-     2 - basic
-     3 - cinnamon
-     4 - full
-     5 - gnome
-     6 - plasma
-    What distrib do you chose: 5
-    Name for this distro (only ascii, no spaces): GNOMELIVE
-    User id/login: toto
-    Password: otot
-
-Then follow the *Quickstart* instructions to build the OS image.
 
 ### Configuration example
 
