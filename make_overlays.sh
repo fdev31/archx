@@ -5,20 +5,30 @@ REAL="$_ORIG_ROOT_FOLDER"
 work=tmp_workdir
 overlay=tmp_overlay
 
+envname=$1
+
 SQ_OPTS="-no-exports -noappend -no-recovery"
 
 function squash() {
     name=$1
     rm -fr ../${name}.sq
-    mksquashfs . ../${name}.sq -comp xz $SQ_OPTS -b 1M  -Xdict-size '100%'
+    $SUDO find var/log > /tmp/blacklist
+    $SUDO mksquashfs . ../${name}.sq -comp xz $SQ_OPTS -b 1M  -Xdict-size '100%' -ef /tmp/blacklist
 }
 
 $SUDO cp -r resources/ configuration.sh ./distrib/${DISTRIB}.sh my_conf.sh "$REAL/"
 $SUDO chmod 666 "$REAL/my_conf.sh"
 [ ! -d "$REAL/var/cache/pikaur" ] && $SUDO mkdir "$REAL/var/cache/pikaur"
 
+if [ -z "$envname" ]; then
+    environments=$(ls -1 envs/*)
+    autoexec="/inst.sh"
+else
+    environments=$envname
+    autoexec=
+fi
 
-for envname in envs/* ; do
+for envname in $environments ; do
     echo "===> $envname"
 
     $SUDO rm -fr $work
@@ -34,8 +44,8 @@ for envname in envs/* ; do
     $SUDO mount none -t overlay -o "workdir=$work,lowerdir=$REAL,upperdir=${overlay}" "$R"
 
     install_file  resources/sudo_conf_nopass "/etc/sudoers.d/50_nopassword"
-    echo "Install the required packages, then exit:"
-    ($SUDO arch-chroot "$R" /inst.sh || true)
+    [ -z "$autoexec" ] && echo "Install the required packages, then exit:"
+    ($SUDO arch-chroot "$R" $autoexec || true)
     echo "Packaging..."
     $SUDO umount "$R"
     $SUDO rm -fr "$overlay/var/cache/pacman/pkg/"*
