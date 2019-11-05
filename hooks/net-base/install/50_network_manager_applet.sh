@@ -1,0 +1,1 @@
+../../alternatives/install/network_manager/50_network_manager_applet.sh
