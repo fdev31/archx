@@ -1,4 +1,13 @@
 #!/usr/bin/env sh
+# Main installer script for most packages
+# - install pacmanhooks
+# - RUN pre-install hooks
+# - RUN install hooks
+# - RUN install of DISTRO_PACKAGE_LIST
+# - RUN distro_install_hook
+# - set the BOOT_TARGET
+# - RUN post-install hooks
+
 set -e
 
 if [ ! -e configuration.sh ]; then

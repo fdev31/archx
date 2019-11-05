@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
+# Generates a disk image
+# - generate the empty disk image file
+# - computes sizes and then call the standard installer
+
 set -e
 
 if [ ! -e configuration.sh ]; then

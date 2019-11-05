@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
+# - populates the root folder with a minimal archlinux system
+# - sets the conf & resources inside the root folder
+# - RUNS pre-mkinitcpio hooks
+
 set -e
 
 if [ ! -e configuration.sh ]; then

@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+# Makes a compressed root filesystem image using squashfs
+
 set -e
 
 if [ ! -e configuration.sh ]; then

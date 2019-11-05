@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# Clean up the workspace
 set -e
 
 if [ ! -e configuration.sh ]; then

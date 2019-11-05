@@ -1,4 +1,5 @@
 #!/bin/sh
+# TODO: doc/fix
 
 RESULT=
 CONFIG=""
