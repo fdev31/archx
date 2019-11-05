@@ -1,6 +1,7 @@
 ENV=mate # mate or gnome
 NETMGR=networkmanager
 PROFILES="$PKG_ALL env-awesome"
+PROFILES="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI snd-base snd-more env-awesome"
 PREFERRED_TOOLKIT=gtk
 DISTRO_PACKAGE_LIST=""
 DISK_TOTAL_SIZE=4
