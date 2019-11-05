@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -ex
+set -e
 
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
