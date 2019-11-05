@@ -142,6 +142,10 @@ function make_symlink() {
     $SUDO ln -fs $1 "$R/$2"
 }
 
+function make_package() {
+    $SUDO -u $USERNAME makepkg --noconfirm -fsi
+}
+
 function raw_install_pkg() {
     _set_pkgmgr
 
