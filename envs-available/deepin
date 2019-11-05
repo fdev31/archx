@@ -1,3 +1,5 @@
+remove_pkg clutter clutter-gst clutter-gtk cheese cogl
+
 install_pkg deepin
 install_pkg deepin-extra
 install_pkg deepin-game
@@ -6,3 +8,5 @@ install_pkg deepin-music
 install_pkg deepin-screenshot
 install_pkg deepin-terminal
 install_pkg deepin-gtk-theme
+
+install_pkg cheese

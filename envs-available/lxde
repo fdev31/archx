@@ -45,5 +45,7 @@ exit 0
 $SUDO chmod 755 "$R/bin/comp-swich"
 
 
+remove_pkg lxdm
+
 install_pkg lxde-gtk3
 install_pkg xarchiver
