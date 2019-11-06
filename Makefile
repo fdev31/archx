@@ -46,8 +46,9 @@ ROOT.flag: my_conf.sh
 	touch $@
 
 clean:
-	./cos-cleanup.sh
-	rm -f *.flag
+	./cos-cleanup.sh || true
+	rm -f *.flag || true
+	rm rootfs.s
 
 setup:
 	./cos-customdistro.sh
