@@ -17,7 +17,7 @@ PREFERRED_TOOLKIT="gtk" # or "qt" , keep LOWERCASE !
 PASSWORD="sexy"
 LOW_MEM=
 DISK_TOTAL_SIZE=4 # size in GB
-DISK_SQ_PART=3500 # squashfs part size in MB
+DISK_SQ_PART=3000 # squashfs part size in MB
 ENABLE_UPX=1
 
 # set uppercase country code to set locale (& disable automatic detection)
