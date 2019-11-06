@@ -29,7 +29,7 @@ else
 fi
 
 for envname in $environments ; do
-    echo "===> $envname"
+    step "Building environment package --> $envname"
 
     $SUDO rm -fr $work
     $SUDO rm -fr $overlay
