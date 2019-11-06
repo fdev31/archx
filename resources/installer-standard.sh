@@ -74,7 +74,9 @@ sudo mount ${loop}p1 $rootfs/boot
 
 if [ -d ROOT ]; then
     UPDATE_EFI=
-    sudo cp -ar ROOT/boot/* $rootfs/boot
+    for entry in $(ls -1d ROOT/boot/* |grep -v fallback); do
+        sudo cp -ar $entry $rootfs/boot/
+    done
     INSTALL_SECURE_BOOT=1
 else
     UPDATE_EFI=1
