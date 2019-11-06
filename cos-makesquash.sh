@@ -15,7 +15,7 @@ step "Cleaning FS & building SQUASHFS ($COMPRESSION_TYPE)"
 IF=../ignored.files
 pushd "$R" >/dev/null || exit -2
 ls *.sh > $IF
-ls *.py >> $IF
+ls *.py || true >> $IF
 sudo find resources/ > $IF
 sudo find boot/ | sed 1d >> $IF
 sudo find var/cache/ | sed 1d >> $IF
