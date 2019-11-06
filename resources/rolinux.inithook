@@ -122,22 +122,26 @@ run_latehook() {
 
     ################" AUTOMOUNT OVERLAYS
     mount -o remount,rw "$F_BOOT_ROOT"
+    echo "Loading environments in $F_BOOT_ROOT"
+    ls $F_BOOT_ROOT
     for env in "$F_BOOT_ROOT"/env-*.sq
     do
         name=${env##*/}
         n="$F_BOOT_ROOT/$name"
+        echo "Preparing ENV::$name..."
 
         mkdir $n-mnt
         mkdir ${n}-work
-        mount -t squashfs "$env" "${n}-mnt" -o loop
+        mount -v -t squashfs "$env" "${n}-mnt" -o loop
     done
     # FIXME: make a single mount command to optimize multiple overlays
     for env in "$F_BOOT_ROOT"/env-*.sq
     do
         name=${env##*/}
         n="$F_BOOT_ROOT/$name"
+        echo "Preparing INSTALLING::$name..."
 
-        run_newroot mount -t overlay overlay "$R" -o "relatime,ro,lowerdir=$n-mnt:$R"
+        run_newroot mount -v -t overlay overlay "$R" -o "relatime,ro,lowerdir=$n-mnt:$R"
     done
 
     ################ END " AUTOMOUNT OVERLAYS
