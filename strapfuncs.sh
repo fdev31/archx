@@ -143,7 +143,7 @@ function make_symlink() {
 }
 
 function make_package() {
-    su -l $USERNAME -c "makepkg --noconfirm -fsi $*"
+    su $USERNAME -- makepkg --noconfirm -fsi $*
 }
 
 function raw_install_pkg() {
