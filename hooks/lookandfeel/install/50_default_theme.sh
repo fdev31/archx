@@ -11,13 +11,12 @@ if have_xorg ; then
     install_pkg xcursor-pinux
     install_pkg xcursor-oxygen
 
-    install_pkg faience-ng-icon-theme
-#    install_pkg mint-themes mint-x-icons # TOO SLOW TO LOAD!
+    install_pkg papirus-icon-theme
+    install_pkg moka-icon-theme
 
     install_pkg ttf-roboto
-    # ttf-hack is also an option
-    install_pkg ttf-nerd-fonts-hack-complete-git 
-
-#    install_pkg sardi-icons
-#    install_pkg flatplat-theme
+    install_pkg ttf-hack
+    install_pkg noto-fonts
+    install_pkg ttf-font-awesome
+    install_pkg ttf-fira-code
 fi
