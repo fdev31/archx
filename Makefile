@@ -18,7 +18,7 @@ init:
 	sudo mount --bind ${_ORIG_ROOT_FOLDER} ${_MOUNTED_ROOT_FOLDER}
 
 umount:
-	sudo umount ${_MOUNTED_ROOT_FOLDER}
+	sudo umount ${_MOUNTED_ROOT_FOLDER} || true
 
 help:
 	@echo "Targets:"
@@ -45,10 +45,8 @@ ROOT.flag: my_conf.sh
 	./cos-baseinstall.sh
 	touch $@
 
-clean:
+clean: umount
 	./cos-cleanup.sh || true
-	rm -f *.flag || true
-	rm rootfs.s
 
 setup:
 	./cos-customdistro.sh

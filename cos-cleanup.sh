@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 # Clean up the workspace
-set -e
+#set -xe
 
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
@@ -11,4 +11,5 @@ source ./strapfuncs.sh
 
 sudo rm -fr *.flags
 sudo rm -fr "$HOOK_BUILD_DIR"
-sudo rm -fr ROOT
+sudo rm -fr $ROOTNAME
+sudo rm -fr "$_ORIG_ROOT_FOLDER"/*
