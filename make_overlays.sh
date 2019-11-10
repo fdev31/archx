@@ -14,7 +14,8 @@ function squash() {
     rm -fr ../${name}.sq
     $SUDO find var/log > /tmp/blacklist
     $SUDO find resources >> /tmp/blacklist
-    $SUDO find var/log >> /tmp/blacklist
+    $SUDO find etc/sudoers.d >> /tmp/blacklist
+    $SUDO ls *.sh || true >> /tmp/blacklist
     $SUDO find tmp >> /tmp/blacklist
     $SUDO find home >> /tmp/blacklist
     $SUDO mksquashfs . ../${name}.sq -comp xz $SQ_OPTS -b 1M  -Xdict-size '100%' -ef /tmp/blacklist
