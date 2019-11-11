@@ -59,3 +59,6 @@ shell:
 overlays: umount
 	./make_overlays.sh
 
+initramfs: 
+	./make_initramfs.sh
+

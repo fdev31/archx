@@ -1,4 +1,5 @@
 source ./strapfuncs.sh
+set -x
 
 REAL="$_ORIG_ROOT_FOLDER"
 
@@ -12,18 +13,29 @@ SQ_OPTS="-no-exports -noappend -no-recovery"
 function squash() {
     name=$1
     rm -fr ../${name}.sq
-    $SUDO find var/log > /tmp/blacklist
-    $SUDO find resources >> /tmp/blacklist
-    $SUDO find etc/sudoers.d >> /tmp/blacklist
-    $SUDO ls *.sh || true >> /tmp/blacklist
-    $SUDO find tmp >> /tmp/blacklist
-    $SUDO find home >> /tmp/blacklist
-    $SUDO mksquashfs . ../${name}.sq -comp xz $SQ_OPTS -b 1M  -Xdict-size '100%' -ef /tmp/blacklist
+    t=$(mktemp)
+    cat > $t <<EOF
+stdout.log
+home/*
+home
+resources
+resources/*
+etc/sudoers.d
+etc/sudoers.d/*
+var/cache
+var/cache/*
+home/user/.cache/pikaur
+tmp
+tmp/*
+EOF
+    mv $t /tmp/blacklist
+    rm -fr ../${name}.sq || true
+    $SUDO mksquashfs . ../${name}.sq -comp xz $SQ_OPTS -b 1M  -Xdict-size '100%' -ef /tmp/blacklist -wildcards
 }
 
 $SUDO cp -r resources/ configuration.sh ./distrib/${DISTRIB}.sh my_conf.sh "$REAL/"
 $SUDO chmod 666 "$REAL/my_conf.sh"
-[ ! -d "$REAL/var/cache/pikaur" ] && $SUDO mkdir "$REAL/var/cache/pikaur"
+#[ ! -d "$REAL/var/cache/pikaur" ] && $SUDO mkdir "$REAL/var/cache/pikaur" || true
 
 if [ -z "$envname" ]; then
     environments=$(ls -1 envs/*)
@@ -53,8 +65,8 @@ for envname in $environments ; do
     ($SUDO arch-chroot "$R" $autoexec || true)
     echo "Packaging..."
     $SUDO umount "$R"
-    $SUDO rm -fr "$overlay/var/cache/pacman/pkg/"*
-    $SUDO rm -fr "$overlay/etc/sudoers.d/50_nopassword"
+    $SUDO rm -fr "$overlay/var/cache/pacman/pkg/"* || true
+    $SUDO rm -fr "$overlay/etc/sudoers.d/50_nopassword" || true
     (cd $overlay && squash env-${envname#*/} )
 done
 
