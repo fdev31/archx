@@ -55,3 +55,7 @@ shell:
 	sudo install -m 600 -o root -g root resources/sudo_conf_nopass ${_MOUNTED_ROOT_FOLDER}/etc/sudoers.d/50_nopassword
 	sudo arch-chroot ${_MOUNTED_ROOT_FOLDER}
 	sudo rm -fr ${_MOUNTED_ROOT_FOLDER}/var/cache/pacman/pkg/*
+
+overlays: umount
+	./make_overlays.sh
+
