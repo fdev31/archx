@@ -1,5 +1,6 @@
 #!/usr/bin/ash
 # vim: filetype=sh
+
 W_ROOTDIR="/run/overlay/ROOT" # rootdirs prefix for tmpfs overlay
 W_WORKDIR="/run/overlay/WORK" # workdirs prefix for tmpfs overlay
 
@@ -182,32 +183,32 @@ run_latehook() {
     fi
 
     ################" AUTOMOUNT OVERLAYS
-    if "$F_BOOT_ROOT"/env-*.sq 2>&1 ; then
+    if ls "$F_BOOT_ROOT"/env-*.sq 2>&1 ; then
         ENV_R="$F_BOOT_ROOT"
         mount -o remount,rw "$F_BOOT_ROOT"
     else
         ENV_R="$F_RWPART"
     fi
 
-    echo "Loading environments in $ENV_R"
-    for env in "$ENV_R"/env-*.sq
-    do
-        name=${env##*/}
-        n="$ENV_R/$name"
-        echo "Preparing ENV::$name..."
+    if ls "$ENV_R"/env-*.sq 2>&1 ; then
+        echo "Loading environments in $ENV_R"
+        for env in "$ENV_R"/env-*.sq
+        do
+            name=${env##*/}
+            n="$ENV_R/$name"
+            echo "Preparing ENV::$name..."
 
-        mkdir $n-mnt 2>/dev/null
-        echo mount -v -t squashfs "$env" "${n}-mnt" -o loop
-        mount -v -t squashfs "$env" "${n}-mnt" -o loop
-        cd "$n-mnt"
-            for fname in * ; do
-                # FIXME: make a single mount command to optimize multiple overlays
-                echo run_newroot mount -v -t overlay overlay "$R/$fname" -o "relatime,ro,lowerdir=$n-mnt/$fname:$R/$fname"
-                run_newroot mount -v -t overlay overlay "$R/$fname" -o "relatime,ro,lowerdir=$n-mnt/$fname:$R/$fname"
-            done
-        cd ..
-    done
-
+            mkdir $n-mnt 2>/dev/null
+            mount -v -t squashfs "$env" "${n}-mnt" -o loop
+            cd "$n-mnt"
+                for fname in * ; do
+                    echo "- $fname"
+                    # FIXME: make a single mount command to optimize multiple overlays
+                    run_newroot mount -v -t overlay overlay "$R/$fname" -o "relatime,ro,lowerdir=$n-mnt/$fname:$R/$fname"
+                done
+            cd ..
+        done
+    fi
     ################ END " AUTOMOUNT OVERLAYS
 
 	if [ $STORED -eq 0 ]; then # no storage = tmpfs root
