@@ -8,6 +8,7 @@ fi
 
 source ./strapfuncs.sh
 
+sudo rm -fr stdout.log
 sudo rm -fr *.flag
 sudo rm -fr "$HOOK_BUILD_DIR"
 sudo rm -fr $ROOTNAME
