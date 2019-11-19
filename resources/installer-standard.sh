@@ -2,6 +2,7 @@
 # program <device> <bootPartSize> <squashfs>
 # ex: mkparts.sh ARCHX.img 100 rootfs.s
 # TODO/ make fixed squash size possible
+
 export LC_ALL=C
 rootfs=$(mktemp -d)
 
@@ -72,19 +73,25 @@ fi
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
 
-if [ -d "$_ORIG_ROOT_FOLDER" ]; then
+if [ -d "$ROOT" ]; then
+    echo "root found"
     UPDATE_EFI=
-    for entry in $(ls -1d $_ORIG_ROOT_FOLDER/boot/* |grep -v fallback); do
-        sudo cp -ar $entry $rootfs/boot/
+    sudo mkdir $rootfs/boot/EFI
+    for entry in $(ls -1d $ROOT/boot/* |grep -v fallback); do
+        sudo cp -arf $entry $rootfs/boot/
     done
     INSTALL_SECURE_BOOT=1
 else
     UPDATE_EFI=1
-    sudo cp -ar /boot/{grub,EFI} $rootfs/boot
-    sudo cp -ar /boot/*inux* $rootfs/boot
+    sudo cp -arf /boot/{grub,EFI} $rootfs/boot
+    sudo cp -arf /boot/*inux* $rootfs/boot
 fi
 
 install_grub "${loop}" "$rootfs/boot" $DISKLABEL "$UPDATE_EFI"
+
+sudo umount $rootfs/boot
+sudo umount $rootfs
+sudo losetup -d ${loop}
 
 echo "FINISHED"
 clean_exit 0

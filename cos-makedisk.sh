@@ -43,5 +43,5 @@ sudo mv ../rootfs.default $R/boot/
 popd > /dev/null
 sudo rm -fr "$MPT"
 
-sudo ROOT="$_ORIG_ROOT_FOLDER" ROOT_TYPE="$ROOT_TYPE" DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
+sudo ROOT="$R" ROOT_TYPE="$ROOT_TYPE" DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
 sudo pacman -r "$R" -Qtt | sort > $DISTRIB-pkglist.txt

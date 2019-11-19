@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -d ROOT ]; then
+if [ -d "ROOT" ]; then
     export RUNNING_FROM_BOOTSTRAP=1
 fi
 
