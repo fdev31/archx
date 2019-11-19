@@ -299,3 +299,25 @@ function run_hooks() {
     echo sudo arch-chroot "$R" /resources/chroot_installer "$1"
     sudo arch-chroot "$R" /resources/chroot_installer "$1"
 }
+
+function make_squashfs {
+    filename=$1
+    shift
+    ignored=$1
+    shift
+    # other arguments get passed to mksquashfs
+
+    SQ_OPTS="-no-exports -noappend -no-recovery"
+    if [ -z "$COMPRESSION_TYPE" ]; then
+        $SUDO mksquashfs . "$filename" -ef $ignored  -noI -noD -noF -noX $SQ_OPTS $*
+    else
+        if [ "$COMPRESSION_TYPE" = "xz" ]; then
+            COMP="xz -Xdict-size '100%'"
+        elif [ "$COMPRESSION_TYPE" = "zstd" ]; then
+            COMP="zstd -Xcompression-level 19"
+        else # gz == gzip
+            COMP="gzip"
+        fi
+        $SUDO mksquashfs . "$filename" -ef $ignored -comp $COMP $SQ_OPTS -b 1M $*
+    fi
+}

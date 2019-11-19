@@ -24,13 +24,15 @@ etc/sudoers.d
 etc/sudoers.d/*
 var/cache
 var/cache/*
+var/log
+var/log/*
 home/user/.cache/pikaur
 tmp
 tmp/*
 EOF
     mv $t /tmp/blacklist
     rm -fr ../${name}.sq || true
-    $SUDO mksquashfs . ../${name}.sq -comp xz $SQ_OPTS -b 1M  -Xdict-size '100%' -ef /tmp/blacklist -wildcards
+    make_squashfs "../${name}.sq" "/tmp/blacklist" -wildcards
 }
 
 $SUDO cp -r resources/ configuration.sh ./distrib/${DISTRIB}.sh my_conf.sh "$REAL/"
