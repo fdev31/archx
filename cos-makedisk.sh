@@ -3,8 +3,6 @@
 # - generate the empty disk image file
 # - computes sizes and then call the standard installer
 
-set -e
-
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
     exit 1
@@ -45,5 +43,5 @@ sudo mv ../rootfs.default $R/boot/
 popd > /dev/null
 sudo rm -fr "$MPT"
 
-sudo ROOT_TYPE="$ROOT_TYPE" DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
+sudo ROOT="$_ORIG_ROOT_FOLDER" ROOT_TYPE="$ROOT_TYPE" DISKLABEL="ARCHINST" ./resources/installer-standard.sh "$D" $BOOT_MARGIN "$SQ"
 sudo pacman -r "$R" -Qtt | sort > $DISTRIB-pkglist.txt
