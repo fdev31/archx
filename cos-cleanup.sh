@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 # Clean up the workspace
-#set -xe
 
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"

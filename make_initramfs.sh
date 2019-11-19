@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+
 . ./configuration.sh
 . ./strapfuncs.sh
 

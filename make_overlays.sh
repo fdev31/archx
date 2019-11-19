@@ -1,5 +1,4 @@
 source ./strapfuncs.sh
-set -x
 
 REAL="$_ORIG_ROOT_FOLDER"
 

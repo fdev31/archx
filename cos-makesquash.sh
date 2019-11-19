@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 # Makes a compressed root filesystem image using squashfs
 
-set -e
-
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
     exit 1

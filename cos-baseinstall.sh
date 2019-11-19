@@ -3,8 +3,6 @@
 # - sets the conf & resources inside the root folder
 # - RUNS pre-mkinitcpio hooks
 
-set -e
-
 if [ ! -e configuration.sh ]; then
     echo "This script must be executed from its own original folder"
     exit 1
