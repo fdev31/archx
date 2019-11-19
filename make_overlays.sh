@@ -68,10 +68,13 @@ for envname in $environments ; do
     install_file  resources/sudo_conf_nopass "/etc/sudoers.d/50_nopassword"
     [ -z "$autoexec" ] && echo "Install the required packages, then exit:"
     ($SUDO arch-chroot "$R" $autoexec || true)
-    echo "Packaging..."
+    echo "Building $envname disk..."
+    $SUDO rm -fr "$R/var/cache/pacman/pkg/"* || true
+    $SUDO rm -fr "$R/etc/sudoers.d/50_nopassword" || true
+    ./cos-makesquash.sh
+    ./cos-makedisk.sh
+    mv ARCHX.img ARCHX-${envname:5}.img
     $SUDO umount "$R"
-    $SUDO rm -fr "$overlay/var/cache/pacman/pkg/"* || true
-    $SUDO rm -fr "$overlay/etc/sudoers.d/50_nopassword" || true
     (cd $overlay && squash env-${envname#*/} )
 done
 
