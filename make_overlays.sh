@@ -15,8 +15,12 @@ function squash() {
     t=$(mktemp)
     cat > $t <<EOF
 stdout.log
-home/*
 home
+home/*
+boot/
+boot/*
+.installed_hooks
+.installed_hooks/*
 resources
 resources/*
 etc/sudoers.d
@@ -25,7 +29,6 @@ var/cache
 var/cache/*
 var/log
 var/log/*
-home/user/.cache/pikaur
 tmp
 tmp/*
 EOF
