@@ -17,7 +17,7 @@ function toggle(item, name) {
 }
 </script>
 <h1>ArchX</h1>
-Download the <a href="ARCHX.img">disk image here</a>
+Download the <a href="ARCHX.img">disk image here (3.8G)</a>
 <br/>
 <a href="filelist.txt">Full file list here</a>
 $(lssquashfs rootfs.s > www/filelist.txt)
@@ -30,9 +30,7 @@ EOF
 for env in $(ls -S env-*.sq) ; do
     name=${env:4:-3}
     lssquashfs $env > www/$name-filelist.txt
-    fnr=$(grep -v '/$' "www/$name-filelist.txt" | wc -l)
-    bins=$(grep -v '/$' "www/$name-filelist.txt" | grep '/bin/' | wc -l)
-    locales=$(grep -v '/$' "www/$name-filelist.txt" | grep '/locale/' | wc -l)
+    pkgs=$(grep '/lib/pacman/local/.*files$' "www/$name-filelist.txt" | wc -l)
     cat >> www/index.html <<EOF
 <div class="environment folded" onclick="toggle(this, 'folded')">
 <h2>$name</h2>
@@ -49,8 +47,8 @@ EOF
 done
 
 cat >> www/index.html <<EOF
-<hr/>
-<h2>Getting started</h2>
+<br/>
+<h2 style="width: 500px">Getting started</h2>
 
 
 </body>
