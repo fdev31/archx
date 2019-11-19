@@ -9,7 +9,7 @@ fi
 
 source ./strapfuncs.sh
 
-sudo rm -fr *.flags
+sudo rm -fr *.flag
 sudo rm -fr "$HOOK_BUILD_DIR"
 sudo rm -fr $ROOTNAME
 sudo rm -fr "$_ORIG_ROOT_FOLDER"/*
