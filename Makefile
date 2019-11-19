@@ -62,3 +62,5 @@ overlays: umount
 initramfs: 
 	./make_initramfs.sh
 
+site:
+	./make_website.sh

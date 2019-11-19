@@ -1,0 +1,64 @@
+div.environment:hover {
+    background-color: #eee;
+    transition-duration: 600ms;
+    transform: rotate(0deg);
+}
+div.environment > h2 {
+    text-align: center;
+    margin: 0;
+}
+div.environment a {
+    color: #ab5151;
+}
+div.environment a:visited {
+    color: #562525; 
+}
+div.environment {
+    display: block;
+    overflow: hidden;
+
+    transition-duration: 1s;
+    color: #333;
+    background-color: #d1d4d0;
+    width: 300px;
+    height: 300px;
+
+    float: left;
+    transform: rotate(-1deg);
+
+    background-color: #d1d4d0;
+    margin: 2ex 4ex;
+    padding: 1ex 1em;
+
+    border-radius: 1ex;
+
+    box-shadow: 3px 2px 17px 0px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 3px 2px 17px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 3px 2px 17px 0px rgba(0,0,0,0.75);
+    cursor: pointer;
+}
+
+div.environment.folded {
+    width: 200px;
+    height: 120px;
+}
+
+body {
+    font-family: 'Calistoga', cursive;
+    font-family: 'Alata', sans-serif;
+    background-color: #e6e6e6;
+    max-width: 1500px;
+    padding: 1ex 1em;
+    margin-left: auto;
+    margin-right: auto;
+
+    background-image: url(bg.jpg);
+    color: #eef;
+}
+
+a {
+    color: #f1d4d4;
+}
+a:visited {
+    color: #f3b3b3;
+}
