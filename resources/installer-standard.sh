@@ -72,9 +72,9 @@ fi
 sudo mount ${loop}p2 $rootfs
 sudo mount ${loop}p1 $rootfs/boot
 
-if [ -d ROOT ]; then
+if [ -d "$_ORIG_ROOT_FOLDER" ]; then
     UPDATE_EFI=
-    for entry in $(ls -1d ROOT/boot/* |grep -v fallback); do
+    for entry in $(ls -1d $_ORIG_ROOT_FOLDER/boot/* |grep -v fallback); do
         sudo cp -ar $entry $rootfs/boot/
     done
     INSTALL_SECURE_BOOT=1
