@@ -1,7 +1,7 @@
 Tickets
 =======
 
-:total-count: 24
+:total-count: 26
 
 --------------------------------------------------------------------------------
 
@@ -95,31 +95,6 @@ should be the result of something like:
 
 --------------------------------------------------------------------------------
 
-FIXME
-=====
-
-:bugid: 13
-:created: 2017-07-07T00:26:13
-:priority: 0
-
-Check multilib (broken ?)
-
---------------------------------------------------------------------------------
-
-Rewrite mkbootstrap.sh
-======================
-
-:bugid: 17
-:created: 2017-07-08T03:09:41
-:priority: 0
-
-Minimalist approach
-
-- Makefile
-- build.sh
-
---------------------------------------------------------------------------------
-
 Package manager GUI should be installed only with squash-free installations
 ===========================================================================
 
@@ -143,9 +118,6 @@ No big update
 
 Now one could update the system by just downloading a fresh squash image into the data partition.
 
-ls
-ls -lh
-
 --------------------------------------------------------------------------------
 
 Shortcut should be provided to extend data partition
@@ -166,15 +138,26 @@ Option should be provided to allow external ntfs (or fat ?) partition for home's
 
 --------------------------------------------------------------------------------
 
-Packages should be installable from PKGBUILD
-============================================
+clean /usr/share/locale/
+========================
 
-:bugid: 10
-:created: 2017-06-30T22:00:26
-:priority: 10
+:bugid: 24
+:created: 2019-04-19T00:47:59
+:priority: 0
 
-extra_packages can contain source/ folder with package's PKGBUILDs
-This is not handled yet...
+As a post install hook
+
+--------------------------------------------------------------------------------
+
+Install some extra packages for envs
+====================================
+
+:bugid: 26
+:created: 2019-11-20T23:26:27
+:priority: 0
+
+
+- plank
 
 --------------------------------------------------------------------------------
 
@@ -201,11 +184,16 @@ allowing to not chroot when it's already in the chroot (R=".")
 
 --------------------------------------------------------------------------------
 
-clean /usr/share/locale/
-========================
+Code cleanup / better safety
+============================
 
-:bugid: 24
-:created: 2019-04-19T00:47:59
-:priority: 0
+:bugid: 25
+:created: 2019-11-18T23:19:45
+:prio: 10
+:priority: 10
 
-As a post install hook
+Split the codde shared
+- stop making strapfuncs usage in cos-*
+- simplify strapfuncs.sh
+
+allow the host code to be something else than .sh (eg: python)
