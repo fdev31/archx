@@ -19,7 +19,8 @@ sudo find .installed_hooks/ >> $IF
 sudo find home/$USERNAME/.cache/ >> $IF
 sudo find home/$USERNAME/.local/ >> $IF
 sudo find resources/ >> $IF
-sudo find var/cache/ | grep -v 'pikaur/?$' | sed 1d >> $IF
+sudo find boot/ | sed 1d >> $IF
+sudo find var/cache/ | sed 1d >> $IF
 sudo find run/ | sed 1d >> $IF
 sudo find var/run/ -type f >> $IF
 sudo find var/log/ -type f >> $IF
