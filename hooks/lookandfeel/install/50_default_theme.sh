@@ -19,4 +19,6 @@ if have_xorg ; then
     install_pkg noto-fonts
     install_pkg ttf-font-awesome
     install_pkg ttf-fira-code
+
+    install_aur_pkg menda-themes-git
 fi
