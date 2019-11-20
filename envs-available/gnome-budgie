@@ -6,3 +6,7 @@ install_pkg gnome-shell
 
 
 install_pkg gnome-extra
+install_pkg gnome-flashback
+install_pkg gnome
+
+install_pkg budgie-desktop
