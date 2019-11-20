@@ -45,7 +45,7 @@ if [ -z "$envname" ]; then
     autoexec="/inst.sh"
 else
     environments=$envname
-    autoexec=
+    autoexec="/inst.sh"
 fi
 
 for envname in $environments ; do
