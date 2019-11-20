@@ -19,10 +19,10 @@ source ./coslib.sh
 # R HOOK_BUILD_FOLDER DISTRIB DISTRO_PACKAGE_LIST  BOOT_TARGET
 
 HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
-sudo rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
+$SUDO rm -fr "$HOOK_BUILD_DIR" 2> /dev/null
 step "Installing pacman hooks"
-sudo mkdir -p "$R/etc/pacman.d/hooks"
-sudo cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
+$SUDO mkdir -p "$R/etc/pacman.d/hooks"
+$SUDO cp -r resources/pacmanhooks "$R/etc/pacman.d/hooks"
 step "Triggering install hooks"
 run_hooks pre-install
 step " Network setup "
@@ -35,8 +35,8 @@ if [ -n "$DISTRO_PACKAGE_LIST" ]; then
 fi
 
 distro_install_hook
-sudo systemctl --root ROOT set-default ${BOOT_TARGET}.target
+sudo systemctl --root "$_MOUNTED_ROOT_FOLDER" set-default ${BOOT_TARGET}.target
 run_hooks post-install
+$SUDO mkdir -p "$_MOUNTED_ROOT_FOLDER/var/cache/pikaur/"
 
 sudo mv "$R/stdout.log" .
-
