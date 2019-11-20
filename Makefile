@@ -1,6 +1,6 @@
 .PHONY: all distrib intro setup
 
-all: ARCHX.img
+all: hooks.flag
 
 include configuration.sh
 include my_conf.sh
@@ -30,6 +30,9 @@ help:
 #     @echo "rootfs.s    build the compressed apps image"
 #     @echo "hooks       build the apps"
 #     @echo "ROOT        clear root filesystem and install minimal software"
+
+
+noenv: ARCHX.img
 
 ARCHX.img: rootfs.s
 	./cos-makedisk.sh
