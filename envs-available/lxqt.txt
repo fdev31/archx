@@ -1,0 +1,4 @@
+Simple & fast, using Qt
+
+- targets older computers
+- [link](https://lxqt.org/)

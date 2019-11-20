@@ -1,0 +1,4 @@
+Simple & fast
+
+- targets older computers
+- [link](https://lxde.org/)

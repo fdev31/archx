@@ -1,0 +1,5 @@
+The Qt Plasma desktop
+
+- configurable & powerful
+- full featured
+- [link](https://kde.org/plasma-desktop)

@@ -1,0 +1,6 @@
+Derived of Gnome
+
+- sleek & feature packed
+- suitable for beginners
+- used by LinuxMint
+- [link](https://cinnamon-spices.linuxmint.com/themes)

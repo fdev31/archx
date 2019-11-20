@@ -1,0 +1,6 @@
+Built on the EFL
+
+- unique user experience
+- sleek & fast
+- also provides [moksha](https://www.bodhilinux.com/moksha-desktop/)
+- [link](https://www.enlightenment.org/)

@@ -1,0 +1,6 @@
+The fastest !
+
+- configurable in Lua
+- targets developers
+- just a wm + some apps
+- [link](https://awesomewm.org/)
