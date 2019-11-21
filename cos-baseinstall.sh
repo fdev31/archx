@@ -9,6 +9,7 @@ if [ ! -e configuration.sh ]; then
 fi
 
 source ./strapfuncs.sh
+source ./coslib.sh
 
 step "Installing base packages & patch root files"
 

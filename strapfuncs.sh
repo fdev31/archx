@@ -178,6 +178,7 @@ function install_pkg() {
     step2 "Installing $*"
     raw_install_pkg --needed -S $*
 }
+
 function install_aur_pkg() {
     if [ -z "$SKIP_AUR" ]; then
         step2 "Installing (AUR) $*"
@@ -203,9 +204,11 @@ function disable_service() {
 function install_bin() {
     $SUDO install -m 755 -o root -g root "$1" "$R$2"
 }
+
 function install_file() {
     $SUDO install -m 644 -o root -g root "$1" "$R$2"
 }
+
 function autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
@@ -217,6 +220,7 @@ function autostart_app() {
         echo "Can't find autostart file for $1 !"
     fi
 }
+
 function no_autostart_app() {
     ASDIR="resources/HOME/.config/autostart"
     if [ ! -d "$ASDIR" ]; then
@@ -229,6 +233,7 @@ $(cat $ASDIR/$1.desktop)
 X-MATE-Autostart-enabled=false
 EOF
 }
+
 function install_menu () {
     ASDIR="resources/HOME/.config/menus"
     if [ ! -d "$ASDIR" ]; then
@@ -236,6 +241,7 @@ function install_menu () {
     fi
     $SUDO install -m 644 "resources/menus/$1.menu" "$ASDIR"
 }
+
 function install_application() {
     ASDIR="resources/HOME/.local/share/applications"
     if [ ! -d "$ASDIR" ]; then
@@ -243,6 +249,7 @@ function install_application() {
     fi
     $SUDO install -m 644 resources/applications/$1.desktop "$ASDIR"
 }
+
 function install_resource() {
     $SUDO install -m 644 resources/$1 "$R$2"
 }
@@ -268,56 +275,20 @@ function upx_comp() {
 }
 
 HOOK_BUILD_FLAG=0
-function run_hooks() {
-    if [ $HOOK_BUILD_FLAG -eq 0 ]; then
-        # BUILD CURRENT HOOKS COLLECTION
-        if [ -e "$HOOK_BUILD_DIR" ]; then
-            sudo rm -fr "$HOOK_BUILD_DIR"
-        fi
-        sudo mkdir "$HOOK_BUILD_DIR"
-        sudo chmod 1777 "$HOOK_BUILD_DIR"
-        for hooktype in pre-mkinitcpio pre-install install post-install ; do
-            mkdir "$HOOK_BUILD_DIR/$hooktype"
-        done
-        for PROFILE in $PROFILES; do
-            step2 " ===> profile $PROFILE"
-            for stage in "hooks/$PROFILE/"* 
-            do
-                sstage=${stage#*/}
-                sstage=${sstage#*/}
-                for hook in $stage/*;
-                do
-                    cp "./$stage/$(basename $hook)" "$HOOK_BUILD_DIR/$sstage/"
-                done
-            done
-        done
-        HOOK_BUILD_FLAG=1
-    else
-        echo "Already built"
-    fi
 
-    echo sudo arch-chroot "$R" /resources/chroot_installer "$1"
-    sudo arch-chroot "$R" /resources/chroot_installer "$1"
-}
-
-function make_squashfs {
-    filename=$1
+function set_loginmanager {
+    name=$1
     shift
-    ignored=$1
-    shift
-    # other arguments get passed to mksquashfs
 
-    SQ_OPTS="-no-exports -noappend -no-recovery"
-    if [ -z "$COMPRESSION_TYPE" ]; then
-        $SUDO mksquashfs . "$filename" -ef $ignored  -noI -noD -noF -noX $SQ_OPTS $*
-    else
-        if [ "$COMPRESSION_TYPE" = "xz" ]; then
-            COMP="xz -Xdict-size '100%'"
-        elif [ "$COMPRESSION_TYPE" = "zstd" ]; then
-            COMP="zstd -Xcompression-level 19"
-        else # gz == gzip
-            COMP="gzip"
-        fi
-        $SUDO mksquashfs . "$filename" -ef $ignored -comp $COMP $SQ_OPTS -b 1M $*
-    fi
+    install_pkg lxdm
+    install_pkg archlinux-lxdm-theme-full
+
+    $SUDO sed -i "s#^.*autologin=.*#autologin=user#" "$R/etc/lxdm/lxdm.conf"
+    $SUDO sed -i "s#^.*timeout=.*#timeout=5#" "$R/etc/lxdm/lxdm.conf"
+    $SUDO sed -i "s@# session=.*@session=/bin/$name-session@" "$R/etc/lxdm/lxdm.conf"
+    $SUDO sed -i "s@# numlock=0@numlock=1@" "$R/etc/lxdm/lxdm.conf"
+    $SUDO sed -i "s#Adwaita#Breeze#" "$R/etc/lxdm/lxdm.conf"
+    $SUDO sed -i "s#Industrial#Archlinux#" "$R/etc/lxdm/lxdm.conf"
+
+    enable_service lxdm
 }

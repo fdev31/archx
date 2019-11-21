@@ -1,4 +1,5 @@
 source ./strapfuncs.sh
+source ./coslib.sh
 
 REAL="$_ORIG_ROOT_FOLDER"
 

@@ -14,6 +14,7 @@ if [ ! -e configuration.sh ]; then
 fi
 
 source ./strapfuncs.sh
+source ./coslib.sh
 # vars:
 # R HOOK_BUILD_FOLDER DISTRIB DISTRO_PACKAGE_LIST  BOOT_TARGET
 

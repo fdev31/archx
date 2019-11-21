@@ -1,3 +1,5 @@
+set_loginmanager deepin
+
 remove_pkg clutter clutter-gst clutter-gtk cheese cogl
 
 install_pkg deepin

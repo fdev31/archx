@@ -7,6 +7,7 @@ if [ ! -e configuration.sh ]; then
 fi
 
 source ./strapfuncs.sh
+source ./coslib.sh
 # vars:
 
 step "Cleaning FS & building SQUASHFS ($COMPRESSION_TYPE)"
