@@ -1,6 +1,6 @@
-The fastest !
+Tiling for the win!
 
 - configurable in Lua
 - targets developers
-- just a wm + some apps
+- memory usage: 0.1
 - [link](https://awesomewm.org/)

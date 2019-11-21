@@ -2,4 +2,5 @@ Light "classic" desktop
 
 - fast
 - stable
+- memory usage: 0.6
 - [link](https://mate-desktop.org/)

@@ -3,4 +3,5 @@ Derived of Gnome
 - sleek & feature packed
 - suitable for beginners
 - used by LinuxMint
+- memory usage: 1.3
 - [link](https://cinnamon-spices.linuxmint.com/themes)

@@ -17,11 +17,6 @@ function toggle(item, name) {
 }
 </script>
 <h1>ArchX</h1>
-Download the <a href="ARCHX.img">disk image here (3.8G)</a>
-<br/>
-<a href="filelist.txt">Full file list here</a>
-$(lssquashfs rootfs.s > www/filelist.txt)
-
 
 <h1>Desktop environments</h1>
 
@@ -47,9 +42,9 @@ EOF
 done
 
 cat >> www/index.html <<EOF
-<br/>
-<h2 style="width: 500px">Getting started</h2>
+<br style="clear: left"/>
 
+$(markdown_py www/intro.md)
 
 </body>
 EOF

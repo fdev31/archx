@@ -2,4 +2,5 @@ Stability with eye candy
 
 - fast & powerful
 - sleek unix-like desktop
+- memory usage: 0.7
 - [link](https://www.xfce.org/)

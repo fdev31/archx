@@ -2,5 +2,6 @@ Sleek & modern desktop
 
 - candy for your eyes
 - desktop & apps suite
+- memory usage: 1.1
 - [link](https://www.deepin.org/)
 

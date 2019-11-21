@@ -1,3 +1,4 @@
+set_loginmanager lxqt
 
 # comp switch script
 echo '

@@ -1,3 +1,4 @@
+pacman -Qs xcursor-oxygen && remove_pkg xcursor-oxygen
 set_loginmanager plasma
 
 install_pkg plasma

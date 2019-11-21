@@ -1,4 +1,5 @@
 Simple & fast
 
 - targets older computers
+- memory usage: 0.5
 - [link](https://lxde.org/)
