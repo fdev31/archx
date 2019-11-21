@@ -1,4 +1,8 @@
+
+
 if have_xorg ; then
+    install_pkg plank
+    install_pkg ffmpegthumbnailer
 #    install_pkg osx-arc-white
 #    install_pkg capitaine-cursors
     $SUDO tar xf resources/theme.tar.xz -C "$R"
