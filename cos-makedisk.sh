@@ -33,9 +33,9 @@ if [ -e "$MPT" ]; then
     $SUDO rm -fr "$MPT"
 fi
 mkdir "$MPT"
-mkdir "$MPT/ROOT"
+mkdir -p "$MPT/ROOT/home/$USERNAME"
 mkdir "$MPT/WORK"
-sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
+sudo cp -ra "resources/HOME/" "$MPT/ROOT/home/$USERNAME" # pre-populate HOME // default settings
 
 pushd "$MPT"
 sudo tar cf - . | xz -9 > ../rootfs.default
