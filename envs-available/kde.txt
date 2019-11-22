@@ -2,5 +2,5 @@ The Qt Plasma desktop
 
 - configurable & powerful
 - full featured
-- memory usage: ??
+- memory usage: 0.9
 - [link](https://kde.org/plasma-desktop)
