@@ -16,8 +16,7 @@ pushd "$R" >/dev/null || exit -2
 ls *.sh >> $IF || true
 ls *.py >> $IF || true
 sudo find .installed_hooks/ >> $IF
-sudo find home/$USERNAME/.cache/ >> $IF
-sudo find home/$USERNAME/.local/ >> $IF
+sudo find home/  | sed 1d >> $IF
 sudo find resources/ >> $IF
 sudo find boot/ | sed 1d >> $IF
 sudo find var/cache/ | sed 1d >> $IF
