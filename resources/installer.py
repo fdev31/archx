@@ -47,15 +47,18 @@ class DiskInfo:
                 d['size'] = int(d['size'])
 
         for disk in self.disks:
-            for num, line in enumerate(subprocess.check_output(['fdisk', '-l', '/dev/%(name)s'%disk], encoding='utf-8').split('\n')):
-                if not line.startswith('/dev/'):
-                    continue
-                line = line.replace('*', ' ')
-                p = line.split(None, 1)[0].split('/')[-1]
-                t = line.split(None, 5)[-1]
-                self.get(p)['parttype'] = t
-                if 'EFI' in t:
-                    self.efi.append(p)
+            try:
+                for num, line in enumerate(subprocess.check_output(['fdisk', '-l', '/dev/%(name)s'%disk], encoding='utf-8').split('\n')):
+                    if not line.startswith('/dev/'):
+                        continue
+                    line = line.replace('*', ' ')
+                    p = line.split(None, 1)[0].split('/')[-1]
+                    t = line.split(None, 5)[-1]
+                    self.get(p)['parttype'] = t
+                    if 'EFI' in t:
+                        self.efi.append(p)
+            except Exception as e:
+                print("Err opening %s: %s"%(disk, e))
 
         self.owndisk = self.get(mountpoint='/')['name'][:-1]
         self.squashfs = [line for line in open('/proc/mounts') if 'squashfs' in line][0].split()[0]
