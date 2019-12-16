@@ -183,14 +183,14 @@ run_latehook() {
     fi
 
     ################" AUTOMOUNT OVERLAYS
-    if ls "$F_BOOT_ROOT"/env-*.sq 2>&1 ; then
+    if ls "$F_BOOT_ROOT"/env-*.sq 2>&1 >/dev/null ; then
         ENV_R="$F_BOOT_ROOT"
         mount -o remount,rw "$F_BOOT_ROOT"
     else
         ENV_R="$F_RWPART"
     fi
 
-    if ls "$ENV_R"/env-*.sq 2>&1 ; then
+    if ls "$ENV_R"/env-*.sq 2>&1 >/dev/null ; then
         echo "Loading environments in $ENV_R"
         for env in "$ENV_R"/env-*.sq
         do
