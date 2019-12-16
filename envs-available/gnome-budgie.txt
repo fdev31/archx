@@ -1,7 +1,7 @@
 Modern & feature pack
 
 - sleek & unique UX
-- flashback & classic versions included
+- all flavors included
 - [link](https://www.gnome.org/)
-- memory usage: 1.2 (flashback) to 1.8 (gnome)
+- memory usage: 1.2 to 1.6
 - also includes [budgie](https://github.com/solus-project/budgie-desktop)
