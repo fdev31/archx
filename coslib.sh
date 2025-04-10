@@ -11,7 +11,7 @@ function run_hooks() {
         done
         for PROFILE in $PROFILES; do
             step2 " ===> profile $PROFILE"
-            for stage in "hooks/$PROFILE/"* 
+            for stage in "hooks/$PROFILE/"*
             do
                 sstage=${stage#*/}
                 sstage=${sstage#*/}

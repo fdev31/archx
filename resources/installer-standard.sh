@@ -55,7 +55,14 @@ sudo partprobe
 call_fdisk $DISK n p 1 - +${BOOT_SZ}M t ef n p 2 - +${sq_size}M n - - - - a 1 w || clean_exit 1
 
 sudo partprobe
+sudo sync
+
 loop=$(sudo losetup -P -f --show $DISK)
+if [ -z "$loop" ]; then
+    echo "Error: Unable to create loop device for $DISK"
+    echo "If running from a restricted contained, it's time to re-run & finish out of it"
+    exit 1
+fi
 sudo partprobe
 
 echo "############################################################## create BOOT/EFI partition "

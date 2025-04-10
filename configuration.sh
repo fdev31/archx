@@ -1,5 +1,5 @@
 # Main configuratile file,
-# values may be overriden by distributions
+# values may be overridden by distributions
 # look at distrib/*
 
 # Name for this Linux distribution
@@ -25,7 +25,7 @@ COUNTRY=
 
 # Advanced users only:
 
-PACMAN_BIN="pikaur" # alternative pacman frontend, else set "sudo pacman"
+PACMAN_BIN="yay" # alternative pacman frontend, else set "sudo pacman"
 WORKDIR="$PWD" # default workdir = script dir
 COMPRESSION_TYPE="xz" # xz or gzip or zstd (faster, uses less memory, but bigger files)
 DISK_MARGIN=300 # extra space for persistence, also HOME size, used for loopback or disk images
@@ -59,7 +59,7 @@ PKG_SND="snd-base snd-more snd-adv"
 PKG_CAD="cad-base"
 
 PKG_ALL="$PKG_BASE $PKG_XORG $PKG_EDIT $PKG_GFX $PKG_UI $PKG_EMNU $PKG_DOC $PKG_SRV $PKG_SND $PKG_CAD $PKG_EMU proprietary games edu"
-# Not installed: medical 
+# Not installed: medical
 
 # envs: awesome, budgie, cinnamon, deepin, enlightenment, gnome, kde, lxde, mate, pantheon, xfce, zorin
 _ORIG_ROOT_FOLDER="ROOT_real"

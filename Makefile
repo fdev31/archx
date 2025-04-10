@@ -1,6 +1,6 @@
 .PHONY: all distrib intro setup
 
-all: hooks.flag
+all: ARCHX.img
 
 include configuration.sh
 include my_conf.sh
@@ -62,7 +62,7 @@ shell:
 overlays: umount
 	./make_overlays.sh
 
-initramfs: 
+initramfs:
 	./make_initramfs.sh
 
 site:

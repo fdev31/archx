@@ -37,6 +37,5 @@ fi
 distro_install_hook
 sudo systemctl --root "$_MOUNTED_ROOT_FOLDER" set-default ${BOOT_TARGET}.target
 run_hooks post-install
-$SUDO mkdir -p "$_MOUNTED_ROOT_FOLDER/var/cache/pikaur/"
 
 sudo mv "$R/stdout.log" .

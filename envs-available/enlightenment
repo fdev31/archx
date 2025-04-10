@@ -3,10 +3,6 @@ set_loginmanager enlightenment
 
 install_aur_pkg moksha-git
 
-for pkg in $(pikaur -Sqs moksha |grep 'git$') ; do
-    install_aur_pkg $pkg
-done
-
 install_pkg epplet-base
 install_pkg elementary-icon-theme
 install_pkg pcmanfm

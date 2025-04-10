@@ -65,7 +65,7 @@ if [ -n "$USE_LIVE_SYSTEM" ] && [[ "$PROFILES" != *flashdisk ]] ; then
     PROFILES="${PROFILES} flashdisk"
 fi
 
-# FONCTION DEFINITION
+# FUNCTION DEFINITION
 
 function have_xorg() {
     if [[ "$PROFILES" = *xorg* ]]; then

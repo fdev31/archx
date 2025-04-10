@@ -11,18 +11,27 @@ fi
 source ./strapfuncs.sh
 source ./coslib.sh
 
+# Required packages
+sudo pacman -S arch-install-scripts squashfs-tools grub
+
 step "Installing base packages & patch root files"
 
 # install packages
 
-sudo pacstrap -cd "$R" --needed base base-devel fakeroot linux initramfs linux-firmware python sudo geoip gcc-libs-multilib gcc-multilib
+sudo pacstrap -cP "$R" --needed base base-devel fakeroot linux initramfs linux-firmware python sudo geoip
 sudo chown root.root "$R"
 sudo cp my_conf.sh "$R"
 sudo chmod 777 "$R/my_conf.sh"
 cat distrib/$DISTRIB.sh >> "$R/my_conf.sh"
-sudo cp -r strapfuncs.sh configuration.sh resources "$R"
 
-step "Re-generating RAMFS and low-level config" 
+# hardlink resources
+sudo ln -f strapfuncs.sh configuration.sh "$R"
+find resources -type f -print0 | while IFS= read -r -d '' f; do
+    d=$(dirname "$f")
+    sudo ln -f "$f" "$R/$f"
+done
+
+step "Re-generating RAMFS and low-level config"
 HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER" CHROOT='' run_hooks pre-mkinitcpio
 sync
 sleep 2
@@ -32,5 +41,5 @@ sudo umount "$R/proc" || true
 sudo umount "$R/dev" || true
 sudo umount "$R/sys" || true
 mount
-step2 "make init cpio" 
+step2 "make init cpio"
 sudo arch-chroot "$R" mkinitcpio -p linux

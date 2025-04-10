@@ -19,7 +19,7 @@ DEPS="grub arch-install-scripts sudo dosfstools squashfs-tools xz"
 ERROR=0
 pacman -Qq $DEPS > /dev/null || ERROR=1
 
-[ $ERROR -ne 0 ] && echo "Required packages: $DEPS" 
+[ $ERROR -ne 0 ] && echo "Required packages: $DEPS"
 [ $ERROR -ne 0 ] && exit 1
 
 SECT_SZ=512
@@ -43,7 +43,7 @@ function base_install() {
 
 function reconfigure() {
     HOOK_BUILD_DIR="$R/$HOOK_BUILD_FOLDER"
-    step "Re-generating RAMFS and low-level config" 
+    step "Re-generating RAMFS and low-level config"
     CHROOT='' run_hooks pre-mkinitcpio
     sudo arch-chroot "$R" mkinitcpio -p linux
 }
@@ -121,7 +121,7 @@ function make_squash_root() {
             else # gz == gzip
                 sudo mksquashfs . "$SQ" -ef $IF -comp gzip $SQ_OPTS -b 1M
             fi
-        fi  
+        fi
     popd > /dev/null
     sudo rm ignored.files
 }
@@ -183,7 +183,7 @@ function make_disk_image() {
     mkdir "$MPT/ROOT"
     mkdir "$MPT/WORK"
     sudo cp -ra "$R/home" "$MPT/ROOT" # pre-populate HOME // default settings
-    
+
     pushd "$MPT"
         sudo tar cf - . | ${COMPRESSION_TYPE} -9 > ../rootfs.default
         sudo mv ../rootfs.default $R/boot/
@@ -295,7 +295,7 @@ case "$PARAM" in
         echo "        up: re-create rootfs after a manual update (default)"
         echo "     shell: start a shell"
         echo "   install: install some package (args = pacman args)"
-#        echo "      conf: re-create intial ramdisk"
+#        echo "      conf: re-create initial ramdisk"
 #        echo "    squash: re-create squash rootfs"
 #        echo "      disk: re-create disk image from current squash & ramdisk"
         exit 0

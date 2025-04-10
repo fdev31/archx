@@ -38,7 +38,6 @@ EOF
 
 $SUDO cp -r resources/ configuration.sh ./distrib/${DISTRIB}.sh my_conf.sh "$REAL/"
 $SUDO chmod 666 "$REAL/my_conf.sh"
-[ ! -d "$REAL/var/cache/pikaur" ] && $SUDO mkdir "$REAL/var/cache/pikaur" || true
 
 if [ -z "$envname" ]; then
     environments=$(ls -1 envs/*)
